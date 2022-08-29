@@ -1,4 +1,4 @@
-package com.project.bookand.bookmark;
+package kr.co.bookand.backend.bookmark;
 
 public enum BookmarkType {
     BOOKSTORE, ARTICLE

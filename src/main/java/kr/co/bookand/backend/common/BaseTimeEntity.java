@@ -1,4 +1,4 @@
-package com.project.bookand.common;
+package kr.co.bookand.backend.common;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

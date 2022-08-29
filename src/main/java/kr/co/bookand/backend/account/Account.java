@@ -1,18 +1,16 @@
-package com.project.bookand.account;
+package kr.co.bookand.backend.account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.bookand.bookmark.BookMark_BookStore;
-import com.project.bookand.bookmark.Bookmark;
-import com.project.bookand.bookstore.Tip;
-import com.project.bookand.common.BaseTimeEntity;
-import com.project.bookand.notification.Notification;
+import kr.co.bookand.backend.bookmark.Bookmark;
+import kr.co.bookand.backend.bookstore.Tip;
+import kr.co.bookand.backend.common.BaseTimeEntity;
+import kr.co.bookand.backend.notification.Notification;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

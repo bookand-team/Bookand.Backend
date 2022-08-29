@@ -1,12 +1,11 @@
-package com.project.bookand.notification;
+package kr.co.bookand.backend.notification;
 
-import com.project.bookand.account.Account;
-import com.project.bookand.common.BaseTimeEntity;
+import kr.co.bookand.backend.account.Account;
+import kr.co.bookand.backend.common.BaseTimeEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Entity
 @Getter

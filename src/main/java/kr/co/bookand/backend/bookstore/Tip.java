@@ -1,7 +1,7 @@
-package com.project.bookand.bookstore;
+package kr.co.bookand.backend.bookstore;
 
-import com.project.bookand.account.Account;
-import com.project.bookand.common.BaseTimeEntity;
+import kr.co.bookand.backend.account.Account;
+import kr.co.bookand.backend.common.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

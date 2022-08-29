@@ -1,16 +1,14 @@
-package com.project.bookand.article;
+package kr.co.bookand.backend.article;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.bookand.bookmark.BookMark_Article;
-import com.project.bookand.bookmark.BookMark_BookStore;
-import com.project.bookand.common.BaseTimeEntity;
+import kr.co.bookand.backend.bookmark.BookMark_Article;
+import kr.co.bookand.backend.common.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

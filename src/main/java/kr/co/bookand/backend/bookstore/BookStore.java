@@ -1,8 +1,9 @@
-package com.project.bookand.bookmark;
+package kr.co.bookand.backend.bookstore;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.bookand.account.Account;
-import com.project.bookand.common.BaseTimeEntity;
+import kr.co.bookand.backend.article.Article;
+import kr.co.bookand.backend.common.BaseTimeEntity;
+import kr.co.bookand.backend.bookmark.BookMark_BookStore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,26 +15,29 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Bookmark extends BaseTimeEntity {
+public class BookStore extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+    private String location;
+    private String hours;
+    private String number;
+    private String concept;
+    private String image;
+    private String sns;
+    private String facility;
+    private String Story;
 
     @Enumerated(EnumType.STRING)
-    private BookmarkType bookmarkType;
+    private Theme theme;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Account account;
+    private Article article;
 
     @JsonIgnore
     @OneToMany(mappedBy = "bookStore", cascade = CascadeType.ALL)
     private List<BookMark_BookStore> mark_bookStoreList = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<BookMark_Article> mark_articleList = new ArrayList<>();
-
 }

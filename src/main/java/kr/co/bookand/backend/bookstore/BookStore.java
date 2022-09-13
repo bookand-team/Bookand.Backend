@@ -3,7 +3,7 @@ package kr.co.bookand.backend.bookstore;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.article.Article;
 import kr.co.bookand.backend.common.BaseTimeEntity;
-import kr.co.bookand.backend.bookmark.BookMark_BookStore;
+import kr.co.bookand.backend.bookmark.BookMarkBookStore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,5 +39,5 @@ public class BookStore extends BaseTimeEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "bookStore", cascade = CascadeType.ALL)
-    private List<BookMark_BookStore> mark_bookStoreList = new ArrayList<>();
+    private List<BookMarkBookStore> mark_bookStoreList = new ArrayList<>();
 }

@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.bookmark;
 
-import kr.co.bookand.backend.bookstore.BookStore;
+import kr.co.bookand.backend.article.Article;
 import kr.co.bookand.backend.common.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,14 +11,14 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BookMark_BookStore extends BaseTimeEntity {
+public class BookMarkArticle extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private BookStore bookStore;
+    private Article article;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Bookmark bookmark;

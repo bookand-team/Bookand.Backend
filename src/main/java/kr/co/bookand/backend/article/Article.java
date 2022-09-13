@@ -1,7 +1,7 @@
 package kr.co.bookand.backend.article;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import kr.co.bookand.backend.bookmark.BookMark_Article;
+import kr.co.bookand.backend.bookmark.BookMarkArticle;
 import kr.co.bookand.backend.common.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,6 +31,6 @@ public class Article extends BaseTimeEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<BookMark_Article> mark_articleList = new ArrayList<>();
+    private List<BookMarkArticle> mark_articleList = new ArrayList<>();
 
 }

@@ -2,7 +2,7 @@ package kr.co.bookand.backend.account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.bookmark.Bookmark;
-import kr.co.bookand.backend.bookstore.Tip;
+import kr.co.bookand.backend.bookstore.ReportBookStore;
 import kr.co.bookand.backend.common.BaseTimeEntity;
 import kr.co.bookand.backend.notification.Notification;
 import lombok.AccessLevel;
@@ -46,7 +46,7 @@ public class Account extends BaseTimeEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<Tip> tipList = new ArrayList<>();
+    private List<ReportBookStore> tipList = new ArrayList<>();
 
 }
 

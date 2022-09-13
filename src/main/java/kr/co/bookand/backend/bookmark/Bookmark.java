@@ -30,10 +30,10 @@ public class Bookmark extends BaseTimeEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "bookStore", cascade = CascadeType.ALL)
-    private List<BookMark_BookStore> mark_bookStoreList = new ArrayList<>();
+    private List<BookMarkBookStore> mark_bookStoreList = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<BookMark_Article> mark_articleList = new ArrayList<>();
+    private List<BookMarkArticle> mark_articleList = new ArrayList<>();
 
 }

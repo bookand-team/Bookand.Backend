@@ -1,14 +1,12 @@
-package kr.co.bookand.backend.account;
+package kr.co.bookand.backend.account.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.bookmark.Bookmark;
 import kr.co.bookand.backend.bookstore.ReportBookStore;
 import kr.co.bookand.backend.common.BaseTimeEntity;
 import kr.co.bookand.backend.notification.Notification;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,6 +16,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class Account extends BaseTimeEntity {
 
     @Id
@@ -29,7 +28,7 @@ public class Account extends BaseTimeEntity {
     private String password;
 
     private String provider;
-    private String provider_id;
+    private String providerId;
     private String provider_name;
     private String profile;
 

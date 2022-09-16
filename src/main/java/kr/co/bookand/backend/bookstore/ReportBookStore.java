@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.bookstore;
 
-import kr.co.bookand.backend.account.Account;
+import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.common.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;

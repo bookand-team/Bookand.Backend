@@ -46,7 +46,7 @@ public class AuthDto {
     @NoArgsConstructor
     public static class AuthResponse {
         private String process;
-        private Object data;
+        private Object token;
 
         public AuthResponseMessage toAuthResponseMessage(String msg) {
             return AuthResponseMessage.builder()
@@ -54,7 +54,7 @@ public class AuthDto {
                             .status(CodeStatus.SUCCESS)
                             .msg(msg)
                             .build())
-                    .data(this)
+                    .data((AuthResponse) token)
                     .build();
         }
     }

@@ -1,6 +1,5 @@
 package kr.co.bookand.backend.account.domain.dto;
 
-import kr.co.bookand.backend.account.domain.dto.AuthDto;
 import kr.co.bookand.backend.common.CodeStatus;
 import kr.co.bookand.backend.common.Message;
 import lombok.*;

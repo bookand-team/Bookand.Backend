@@ -28,9 +28,6 @@ public class Account extends BaseTimeEntity {
     private String password;
 
     private String provider;
-    private String providerId;
-    private String provider_name;
-    private String profile;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -47,6 +44,13 @@ public class Account extends BaseTimeEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<ReportBookStore> tipList = new ArrayList<>();
 
+    public AccountDto.MemberRequest toAccountRequestDto(String suffix) {
+        return new AccountDto.MemberRequest(email, email+suffix, nickname, provider);
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
 
 

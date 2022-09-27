@@ -61,14 +61,13 @@ public class AuthService {
             log.info("로그인", tokenDto);
             return authResponseDto.toAuthResponseMessage("소셜 로그인 성공");
         }else {
-            // 회원가입 페이지
             MiddleAccount middleAccount = MiddleAccount.builder()
                     .email(email)
                     .socialType(socialType)
                     .build();
 
             // 회원가입
-            TokenMessage tokenMessage = socialSignUp(middleAccount);
+            TokenDto tokenMessage = socialSignUp(middleAccount);
             AuthResponse authResponseDto = new AuthResponse("SignUp", tokenMessage);
             return authResponseDto.toAuthResponseMessage("소셜 회원가입");
         }
@@ -94,12 +93,12 @@ public class AuthService {
         return tokenDto;
     }
 
-    private TokenMessage socialSignUp(MiddleAccount middleAccount) {
+    private TokenDto socialSignUp(MiddleAccount middleAccount) {
         String nickname = nicknameRandom();
         Account account = middleAccount.toAccount(passwordEncoder,suffix, nickname);
         accountRepository.save(account);
         TokenDto tokenDto = login(account.toAccountRequestDto(suffix).toLoginRequest());
-        return tokenDto.toTokenMessage("소셜 회원가입", CodeStatus.SUCCESS);
+        return tokenDto;
 
     }
 

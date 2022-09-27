@@ -15,8 +15,8 @@ public class AuthDto {
     @Builder
     @NoArgsConstructor
     public static class AuthRequest {
-        private String socialType;
         private String accessToken;
+        private String socialType;
         private String id;
 
         public void insertId(String id) {
@@ -54,7 +54,7 @@ public class AuthDto {
                             .status(CodeStatus.SUCCESS)
                             .msg(msg)
                             .build())
-                    .data((AuthResponse) token)
+                    .data(this)
                     .build();
         }
     }
@@ -68,13 +68,6 @@ public class AuthDto {
         private AuthResponse data;
     }
 
-    @Getter
-    @AllArgsConstructor
-    @Builder
-    public static class TokenMessage {
-        private Message message;
-        private TokenDto data;
-    }
 
     @Getter
     @AllArgsConstructor

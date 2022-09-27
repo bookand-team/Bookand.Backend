@@ -4,6 +4,7 @@ import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.SocialType;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
+import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.account.exception.NotFoundUserInformationException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.common.ApiService;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
+
 
 import java.util.Collections;
 import java.util.Map;
@@ -93,8 +95,10 @@ public class AuthService {
         return tokenDto;
     }
 
-    private TokenDto socialSignUp(MiddleAccount middleAccount) {
+    @Transactional
+    public TokenDto socialSignUp(MiddleAccount middleAccount) {
         String nickname = nicknameRandom();
+        duplicateEmailAndNickName(middleAccount.getEmail(), nickname);
         Account account = middleAccount.toAccount(passwordEncoder,suffix, nickname);
         accountRepository.save(account);
         TokenDto tokenDto = login(account.toAccountRequestDto(suffix).toLoginRequest());
@@ -104,6 +108,15 @@ public class AuthService {
 
     private String nicknameRandom() {
         return "구현예정";
+    }
+
+    private void duplicateEmailAndNickName(String email, String nickname) {
+        if (accountRepository.existsByEmail(email)) {
+            throw new AccountException("email 중복");
+        }
+        if (accountRepository.existsByNickname(nickname)) {
+            throw new AccountException("nickname 중복");
+        }
     }
 
 

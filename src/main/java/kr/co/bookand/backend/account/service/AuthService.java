@@ -9,6 +9,8 @@ import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.common.ApiService;
 import kr.co.bookand.backend.common.CodeStatus;
 import kr.co.bookand.backend.common.Message;
+import kr.co.bookand.backend.config.jwt.RefreshToken;
+import kr.co.bookand.backend.config.jwt.RefreshTokenRepository;
 import kr.co.bookand.backend.config.jwt.TokenFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final RefreshTokenRepository refreshTokenRepository;
     private final TokenFactory tokenFactory;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final AccountRepository accountRepository;
@@ -83,6 +86,11 @@ public class AuthService {
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
 
         // refresh token 저장
+        RefreshToken refreshToken = RefreshToken.builder()
+                .key(authentication.getName())
+                .value(tokenDto.getRefreshToken())
+                .build();
+        refreshTokenRepository.save(refreshToken);
         return tokenDto;
     }
 
@@ -135,6 +143,8 @@ public class AuthService {
         String loginAccount = authentication.getName();
         if (accountRepository.findByEmail(loginAccount).isPresent()){
             // 리프레시 토큰 삭제
+            RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName()).get();
+            refreshTokenRepository.delete(refreshToken);
         }else{
             throw new NotFoundUserInformationException();
         }

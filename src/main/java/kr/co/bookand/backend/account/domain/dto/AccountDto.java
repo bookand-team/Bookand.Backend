@@ -2,11 +2,12 @@ package kr.co.bookand.backend.account.domain.dto;
 
 
 import kr.co.bookand.backend.account.domain.Account;
+import kr.co.bookand.backend.common.CodeStatus;
+import kr.co.bookand.backend.common.Message;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class AccountDto {
 
@@ -18,15 +19,6 @@ public class AccountDto {
         private String password;
         private String nickname;
         private String socialType;
-
-        public Account toAccount(PasswordEncoder passwordEncoder) {
-            return Account.builder()
-                    .email(email)
-                    .password(passwordEncoder.encode(password))
-                    .nickname(nickname)
-                    .provider(socialType)
-                    .build();
-        }
 
         public LoginRequest toLoginRequest() {
             return LoginRequest.builder()
@@ -50,6 +42,39 @@ public class AccountDto {
 
         public UsernamePasswordAuthenticationToken toAuthentication() {
             return new UsernamePasswordAuthenticationToken(email,password);
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class MemberInfo{
+        private String email;
+        private String nickname;
+
+        public static MemberInfo of(Account account) {
+            return new MemberInfo(account.getEmail(), account.getNickname());
+        }
+    }
+
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class MemberResponseMessage {
+        private Message message;
+        private MemberInfo data;
+
+        public static MemberResponseMessage of(CodeStatus status, String message, MemberInfo data){
+            return MemberResponseMessage.builder()
+                    .data(data)
+                    .message(
+                        Message.builder().
+                                status(status).
+                                msg(message).
+                                build()
+                    )
+                    .build();
         }
     }
 

@@ -7,6 +7,7 @@ import kr.co.bookand.backend.common.Message;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 public class AccountDto {
@@ -31,6 +32,14 @@ public class AccountDto {
             return new UsernamePasswordAuthenticationToken(email,password);
         }
 
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class MemberRequestUpdate {
+        private String nickname;
     }
 
     @Getter
@@ -77,5 +86,4 @@ public class AccountDto {
                     .build();
         }
     }
-
 }

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -31,15 +32,21 @@ public class AccountService {
 
     // 회원 수정
     @Transactional
-    public Message updateNickname(String nickname){
-        Optional<Account> checkNicknameAccount = accountRepository.findByNickname(nickname);
+    public AccountDto.MemberInfo updateNickname(AccountDto.MemberRequestUpdate memberRequestUpdateDto){
+        Optional<Account> checkNicknameAccount = accountRepository.findByNickname(memberRequestUpdateDto.getNickname());
         if (checkNicknameAccount.isPresent()) {
-            return Message.of(CodeStatus.FAIL, "닉네임 중복");
+            throw new RuntimeException();
         } else {
             Account dbAccount = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
                     .orElseThrow(NotFoundUserInformationException::new);
-            dbAccount.updateNickname(nickname);
-            return Message.of(CodeStatus.SUCCESS, "닉네임 변경됨.");
+            dbAccount.updateNickname(memberRequestUpdateDto.getNickname());
+            return AccountDto.MemberInfo.of(dbAccount);
         }
     }
+
+    @Transactional
+    public void removeAccount(Account account) {
+        accountRepository.delete(account);
+    }
+
 }

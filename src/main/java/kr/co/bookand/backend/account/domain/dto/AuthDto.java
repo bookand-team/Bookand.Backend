@@ -95,5 +95,13 @@ public class AuthDto {
 
     }
 
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class TokenMessage {
+        private Message message;
+        private TokenDto data;
+    }
+
 
 }

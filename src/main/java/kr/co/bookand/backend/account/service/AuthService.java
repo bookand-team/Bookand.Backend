@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -121,7 +122,6 @@ public class AuthService {
 
 
     private String getSocialIdWithAccessToken(AuthRequest data) {
-        log.info("test1 {}", data.getSocialType());
         SocialType socialType = data.getSocialType();
         if (socialType.equals(SocialType.GOOGLE)) {
             return getGoogleId(data);
@@ -161,6 +161,34 @@ public class AuthService {
             throw new NotFoundUserInformationException();
         }
         return Message.of(CodeStatus.SUCCESS, "로그아웃 성공");
+    }
+
+    @Transactional
+    public TokenMessage reissue(TokenDto.TokenRequestDto tokenRequestDto){
+
+        if (!tokenFactory.validateToken(tokenRequestDto.getRefreshToken())){
+            // 예외처리
+            throw new RuntimeException();
+        }
+        Authentication authentication = tokenFactory.getAuthentication(tokenRequestDto.getRefreshToken());
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+                .orElseThrow(
+                        // 예외처리
+                );
+        reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
+        TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
+        return tokenDto.toTokenMessage("토큰 재발급", CodeStatus.SUCCESS);
+    }
+
+    private void reissueRefreshExceptionCheck(String refreshToken, TokenDto.TokenRequestDto tokenRequestDto){
+        if (refreshToken == null){
+            // 예외처리
+            throw new RuntimeException();
+        }
+        if (!refreshToken.equals(tokenRequestDto.getRefreshToken())){
+            // 예외처리
+            throw new RuntimeException();
+        }
     }
 
 }

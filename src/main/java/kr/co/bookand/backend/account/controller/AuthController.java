@@ -1,6 +1,7 @@
 package kr.co.bookand.backend.account.controller;
 
 import kr.co.bookand.backend.account.domain.dto.AuthDto;
+import kr.co.bookand.backend.account.domain.dto.TokenDto;
 import kr.co.bookand.backend.account.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,5 +21,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthDto.AuthResponseMessage> login(@RequestBody AuthDto.AuthRequest authRequest) {
         return new ResponseEntity<>(authService.socialAccess(authRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<AuthDto.TokenMessage> reissue(@RequestBody TokenDto.TokenRequestDto tokenRequestDto){
+        return ResponseEntity.ok(authService.reissue(tokenRequestDto));
     }
 }

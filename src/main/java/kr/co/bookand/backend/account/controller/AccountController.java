@@ -4,8 +4,11 @@ import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.account.util.AccountUtil;
 import kr.co.bookand.backend.common.CodeStatus;
-import kr.co.bookand.backend.common.Message;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

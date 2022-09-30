@@ -1,6 +1,7 @@
 package kr.co.bookand.backend.account.service;
 
 import kr.co.bookand.backend.account.domain.Account;
+import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.SocialType;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
@@ -30,6 +31,7 @@ import org.springframework.util.MultiValueMap;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
@@ -82,6 +84,16 @@ public class AuthService {
         return getTokenDto(loginRequest);
     }
 
+    public TokenDto loginAdmin(AccountDto.LoginRequest loginRequest){
+        String email = loginRequest.getEmail();
+        Account admin = accountRepository.findByEmail(email).orElseThrow(NotFoundUserInformationException::new);
+        if (admin.getRole().equals(Role.ADMIN)) {
+            // 예외처리
+            throw new RuntimeException();
+        }
+        return getTokenDto(loginRequest);
+    }
+
     private TokenDto getTokenDto(AccountDto.LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -108,7 +120,14 @@ public class AuthService {
     }
 
     private String nicknameRandom() {
-        return "구현예정";
+        String url = "https://nickname.hwanmoo.kr/?format=json&count=1&max_length=10";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
+        ResponseEntity<Map<String, Object>> response = apiService.httpEntityPost(url, HttpMethod.GET, request, RESPONSE_TYPE);
+        Map<String, Object> stringObjectMap = Objects.requireNonNull(response.getBody());
+        String words = stringObjectMap.get("words").toString().replaceAll("\\[", "").replaceAll("\\]", "");
+        return words ;
     }
 
     private void duplicateEmailAndNickName(String email, String nickname) {
@@ -150,6 +169,7 @@ public class AuthService {
         return headers;
     }
 
+    @Transactional
     public Message logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginAccount = authentication.getName();
@@ -189,6 +209,11 @@ public class AuthService {
             // 예외처리
             throw new RuntimeException();
         }
+    }
+
+    public TokenMessage adminLogin(AccountDto.LoginRequest loginRequestDto) {
+        TokenDto tokenDto = loginAdmin(loginRequestDto);
+        return tokenDto.toTokenMessage("어드민 로그인", CodeStatus.SUCCESS);
     }
 
 }

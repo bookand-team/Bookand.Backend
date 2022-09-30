@@ -90,14 +90,6 @@ public class AuthDto {
     @Getter
     @AllArgsConstructor
     @Builder
-    public static class LoginRequest {
-        private String refreshToken;
-
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @Builder
     public static class TokenMessage {
         private Message message;
         private TokenDto data;

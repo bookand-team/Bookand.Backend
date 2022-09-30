@@ -25,12 +25,26 @@ public class SwaggerConfig {
 
     @Bean
     public Docket apiV1(){
+        ParameterBuilder parameterBuilder = new ParameterBuilder();
+
+        parameterBuilder.name("Authorization")
+                .description("Access Token")
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")
+                .required(false)
+                .build();
+
+        List<Parameter> parameters = new ArrayList<>();
+        parameters.add(parameterBuilder.build());
+
         return new Docket(DocumentationType.SWAGGER_2)
+                .globalOperationParameters(parameters)
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentTypes())
                 .apiInfo(getApiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.project.bookand"))
+                .apis(RequestHandlerSelectors.any())
+                //.apis(RequestHandlerSelectors.basePackage("com.project.bookand"))
                 .paths(PathSelectors.ant("/api/**"))
                 .build();
     }

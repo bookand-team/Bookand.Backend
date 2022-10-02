@@ -5,7 +5,6 @@ import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.exception.NotFoundUserInformationException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
-import kr.co.bookand.backend.common.CodeStatus;
 import kr.co.bookand.backend.common.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

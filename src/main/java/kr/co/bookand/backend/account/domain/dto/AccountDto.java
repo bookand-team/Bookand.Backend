@@ -2,7 +2,6 @@ package kr.co.bookand.backend.account.domain.dto;
 
 
 import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.common.CodeStatus;
 import kr.co.bookand.backend.common.Message;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -67,23 +66,4 @@ public class AccountDto {
     }
 
 
-    @Getter
-    @AllArgsConstructor
-    @Builder
-    public static class MemberResponseMessage {
-        private Message message;
-        private MemberInfo data;
-
-        public static MemberResponseMessage of(CodeStatus status, String message, MemberInfo data){
-            return MemberResponseMessage.builder()
-                    .data(data)
-                    .message(
-                        Message.builder().
-                                status(status).
-                                msg(message).
-                                build()
-                    )
-                    .build();
-        }
-    }
 }

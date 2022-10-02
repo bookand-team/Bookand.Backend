@@ -3,7 +3,6 @@ package kr.co.bookand.backend.account.domain.dto;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.SocialType;
-import kr.co.bookand.backend.common.CodeStatus;
 import kr.co.bookand.backend.common.Message;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,35 +38,6 @@ public class AuthDto {
             }
         }
     }
-
-    @Getter
-    @AllArgsConstructor
-    @Builder
-    @NoArgsConstructor
-    public static class AuthResponse {
-        private String process;
-        private Object token;
-
-        public AuthResponseMessage toAuthResponseMessage(String msg) {
-            return AuthResponseMessage.builder()
-                    .message(Message.builder()
-                            .status(CodeStatus.SUCCESS)
-                            .msg(msg)
-                            .build())
-                    .data(this)
-                    .build();
-        }
-    }
-
-    @Data
-    @AllArgsConstructor
-    @Builder
-    @NoArgsConstructor
-    public static class AuthResponseMessage {
-        private Message message;
-        private AuthResponse data;
-    }
-
 
     @Getter
     @AllArgsConstructor

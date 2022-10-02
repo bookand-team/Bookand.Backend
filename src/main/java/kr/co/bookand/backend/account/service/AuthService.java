@@ -9,7 +9,6 @@ import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.account.exception.NotFoundUserInformationException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.common.ApiService;
-import kr.co.bookand.backend.common.CodeStatus;
 import kr.co.bookand.backend.common.Message;
 import kr.co.bookand.backend.config.jwt.RefreshToken;
 import kr.co.bookand.backend.config.jwt.RefreshTokenRepository;
@@ -28,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 
 
-import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -52,7 +50,7 @@ public class AuthService {
     private String suffix;
 
     @Transactional
-    public AuthResponseMessage socialAccess(AuthRequest authRequestDto) {
+    public TokenDto socialAccess(AuthRequest authRequestDto) {
         String userId = getSocialIdWithAccessToken(authRequestDto);
         authRequestDto.insertId(userId);
         String email = authRequestDto.extraEmail();
@@ -62,9 +60,8 @@ public class AuthService {
         if (account.isPresent()) {
             // 로그인
             TokenDto tokenDto = login(account.get().toAccountRequestDto(suffix).toLoginRequest());
-            AuthResponse authResponseDto = new AuthResponse("Login", tokenDto);
             log.info("로그인", tokenDto);
-            return authResponseDto.toAuthResponseMessage("소셜 로그인 성공");
+            return tokenDto;
         }else {
             MiddleAccount middleAccount = MiddleAccount.builder()
                     .email(email)
@@ -73,8 +70,7 @@ public class AuthService {
 
             // 회원가입
             TokenDto tokenMessage = socialSignUp(middleAccount);
-            AuthResponse authResponseDto = new AuthResponse("SignUp", tokenMessage);
-            return authResponseDto.toAuthResponseMessage("소셜 회원가입");
+            return tokenMessage;
         }
     }
 
@@ -180,11 +176,11 @@ public class AuthService {
         }else{
             throw new NotFoundUserInformationException();
         }
-        return Message.of(CodeStatus.SUCCESS, "로그아웃 성공");
+        return Message.of("로그아웃 성공");
     }
 
     @Transactional
-    public TokenMessage reissue(TokenDto.TokenRequestDto tokenRequestDto){
+    public TokenDto reissue(TokenDto.TokenRequestDto tokenRequestDto){
 
         if (!tokenFactory.validateToken(tokenRequestDto.getRefreshToken())){
             // 예외처리
@@ -197,7 +193,7 @@ public class AuthService {
                 );
         reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
-        return tokenDto.toTokenMessage("토큰 재발급", CodeStatus.SUCCESS);
+        return tokenDto;
     }
 
     private void reissueRefreshExceptionCheck(String refreshToken, TokenDto.TokenRequestDto tokenRequestDto){
@@ -211,9 +207,9 @@ public class AuthService {
         }
     }
 
-    public TokenMessage adminLogin(AccountDto.LoginRequest loginRequestDto) {
+    public TokenDto adminLogin(AccountDto.LoginRequest loginRequestDto) {
         TokenDto tokenDto = loginAdmin(loginRequestDto);
-        return tokenDto.toTokenMessage("어드민 로그인", CodeStatus.SUCCESS);
+        return tokenDto;
     }
 
 }

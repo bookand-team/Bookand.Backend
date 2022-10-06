@@ -3,6 +3,7 @@ package kr.co.bookand.backend.account.controller;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.account.util.AccountUtil;
+import kr.co.bookand.backend.common.ApiResponse;
 import kr.co.bookand.backend.common.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,13 +24,13 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("/me")
-    public MemberInfo getMyAccountInfo() {
-        return accountService.getAccount();
+    public ApiResponse<MemberInfo> getMyAccountInfo() {
+        return ApiResponse.success(accountService.getAccount());
     }
 
     @PostMapping("/nickname")
-    public MemberInfo updateNickname(@Valid @RequestBody MemberRequestUpdate memberRequestUpdateDto) {
-        return accountService.updateNickname(memberRequestUpdateDto);
+    public ApiResponse<MemberInfo> updateNickname(@Valid @RequestBody MemberRequestUpdate memberRequestUpdateDto) {
+        return ApiResponse.success(accountService.updateNickname(memberRequestUpdateDto));
     }
 
     @DeleteMapping("/remove")

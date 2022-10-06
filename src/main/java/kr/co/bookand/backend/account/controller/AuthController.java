@@ -4,6 +4,7 @@ import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.domain.dto.AuthDto;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
 import kr.co.bookand.backend.account.service.AuthService;
+import kr.co.bookand.backend.common.ApiResponse;
 import kr.co.bookand.backend.common.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,22 +21,22 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody AuthRequest authRequest) {
-        return new ResponseEntity<>(authService.socialAccess(authRequest), HttpStatus.OK);
+    public ApiResponse<TokenDto> login(@RequestBody AuthRequest authRequest) {
+        return ApiResponse.success(authService.socialAccess(authRequest));
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissue(@RequestBody TokenDto.TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(authService.reissue(tokenRequestDto));
+    public ApiResponse<TokenDto> reissue(@RequestBody TokenDto.TokenRequestDto tokenRequestDto) {
+        return ApiResponse.success(authService.reissue(tokenRequestDto));
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<Message> logout() {
-        return ResponseEntity.ok(authService.logout());
+    public Message logout() {
+        return Message.of(authService.logout().getResult());
     }
 
     @PostMapping("/admin")
-    public ResponseEntity<TokenDto> loginAdmin(@RequestBody AccountDto.LoginRequest loginRequestDto) {
-        return ResponseEntity.ok(authService.adminLogin(loginRequestDto));
+    public ApiResponse<TokenDto> loginAdmin(@RequestBody AccountDto.LoginRequest loginRequestDto) {
+        return ApiResponse.success(authService.adminLogin(loginRequestDto));
     }
 }

@@ -44,12 +44,14 @@ public class AuthDto {
     @Builder
     public static class MiddleAccount{
         private String email;
+        private String providerEmail;
         private SocialType socialType;
 
-        public Account toAccount(PasswordEncoder passwordEncoder, String suffix, String nickname) {
+        public Account toAccount(PasswordEncoder passwordEncoder, String suffix, String nickname, String providerEmail) {
             return Account.builder()
                     .email(email)
                     .provider(socialType.toString())
+                    .providerEmail(providerEmail)
                     .password(passwordEncoder.encode(email + suffix))
                     .role(Role.USER)
                     .nickname(nickname)
@@ -65,5 +67,15 @@ public class AuthDto {
         private TokenDto data;
     }
 
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class ProviderIdAndEmail{
+        private String userId;
+        private String email;
 
+        public static ProviderIdAndEmail toProviderDto(String userId, String email) {
+            return new ProviderIdAndEmail(userId, email);
+        }
+    }
 }

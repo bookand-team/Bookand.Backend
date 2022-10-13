@@ -52,7 +52,8 @@ public class AuthService {
 
     @Transactional
     public TokenResponse socialAccess(AuthRequest authRequestDto) {
-        String userId = getSocialIdWithAccessToken(authRequestDto);
+        String userId = getSocialIdWithAccessToken(authRequestDto).getUserId();
+        String providerEmail = getSocialIdWithAccessToken(authRequestDto).getEmail();
         authRequestDto.insertId(userId);
         String email = authRequestDto.extraEmail();
         Optional<Account> account = accountRepository.findByEmail(email);
@@ -61,12 +62,13 @@ public class AuthService {
         if (account.isPresent()) {
             // 로그인
             TokenDto tokenDto = login(account.get().toAccountRequestDto(suffix).toLoginRequest());
-            log.info("로그인", tokenDto);
             return tokenDto.toTokenDto();
+
         }else {
             MiddleAccount middleAccount = MiddleAccount.builder()
                     .email(email)
                     .socialType(socialType)
+                    .providerEmail(providerEmail)
                     .build();
 
             // 회원가입
@@ -109,10 +111,9 @@ public class AuthService {
     public TokenDto socialSignUp(MiddleAccount middleAccount) {
         String nickname = nicknameRandom();
         duplicateEmailAndNickName(middleAccount.getEmail(), nickname);
-        Account account = middleAccount.toAccount(passwordEncoder,suffix, nickname);
+        Account account = middleAccount.toAccount(passwordEncoder,suffix, nickname, middleAccount.getProviderEmail());
         accountRepository.save(account);
-        TokenDto tokenDto = login(account.toAccountRequestDto(suffix).toLoginRequest());
-        return tokenDto;
+        return login(account.toAccountRequestDto(suffix).toLoginRequest());
 
     }
 
@@ -123,8 +124,7 @@ public class AuthService {
         HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
         ResponseEntity<Map<String, Object>> response = apiService.httpEntityPost(url, HttpMethod.GET, request, RESPONSE_TYPE);
         Map<String, Object> stringObjectMap = Objects.requireNonNull(response.getBody());
-        String words = stringObjectMap.get("words").toString().replaceAll("\\[", "").replaceAll("\\]", "");
-        return words ;
+        return stringObjectMap.get("words").toString().replaceAll("\\[", "").replaceAll("]", "");
     }
 
     private void duplicateEmailAndNickName(String email, String nickname) {
@@ -137,25 +137,26 @@ public class AuthService {
     }
 
 
-    private String getSocialIdWithAccessToken(AuthRequest data) {
+    private ProviderIdAndEmail getSocialIdWithAccessToken(AuthRequest data) {
         SocialType socialType = data.getSocialType();
         if (socialType.equals(SocialType.GOOGLE)) {
-            return getGoogleId(data);
+            Map<String, Object> googleIdAndEmail = getGoogleIdAndEmail(data);
+            String userId = (String) googleIdAndEmail.get("sub");
+            String providerEmail = (String) googleIdAndEmail.get("email");
+            return ProviderIdAndEmail.toProviderDto(userId, providerEmail);
         } else {
 //            return getAppleId(data);
-            return "test";
+            throw new RuntimeException();
         }
     }
 
-    private String getGoogleId(AuthRequest data) {
+    private Map<String, Object> getGoogleIdAndEmail(AuthRequest data) {
         String url = data.getSocialType().getUserInfoUrl();
         HttpMethod method = data.getSocialType().getMethod();
         HttpHeaders headers = setHeaders(data.getAccessToken());
         HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
         ResponseEntity<Map<String, Object>> response = apiService.httpEntityPost(url, method, request, RESPONSE_TYPE);
-        Map<String, Object> response1 = (Map<String, Object>) response.getBody();
-        String id = (String) response1.get("sub");
-        return id;
+        return response.getBody();
     }
 
     public HttpHeaders setHeaders(String accessToken) {
@@ -170,7 +171,8 @@ public class AuthService {
     public Message logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginAccount = authentication.getName();
-        if (accountRepository.findByEmail(loginAccount).isPresent()){
+        if (accountRepository.findByEmail(loginAccount).isPresent() ||
+                refreshTokenRepository.findByKey(authentication.getName()).isPresent()){
             // 리프레시 토큰 삭제
             RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName()).get();
             refreshTokenRepository.delete(refreshToken);

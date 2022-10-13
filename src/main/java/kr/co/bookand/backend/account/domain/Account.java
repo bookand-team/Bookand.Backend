@@ -26,8 +26,8 @@ public class Account extends BaseTimeEntity {
     private String email;
     private String nickname;
     private String password;
-
     private String provider;
+    private String providerEmail;
 
     @Enumerated(EnumType.STRING)
     private Role role;

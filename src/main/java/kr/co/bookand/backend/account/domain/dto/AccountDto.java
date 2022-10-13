@@ -26,11 +26,6 @@ public class AccountDto {
                     .password(password)
                     .build();
         }
-
-        public UsernamePasswordAuthenticationToken toAuthentication() {
-            return new UsernamePasswordAuthenticationToken(email,password);
-        }
-
     }
 
     @Getter
@@ -58,10 +53,11 @@ public class AccountDto {
     @Builder
     public static class MemberInfo{
         private String email;
+        private String providerEmail;
         private String nickname;
 
         public static MemberInfo of(Account account) {
-            return new MemberInfo(account.getEmail(), account.getNickname());
+            return new MemberInfo(account.getEmail(), account.getProviderEmail(), account.getNickname());
         }
     }
 

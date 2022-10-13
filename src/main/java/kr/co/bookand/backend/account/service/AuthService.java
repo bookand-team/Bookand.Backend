@@ -33,6 +33,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
+import static kr.co.bookand.backend.account.domain.dto.TokenDto.*;
 
 @Slf4j
 @Service
@@ -50,7 +51,7 @@ public class AuthService {
     private String suffix;
 
     @Transactional
-    public TokenDto socialAccess(AuthRequest authRequestDto) {
+    public TokenResponse socialAccess(AuthRequest authRequestDto) {
         String userId = getSocialIdWithAccessToken(authRequestDto);
         authRequestDto.insertId(userId);
         String email = authRequestDto.extraEmail();
@@ -61,7 +62,7 @@ public class AuthService {
             // 로그인
             TokenDto tokenDto = login(account.get().toAccountRequestDto(suffix).toLoginRequest());
             log.info("로그인", tokenDto);
-            return tokenDto;
+            return tokenDto.toTokenDto();
         }else {
             MiddleAccount middleAccount = MiddleAccount.builder()
                     .email(email)
@@ -70,7 +71,7 @@ public class AuthService {
 
             // 회원가입
             TokenDto tokenMessage = socialSignUp(middleAccount);
-            return tokenMessage;
+            return tokenMessage.toTokenDto();
         }
     }
 
@@ -180,7 +181,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto reissue(TokenDto.TokenRequestDto tokenRequestDto){
+    public TokenResponse reissue(TokenRequest tokenRequestDto){
 
         if (!tokenFactory.validateToken(tokenRequestDto.getRefreshToken())){
             // 예외처리
@@ -193,10 +194,10 @@ public class AuthService {
                 );
         reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
-        return tokenDto;
+        return tokenDto.toTokenDto();
     }
 
-    private void reissueRefreshExceptionCheck(String refreshToken, TokenDto.TokenRequestDto tokenRequestDto){
+    private void reissueRefreshExceptionCheck(String refreshToken, TokenRequest tokenRequestDto){
         if (refreshToken == null){
             // 예외처리
             throw new RuntimeException();
@@ -207,9 +208,9 @@ public class AuthService {
         }
     }
 
-    public TokenDto adminLogin(AccountDto.LoginRequest loginRequestDto) {
+    public TokenResponse adminLogin(AccountDto.LoginRequest loginRequestDto) {
         TokenDto tokenDto = loginAdmin(loginRequestDto);
-        return tokenDto;
+        return tokenDto.toTokenDto();
     }
 
 }

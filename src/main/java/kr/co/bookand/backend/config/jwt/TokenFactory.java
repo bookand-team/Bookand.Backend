@@ -43,6 +43,7 @@ public class TokenFactory {
 
         long now = (new Date()).getTime();
         Date accessTokenExpiresIn = new Date(now + TokenInfo.ACCESS_TOKEN_EXPIRE_TIME);
+
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(TokenInfo.AUTHORITIES_KEY, authorities)

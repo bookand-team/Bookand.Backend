@@ -37,7 +37,7 @@ public class AccountDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class MemberRequestUpdate {
+    public static class MemberUpdateRequest {
         private String nickname;
     }
 

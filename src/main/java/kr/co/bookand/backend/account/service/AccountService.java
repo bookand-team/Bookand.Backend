@@ -5,13 +5,11 @@ import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.exception.NotFoundUserInformationException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
-import kr.co.bookand.backend.common.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -31,7 +29,7 @@ public class AccountService {
 
     // 회원 수정
     @Transactional
-    public AccountDto.MemberInfo updateNickname(AccountDto.MemberRequestUpdate memberRequestUpdateDto){
+    public AccountDto.MemberInfo updateNickname(AccountDto.MemberUpdateRequest memberRequestUpdateDto){
         Optional<Account> checkNicknameAccount = accountRepository.findByNickname(memberRequestUpdateDto.getNickname());
         if (checkNicknameAccount.isPresent()) {
             throw new RuntimeException();

@@ -1,6 +1,7 @@
 package kr.co.bookand.backend.account.controller;
 
 import kr.co.bookand.backend.account.domain.Account;
+import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.account.util.AccountUtil;
 import kr.co.bookand.backend.common.ApiResponse;
@@ -29,7 +30,7 @@ public class AccountController {
     }
 
     @PostMapping("/nickname")
-    public ApiResponse<MemberInfo> updateNickname(@Valid @RequestBody MemberRequestUpdate memberRequestUpdateDto) {
+    public ApiResponse<MemberInfo> updateNickname(@Valid @RequestBody AccountDto.MemberUpdateRequest memberRequestUpdateDto) {
         return ApiResponse.success(accountService.updateNickname(memberRequestUpdateDto));
     }
 

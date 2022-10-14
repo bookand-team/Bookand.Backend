@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,23 +23,23 @@ public class AccountService {
 
     // 회원 정보 조회
     @Transactional(readOnly = true)
-    public AccountDto.MemberInfo getAccount() {
+    public MemberInfo getAccount() {
         return accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
-                .map(AccountDto.MemberInfo::of)
-                .orElseThrow(NotFoundUserInformationException::new);
+                .map(MemberInfo::of)
+                .orElseThrow(()-> new NotFoundUserInformationException(SecurityUtil.getCurrentAccountEmail()));
     }
 
     // 회원 수정
     @Transactional
-    public AccountDto.MemberInfo updateNickname(AccountDto.MemberUpdateRequest memberRequestUpdateDto){
+    public MemberInfo updateNickname(MemberUpdateRequest memberRequestUpdateDto){
         Optional<Account> checkNicknameAccount = accountRepository.findByNickname(memberRequestUpdateDto.getNickname());
         if (checkNicknameAccount.isPresent()) {
-            throw new RuntimeException();
+            throw new NotFoundUserInformationException(checkNicknameAccount);
         } else {
             Account dbAccount = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
-                    .orElseThrow(NotFoundUserInformationException::new);
+                    .orElseThrow(()-> new NotFoundUserInformationException(SecurityUtil.getCurrentAccountEmail()));
             dbAccount.updateNickname(memberRequestUpdateDto.getNickname());
-            return AccountDto.MemberInfo.of(dbAccount);
+            return MemberInfo.of(dbAccount);
         }
     }
 

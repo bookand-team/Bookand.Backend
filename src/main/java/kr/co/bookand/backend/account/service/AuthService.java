@@ -5,11 +5,14 @@ import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.SocialType;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
-import kr.co.bookand.backend.account.exception.AccountException;
+import kr.co.bookand.backend.account.exception.DuplicateEmailException;
+import kr.co.bookand.backend.account.exception.DuplicateNicknameException;
 import kr.co.bookand.backend.account.exception.NotFoundUserInformationException;
+import kr.co.bookand.backend.account.exception.NotRoleUserException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.common.ApiService;
 import kr.co.bookand.backend.common.Message;
+import kr.co.bookand.backend.config.jwt.JwtException;
 import kr.co.bookand.backend.config.jwt.RefreshToken;
 import kr.co.bookand.backend.config.jwt.RefreshTokenRepository;
 import kr.co.bookand.backend.config.jwt.TokenFactory;
@@ -79,16 +82,15 @@ public class AuthService {
 
     public TokenDto login(AccountDto.LoginRequest loginRequest){
         String email = loginRequest.getEmail();
-        accountRepository.findByEmail(email).orElseThrow(NotFoundUserInformationException::new);
+        accountRepository.findByEmail(email).orElseThrow(() -> new NotFoundUserInformationException(email));
         return getTokenDto(loginRequest);
     }
 
     public TokenDto loginAdmin(AccountDto.LoginRequest loginRequest){
         String email = loginRequest.getEmail();
-        Account admin = accountRepository.findByEmail(email).orElseThrow(NotFoundUserInformationException::new);
+        Account admin = accountRepository.findByEmail(email).orElseThrow(() -> new NotFoundUserInformationException(email));
         if (admin.getRole().equals(Role.ADMIN)) {
-            // 예외처리
-            throw new RuntimeException();
+            throw new NotRoleUserException(admin.getRole());
         }
         return getTokenDto(loginRequest);
     }
@@ -129,10 +131,10 @@ public class AuthService {
 
     private void duplicateEmailAndNickName(String email, String nickname) {
         if (accountRepository.existsByEmail(email)) {
-            throw new AccountException("email 중복");
+            throw new DuplicateEmailException(email);
         }
         if (accountRepository.existsByNickname(nickname)) {
-            throw new AccountException("nickname 중복");
+            throw new DuplicateNicknameException(nickname);
         }
     }
 
@@ -177,7 +179,7 @@ public class AuthService {
             RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName()).get();
             refreshTokenRepository.delete(refreshToken);
         }else{
-            throw new NotFoundUserInformationException();
+            throw new NotFoundUserInformationException(loginAccount);
         }
         return Message.of("로그아웃 성공");
     }
@@ -186,14 +188,11 @@ public class AuthService {
     public TokenResponse reissue(TokenRequest tokenRequestDto){
 
         if (!tokenFactory.validateToken(tokenRequestDto.getRefreshToken())){
-            // 예외처리
-            throw new RuntimeException();
+            throw new JwtException();
         }
         Authentication authentication = tokenFactory.getAuthentication(tokenRequestDto.getRefreshToken());
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(
-                        // 예외처리
-                );
+                .orElseThrow(JwtException::new);
         reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
         return tokenDto.toTokenDto();
@@ -201,12 +200,10 @@ public class AuthService {
 
     private void reissueRefreshExceptionCheck(String refreshToken, TokenRequest tokenRequestDto){
         if (refreshToken == null){
-            // 예외처리
-            throw new RuntimeException();
+            throw new JwtException();
         }
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())){
-            // 예외처리
-            throw new RuntimeException();
+            throw new JwtException();
         }
     }
 

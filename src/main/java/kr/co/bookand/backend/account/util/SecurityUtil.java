@@ -13,7 +13,7 @@ public class SecurityUtil {
     public static String getCurrentAccountEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() ==null){
-            throw new NotFoundUserInformationException();
+            throw new NotFoundUserInformationException(authentication);
         }
         return authentication.getName();
     }

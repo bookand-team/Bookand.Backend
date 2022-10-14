@@ -10,17 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Message {
-    private CodeStatus status;
-    private String msg;
-
-    public static Message of(CodeStatus status, String msg) {
-        return Message.builder()
-                .status(status)
-                .msg(msg)
-                .build();
-    }
+    private String result;
 
     public static Message of(String msg) {
-        return Message.of(CodeStatus.FAIL, msg);
+        return Message.builder()
+                .result(msg)
+                .build();
     }
 }

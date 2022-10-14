@@ -29,9 +29,14 @@ public class AccountController {
         return ApiResponse.success(accountService.getAccount());
     }
 
-    @PostMapping("/nickname")
+    @PostMapping("/profile")
     public ApiResponse<MemberInfo> updateNickname(@Valid @RequestBody AccountDto.MemberUpdateRequest memberRequestUpdateDto) {
         return ApiResponse.success(accountService.updateNickname(memberRequestUpdateDto));
+    }
+
+    @GetMapping("/nickname/{nickname}")
+    public ApiResponse<Boolean> validNickname(@PathVariable String nickname) {
+        return ApiResponse.success(accountService.validNickname(nickname));
     }
 
     @DeleteMapping("/remove")

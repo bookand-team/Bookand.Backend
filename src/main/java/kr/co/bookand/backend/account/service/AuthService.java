@@ -186,7 +186,6 @@ public class AuthService {
 
     @Transactional
     public TokenResponse reissue(TokenRequest tokenRequestDto){
-
         if (!tokenFactory.validateToken(tokenRequestDto.getRefreshToken())){
             throw new JwtException();
         }

@@ -2,6 +2,7 @@ package kr.co.bookand.backend.account.service;
 
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
+import kr.co.bookand.backend.account.exception.DuplicateNicknameException;
 import kr.co.bookand.backend.account.exception.NotFoundUserInformationException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
@@ -9,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
 
@@ -32,15 +31,18 @@ public class AccountService {
     // 회원 수정
     @Transactional
     public MemberInfo updateNickname(MemberUpdateRequest memberRequestUpdateDto){
-        Optional<Account> checkNicknameAccount = accountRepository.findByNickname(memberRequestUpdateDto.getNickname());
-        if (checkNicknameAccount.isPresent()) {
-            throw new NotFoundUserInformationException(checkNicknameAccount);
+        if (validNickname(memberRequestUpdateDto.getNickname())) {
+            throw new DuplicateNicknameException(memberRequestUpdateDto.getNickname());
         } else {
             Account dbAccount = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
                     .orElseThrow(()-> new NotFoundUserInformationException(SecurityUtil.getCurrentAccountEmail()));
             dbAccount.updateNickname(memberRequestUpdateDto.getNickname());
             return MemberInfo.of(dbAccount);
         }
+    }
+
+    public boolean validNickname(String nickname) {
+        return accountRepository.findByNickname(nickname).isPresent();
     }
 
     @Transactional

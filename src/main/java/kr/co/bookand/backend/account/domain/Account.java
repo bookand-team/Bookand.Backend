@@ -3,7 +3,7 @@ package kr.co.bookand.backend.account.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.bookmark.Bookmark;
-import kr.co.bookand.backend.bookstore.ReportBookStore;
+import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import kr.co.bookand.backend.common.BaseTimeEntity;
 import kr.co.bookand.backend.notification.Notification;
 import lombok.*;

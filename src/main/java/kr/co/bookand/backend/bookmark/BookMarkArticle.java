@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.bookmark;
 
-import kr.co.bookand.backend.article.Article;
+import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.common.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;

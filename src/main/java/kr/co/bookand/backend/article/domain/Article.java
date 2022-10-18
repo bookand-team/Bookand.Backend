@@ -1,12 +1,11 @@
-package kr.co.bookand.backend.article;
+package kr.co.bookand.backend.article.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import kr.co.bookand.backend.article.domain.dto.ArticleDto;
 import kr.co.bookand.backend.bookmark.BookMarkArticle;
+import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.common.BaseTimeEntity;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,6 +15,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class Article extends BaseTimeEntity {
 
     @Id
@@ -31,6 +31,16 @@ public class Article extends BaseTimeEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<BookMarkArticle> mark_articleList = new ArrayList<>();
+    private List<BookMarkArticle> markArticleList = new ArrayList<>();
 
+    public void viewCount() {
+        this.hit = hit + 1;
+    }
+
+    public void updateArticle(ArticleDto articleDto) {
+        this.title = articleDto.getTitle();
+        this.content = articleDto.getContent();
+        this.mainPicture = articleDto.getMainPicture();
+        this.hit = articleDto.getHit();
+    }
 }

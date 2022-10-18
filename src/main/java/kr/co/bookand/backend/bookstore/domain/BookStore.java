@@ -5,10 +5,7 @@ import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto;
 import kr.co.bookand.backend.common.BaseTimeEntity;
 import kr.co.bookand.backend.bookmark.BookMarkBookStore;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,6 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Builder
 public class BookStore extends BaseTimeEntity {
 

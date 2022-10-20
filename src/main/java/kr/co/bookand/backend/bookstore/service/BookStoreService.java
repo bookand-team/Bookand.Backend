@@ -31,9 +31,9 @@ public class BookStoreService {
         return BookStoreDto.of(saveBookStore);
     }
 
-    public BookStoreDto updateBookStore(BookStoreDto bookStoreDto) {
-        String name = bookStoreDto.getName();
-        BookStore bookStore = bookStoreRepository.findByName(name).orElseThrow(RuntimeException::new);
+    public BookStoreDto updateBookStore(String id, BookStoreDto bookStoreDto) {
+        BookStore bookStore = bookStoreRepository.findById(Long.parseLong(id)).orElseThrow(RuntimeException::new);
+        // 검증 로직 추가
         bookStore.updateBookStoreData(bookStoreDto);
         return BookStoreDto.of(bookStore);
     }

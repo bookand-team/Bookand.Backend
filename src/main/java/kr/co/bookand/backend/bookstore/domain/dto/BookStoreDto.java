@@ -50,4 +50,11 @@ public class BookStoreDto {
                 .theme(Theme.valueOf(theme))
                 .build();
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class BookStoreSimpleDto{
+        private Long bookStoreId;
+    }
 }

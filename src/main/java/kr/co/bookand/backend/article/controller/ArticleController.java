@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/article")
@@ -18,29 +20,28 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping("/{name}")
-    public ApiResponse<ArticleDto> getArticle(@PathVariable String name) {
-        ArticleDto articleDto = articleService.getArticle(name);
-        return ApiResponse.success(articleDto);
+    public ApiResponse<ArticleResponse> getArticle(@PathVariable String name) {
+        ArticleResponse article = articleService.getArticle(name);
+        return ApiResponse.success(article);
     }
 
     @GetMapping("")
-    public ApiResponse<Page<ArticleDto>> getArticleList(@PageableDefault(size = 10) Pageable pageable) {
-        Page<ArticleDto> articleList = articleService.getArticleList(pageable);
+    public ApiResponse<Page<ArticleResponse>> getArticleList(@PageableDefault(size = 10) Pageable pageable) {
+        Page<ArticleResponse> articleList = articleService.getArticleList(pageable);
         return ApiResponse.success(articleList);
     }
 
     @PostMapping("")
-    public ApiResponse<ArticleDto> createArticle(@RequestBody ArticleDto articleDto) {
-        ArticleDto article = articleService.createArticle(articleDto);
+    public ApiResponse<ArticleResponse> createArticle(@RequestBody ArticleRequest articleDto) {
+        ArticleResponse article = articleService.createArticle(articleDto);
         return ApiResponse.success(article);
     }
 
     @PutMapping("")
-    public ApiResponse<ArticleDto> updateArticle(@RequestBody ArticleDto articleDto) {
-        ArticleDto article = articleService.updateArticle(articleDto);
+    public ApiResponse<ArticleResponse> updateArticle(@RequestBody ArticleRequest articleDto) {
+        ArticleResponse article = articleService.updateArticle(articleDto);
         return ApiResponse.success(article);
     }
-
 
     @DeleteMapping("/{name}")
     public Message removeArticle(@PathVariable String name) {

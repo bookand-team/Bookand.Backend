@@ -33,14 +33,16 @@ public class Article extends BaseTimeEntity {
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private List<BookMarkArticle> markArticleList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    private List<BookStore> bookStoreList = new ArrayList();
+
     public void viewCount() {
         this.hit = hit + 1;
     }
 
-    public void updateArticle(ArticleDto articleDto) {
+    public void updateArticle(ArticleDto.ArticleRequest articleDto) {
         this.title = articleDto.getTitle();
         this.content = articleDto.getContent();
         this.mainPicture = articleDto.getMainPicture();
-        this.hit = articleDto.getHit();
     }
 }

@@ -31,9 +31,9 @@ public class BookStoreController {
         return bookStoreService.createBookStore(bookStoreDto);
     }
 
-    @PutMapping("")
-    public BookStoreDto updateBookStore(@RequestBody BookStoreDto bookStoreDto) {
-        return bookStoreService.updateBookStore(bookStoreDto);
+    @PutMapping("/{id}")
+    public BookStoreDto updateBookStore(@PathVariable String id, @RequestBody BookStoreDto bookStoreDto) {
+        return bookStoreService.updateBookStore(id, bookStoreDto);
     }
 
     @DeleteMapping("/{name}")

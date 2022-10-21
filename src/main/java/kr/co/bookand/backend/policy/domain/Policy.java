@@ -1,6 +1,7 @@
 package kr.co.bookand.backend.policy.domain;
 
 import kr.co.bookand.backend.common.BaseTimeEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @NoArgsConstructor
+@Builder
 public class Policy extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

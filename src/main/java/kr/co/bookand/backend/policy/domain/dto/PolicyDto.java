@@ -19,6 +19,13 @@ public class PolicyDto extends BaseTimeEntity {
                 .context(policy.getContext())
                 .build();
     }
+
+    public Policy toPolicy() {
+        return Policy.builder()
+                .title(title)
+                .context(context)
+                .build();
+    }
 }
 
 

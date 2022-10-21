@@ -20,7 +20,7 @@ public class PolicyController {
         return ApiResponse.success(policyService.getPolicy(title));
     }
 
-    @PostMapping()
+    @PutMapping()
     public ApiResponse<PolicyDto> updatePolicy(@RequestBody PolicyDto policyDto) {
         return ApiResponse.success(policyService.updatePolicy(policyDto));
     }
@@ -29,6 +29,11 @@ public class PolicyController {
     public Message deletePolicy(@PathVariable String title) {
         policyService.removePolicy(title);
         return Message.of("삭제 완료");
+    }
+
+    @PostMapping()
+    public ApiResponse<PolicyDto> createPolicy(@RequestBody PolicyDto policyDto) {
+        return ApiResponse.success(policyService.createPolicy(policyDto));
     }
 
 }

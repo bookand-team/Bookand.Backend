@@ -7,6 +7,8 @@ import kr.co.bookand.backend.policy.repository.PolicyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class PolicyService {
@@ -21,6 +23,16 @@ public class PolicyService {
 
     public PolicyDto getPolicy(String title) {
         return policyRepository.findByTitle(title).map(PolicyDto::of).orElseThrow(() -> new NotFoundContextException(title));
+    }
+
+    public PolicyDto createPolicy(PolicyDto policyDto) {
+        Optional<Policy> policy1 = policyRepository.findByTitle(policyDto.getTitle());
+        if (policy1.isPresent()) {
+            throw new RuntimeException();
+        }
+        Policy policy = policyDto.toPolicy();
+        Policy save = policyRepository.save(policy);
+        return PolicyDto.of(save);
     }
 
     public void removePolicy(String title) {

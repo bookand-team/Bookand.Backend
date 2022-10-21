@@ -1,4 +1,4 @@
-package kr.co.bookand.backend.bookstore;
+package kr.co.bookand.backend.bookstore.domain;
 
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.common.BaseTimeEntity;

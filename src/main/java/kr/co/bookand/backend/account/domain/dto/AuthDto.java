@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.account.domain.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.SocialType;
@@ -14,8 +15,11 @@ public class AuthDto {
     @Builder
     @NoArgsConstructor
     public static class AuthRequest {
+        @ApiModelProperty(value = "소셜 액세스 토큰", example = "ya29.a0Aa4xrXNXkiDBMm7MtSneVejzvupPun8S8EHorgvrt-nlCNy83PA9TI")
         private String accessToken;
+        @ApiModelProperty(value = "소셜타입", example = "GOOGLE/APPLE")
         private String socialType;
+        @ApiModelProperty(value = "소셜해당아이디",example = "요청 값이 아님")
         private String id;
 
         public void insertId(String id) {

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_NAME: bookand_deploy
+  PROJECT_NAME: bookand
   BUCKET_NAME: bookand-cicd-bucket
   CODE_DEPLOY_APP_NAME: bookandapp
   DEPLOYMENT_GROUP_NAME: bookandapp_deploy

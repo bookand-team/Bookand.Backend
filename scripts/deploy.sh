@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-REPOSITORY=/bookand
+REPOSITORY=/home/ec2-user/bookand
 cd $REPOSITORY
 
 APP_NAME=bookand
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
+echo "> $JAR_NAME 이름"
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
 CURRENT_PID=$(pgrep -f $APP_NAME)

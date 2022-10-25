@@ -44,6 +44,7 @@ public class AccountDto {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     @Builder
     public static class LoginRequest {
         @ApiModelProperty(value = "이메일", example = "bookand@example.com")

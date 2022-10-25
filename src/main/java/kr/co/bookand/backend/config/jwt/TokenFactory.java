@@ -40,6 +40,7 @@ public class TokenFactory {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
+        System.out.println("authorities = " + authorities);
 
         long now = (new Date()).getTime();
         Date accessTokenExpiresIn = new Date(now + TokenInfo.ACCESS_TOKEN_EXPIRE_TIME);

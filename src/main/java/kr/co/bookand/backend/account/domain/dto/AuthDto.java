@@ -61,6 +61,18 @@ public class AuthDto {
                     .nickname(nickname)
                     .build();
         }
+
+        public Account toAdmin(PasswordEncoder passwordEncoder, String suffix) {
+            return Account.builder()
+                    .email("admin@bookand.com")
+                    .provider("admin")
+                    .providerEmail("admin")
+                    .password(passwordEncoder.encode(email + suffix))
+                    .role(Role.ADMIN)
+                    .nickname("admin")
+                    .build();
+        }
+
     }
 
     @Getter

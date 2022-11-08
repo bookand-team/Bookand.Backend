@@ -89,7 +89,7 @@ public class AuthService {
     public TokenDto loginAdmin(AccountDto.LoginRequest loginRequest){
         String email = loginRequest.getEmail();
         Account admin = accountRepository.findByEmail(email).orElseThrow(() -> new NotFoundUserInformationException(email));
-        if (admin.getRole().equals(Role.ADMIN)) {
+        if (!admin.getRole().equals(Role.ADMIN)) {
             throw new NotRoleUserException(admin.getRole());
         }
         return getTokenDto(loginRequest);

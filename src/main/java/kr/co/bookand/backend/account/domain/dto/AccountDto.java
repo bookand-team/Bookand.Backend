@@ -3,7 +3,6 @@ package kr.co.bookand.backend.account.domain.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.common.Message;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,6 +43,7 @@ public class AccountDto {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     @Builder
     public static class LoginRequest {
         @ApiModelProperty(value = "이메일", example = "bookand@example.com")

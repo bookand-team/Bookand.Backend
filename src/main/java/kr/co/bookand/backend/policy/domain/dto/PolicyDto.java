@@ -5,9 +5,11 @@ import kr.co.bookand.backend.policy.domain.Policy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class PolicyDto extends BaseTimeEntity {
     String title;

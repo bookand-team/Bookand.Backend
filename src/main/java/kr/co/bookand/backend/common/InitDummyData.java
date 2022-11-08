@@ -5,6 +5,7 @@ import kr.co.bookand.backend.account.domain.SocialType;
 import kr.co.bookand.backend.account.domain.dto.AuthDto;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,8 @@ public class InitDummyData {
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
-    private String suffix;
+    @Value("${admin.secret}")
+    private CharSequence ADMIN_PASSWORD;
 
     @PostConstruct
     public void dummyData() {
@@ -25,7 +27,7 @@ public class InitDummyData {
                 .socialType(SocialType.GOOGLE)
                 .providerEmail("providerEmail")
                 .build();
-        Account account = middleAccount.toAdmin(passwordEncoder, suffix);
+        Account account = middleAccount.toAdmin(passwordEncoder, ADMIN_PASSWORD);
         accountRepository.save(account);
     }
 }

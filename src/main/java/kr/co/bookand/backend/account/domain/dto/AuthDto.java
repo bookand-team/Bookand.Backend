@@ -6,6 +6,7 @@ import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.SocialType;
 import kr.co.bookand.backend.common.Message;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class AuthDto {
@@ -47,6 +48,7 @@ public class AuthDto {
     @AllArgsConstructor
     @Builder
     public static class MiddleAccount{
+
         private String email;
         private String providerEmail;
         private SocialType socialType;
@@ -62,12 +64,12 @@ public class AuthDto {
                     .build();
         }
 
-        public Account toAdmin(PasswordEncoder passwordEncoder, String suffix) {
+        public Account toAdmin(PasswordEncoder passwordEncoder, CharSequence ADMIN_PASSWORD) {
             return Account.builder()
-                    .email("admin@bookand.com")
+                    .email("admin")
                     .provider("admin")
                     .providerEmail("admin")
-                    .password(passwordEncoder.encode(email + suffix))
+                    .password(passwordEncoder.encode(ADMIN_PASSWORD))
                     .role(Role.ADMIN)
                     .nickname("admin")
                     .build();

@@ -1,14 +1,19 @@
 package kr.co.bookand.backend.account.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.SocialType;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
+import kr.co.bookand.backend.account.domain.dto.AppleDto;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
-import kr.co.bookand.backend.account.exception.DuplicateEmailException;
-import kr.co.bookand.backend.account.exception.DuplicateNicknameException;
-import kr.co.bookand.backend.account.exception.NotFoundUserInformationException;
-import kr.co.bookand.backend.account.exception.NotRoleUserException;
+import kr.co.bookand.backend.account.exception.*;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.common.ApiService;
 import kr.co.bookand.backend.common.Message;
@@ -28,12 +33,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.*;
 
 import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
 import static kr.co.bookand.backend.account.domain.dto.TokenDto.*;
@@ -49,6 +59,7 @@ public class AuthService {
     private final AccountRepository accountRepository;
     private final ApiService<MultiValueMap<String, String>> apiService;
     private final PasswordEncoder passwordEncoder;
+    private final RestTemplate restTemplate;
     ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE  =  new ParameterizedTypeReference<>(){};
 
     private String suffix;
@@ -146,8 +157,11 @@ public class AuthService {
             String userId = (String) googleIdAndEmail.get("sub");
             String providerEmail = (String) googleIdAndEmail.get("email");
             return ProviderIdAndEmail.toProviderDto(userId, providerEmail);
+        } else if (socialType.equals(SocialType.APPLE)) {
+            String appleId = getAppleId(data.getAccessToken());
+            String providerEmail = appleId + "@apple";
+            return ProviderIdAndEmail.toProviderDto(appleId, providerEmail);
         } else {
-//            return getAppleId(data);
             throw new RuntimeException();
         }
     }
@@ -159,6 +173,42 @@ public class AuthService {
         HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
         ResponseEntity<Map<String, Object>> response = apiService.httpEntityPost(url, method, request, RESPONSE_TYPE);
         return response.getBody();
+    }
+
+    private AppleDto getAppleAuthPublicKey(){
+        String url = SocialType.APPLE.getUserInfoUrl();
+        HttpMethod method = SocialType.APPLE.getMethod();
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
+        ResponseEntity<AppleDto> response =  apiService.getAppleKeys(url,method, request, AppleDto.class);
+        return response.getBody();
+    }
+
+    private String getAppleId(String identityToken) {
+        AppleDto appleKeyStorage = getAppleAuthPublicKey();
+        try {
+            String headerToken = identityToken.substring(0,identityToken.indexOf("."));
+            Map<String, String> header = new ObjectMapper().readValue(new String(Base64.getDecoder().decode(headerToken), StandardCharsets.UTF_8), Map.class);
+            AppleDto.AppleKey key = appleKeyStorage.getMatchedKeyBy(header.get("kid"), header.get("alg")).orElseThrow();
+
+            byte[] nBytes = Base64.getUrlDecoder().decode(key.n());
+            byte[] eBytes = Base64.getUrlDecoder().decode(key.e());
+
+            BigInteger n = new BigInteger(1, nBytes);
+            BigInteger e = new BigInteger(1, eBytes);
+
+            RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(n, e);
+            KeyFactory keyFactory = KeyFactory.getInstance(key.kty());
+            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+
+            Claims claims = Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(identityToken).getBody();
+            String subject = claims.getSubject();
+            return subject;
+
+        } catch (JsonProcessingException | NoSuchAlgorithmException | InvalidKeySpecException | SignatureException |
+                MalformedJwtException | ExpiredJwtException | IllegalArgumentException e) {
+            throw new AppleLoginException(e);
+        }
     }
 
     public HttpHeaders setHeaders(String accessToken) {

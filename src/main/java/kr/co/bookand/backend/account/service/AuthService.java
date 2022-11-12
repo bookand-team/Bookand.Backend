@@ -23,6 +23,7 @@ import kr.co.bookand.backend.config.jwt.RefreshTokenRepository;
 import kr.co.bookand.backend.config.jwt.TokenFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,9 +60,9 @@ public class AuthService {
     private final AccountRepository accountRepository;
     private final ApiService<MultiValueMap<String, String>> apiService;
     private final PasswordEncoder passwordEncoder;
-    private final RestTemplate restTemplate;
     ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE  =  new ParameterizedTypeReference<>(){};
 
+    @Value("${bookand.suffix}")
     private String suffix;
 
     @Transactional
@@ -153,26 +154,23 @@ public class AuthService {
     private ProviderIdAndEmail getSocialIdWithAccessToken(AuthRequest data) {
         SocialType socialType = data.getSocialType();
         if (socialType.equals(SocialType.GOOGLE)) {
-            Map<String, Object> googleIdAndEmail = getGoogleIdAndEmail(data);
-            String userId = (String) googleIdAndEmail.get("sub");
-            String providerEmail = (String) googleIdAndEmail.get("email");
-            return ProviderIdAndEmail.toProviderDto(userId, providerEmail);
+            return getGoogleIdAndEmail(data);
         } else if (socialType.equals(SocialType.APPLE)) {
-            String appleId = getAppleId(data.getAccessToken());
-            String providerEmail = appleId + "@apple";
-            return ProviderIdAndEmail.toProviderDto(appleId, providerEmail);
+            return getAppleId(data.getAccessToken());
         } else {
             throw new RuntimeException();
         }
     }
 
-    private Map<String, Object> getGoogleIdAndEmail(AuthRequest data) {
+    private ProviderIdAndEmail getGoogleIdAndEmail(AuthRequest data) {
         String url = data.getSocialType().getUserInfoUrl();
         HttpMethod method = data.getSocialType().getMethod();
         HttpHeaders headers = setHeaders(data.getAccessToken());
         HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
         ResponseEntity<Map<String, Object>> response = apiService.httpEntityPost(url, method, request, RESPONSE_TYPE);
-        return response.getBody();
+        String userId = (String) response.getBody().get("sub");
+        String providerEmail = (String) response.getBody().get("email");
+        return ProviderIdAndEmail.toProviderDto(userId, providerEmail);
     }
 
     private AppleDto getAppleAuthPublicKey(){
@@ -184,7 +182,7 @@ public class AuthService {
         return response.getBody();
     }
 
-    private String getAppleId(String identityToken) {
+    private ProviderIdAndEmail getAppleId(String identityToken) {
         AppleDto appleKeyStorage = getAppleAuthPublicKey();
         try {
             String headerToken = identityToken.substring(0,identityToken.indexOf("."));
@@ -203,7 +201,8 @@ public class AuthService {
 
             Claims claims = Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(identityToken).getBody();
             String subject = claims.getSubject();
-            return subject;
+            String email = (String)claims.get("email");
+            return ProviderIdAndEmail.toProviderDto(subject, email);
 
         } catch (JsonProcessingException | NoSuchAlgorithmException | InvalidKeySpecException | SignatureException |
                 MalformedJwtException | ExpiredJwtException | IllegalArgumentException e) {

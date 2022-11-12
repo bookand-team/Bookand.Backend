@@ -1,14 +1,19 @@
 package kr.co.bookand.backend.account.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.SocialType;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
+import kr.co.bookand.backend.account.domain.dto.AppleDto;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
-import kr.co.bookand.backend.account.exception.DuplicateEmailException;
-import kr.co.bookand.backend.account.exception.DuplicateNicknameException;
-import kr.co.bookand.backend.account.exception.NotFoundUserInformationException;
-import kr.co.bookand.backend.account.exception.NotRoleUserException;
+import kr.co.bookand.backend.account.exception.*;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.common.ApiService;
 import kr.co.bookand.backend.common.Message;
@@ -18,6 +23,7 @@ import kr.co.bookand.backend.config.jwt.RefreshTokenRepository;
 import kr.co.bookand.backend.config.jwt.TokenFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,12 +34,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.*;
 
 import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
 import static kr.co.bookand.backend.account.domain.dto.TokenDto.*;
@@ -51,6 +62,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE  =  new ParameterizedTypeReference<>(){};
 
+    @Value("${bookand.suffix}")
     private String suffix;
 
     @Transactional
@@ -142,23 +154,60 @@ public class AuthService {
     private ProviderIdAndEmail getSocialIdWithAccessToken(AuthRequest data) {
         SocialType socialType = data.getSocialType();
         if (socialType.equals(SocialType.GOOGLE)) {
-            Map<String, Object> googleIdAndEmail = getGoogleIdAndEmail(data);
-            String userId = (String) googleIdAndEmail.get("sub");
-            String providerEmail = (String) googleIdAndEmail.get("email");
-            return ProviderIdAndEmail.toProviderDto(userId, providerEmail);
+            return getGoogleIdAndEmail(data);
+        } else if (socialType.equals(SocialType.APPLE)) {
+            return getAppleId(data.getAccessToken());
         } else {
-//            return getAppleId(data);
             throw new RuntimeException();
         }
     }
 
-    private Map<String, Object> getGoogleIdAndEmail(AuthRequest data) {
+    private ProviderIdAndEmail getGoogleIdAndEmail(AuthRequest data) {
         String url = data.getSocialType().getUserInfoUrl();
         HttpMethod method = data.getSocialType().getMethod();
         HttpHeaders headers = setHeaders(data.getAccessToken());
         HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
         ResponseEntity<Map<String, Object>> response = apiService.httpEntityPost(url, method, request, RESPONSE_TYPE);
+        String userId = (String) response.getBody().get("sub");
+        String providerEmail = (String) response.getBody().get("email");
+        return ProviderIdAndEmail.toProviderDto(userId, providerEmail);
+    }
+
+    private AppleDto getAppleAuthPublicKey(){
+        String url = SocialType.APPLE.getUserInfoUrl();
+        HttpMethod method = SocialType.APPLE.getMethod();
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
+        ResponseEntity<AppleDto> response =  apiService.getAppleKeys(url,method, request, AppleDto.class);
         return response.getBody();
+    }
+
+    private ProviderIdAndEmail getAppleId(String identityToken) {
+        AppleDto appleKeyStorage = getAppleAuthPublicKey();
+        try {
+            String headerToken = identityToken.substring(0,identityToken.indexOf("."));
+            Map<String, String> header = new ObjectMapper().readValue(new String(Base64.getDecoder().decode(headerToken), StandardCharsets.UTF_8), Map.class);
+            AppleDto.AppleKey key = appleKeyStorage.getMatchedKeyBy(header.get("kid"), header.get("alg")).orElseThrow();
+
+            byte[] nBytes = Base64.getUrlDecoder().decode(key.n());
+            byte[] eBytes = Base64.getUrlDecoder().decode(key.e());
+
+            BigInteger n = new BigInteger(1, nBytes);
+            BigInteger e = new BigInteger(1, eBytes);
+
+            RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(n, e);
+            KeyFactory keyFactory = KeyFactory.getInstance(key.kty());
+            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+
+            Claims claims = Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(identityToken).getBody();
+            String subject = claims.getSubject();
+            String email = (String)claims.get("email");
+            return ProviderIdAndEmail.toProviderDto(subject, email);
+
+        } catch (JsonProcessingException | NoSuchAlgorithmException | InvalidKeySpecException | SignatureException |
+                MalformedJwtException | ExpiredJwtException | IllegalArgumentException e) {
+            throw new AppleLoginException(e);
+        }
     }
 
     public HttpHeaders setHeaders(String accessToken) {

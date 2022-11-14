@@ -21,8 +21,12 @@ public class PolicyService {
         return PolicyDto.of(policy);
     }
 
-    public PolicyDto getPolicy(String title) {
+    public PolicyDto getTitlePolicy(String title) {
         return policyRepository.findByTitle(title).map(PolicyDto::of).orElseThrow(() -> new NotFoundContextException(title));
+    }
+
+    public PolicyDto getPolicy(Long id) {
+        return policyRepository.findById(id).map(PolicyDto::of).orElseThrow(() -> new NotFoundContextException(id));
     }
 
     public PolicyDto createPolicy(PolicyDto policyDto) {
@@ -35,8 +39,8 @@ public class PolicyService {
         return PolicyDto.of(save);
     }
 
-    public void removePolicy(String title) {
-        Policy policy = policyRepository.findByTitle(title).orElseThrow(() -> new NotFoundContextException(title));
+    public void removePolicy(Long id) {
+        Policy policy = policyRepository.findById(id).orElseThrow(() -> new NotFoundContextException(id));
         policyRepository.delete(policy);
     }
 }

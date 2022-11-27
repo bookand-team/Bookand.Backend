@@ -3,7 +3,13 @@ package kr.co.bookand.backend.article.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.bookand.backend.article.domain.dto.ArticleDto;
+import kr.co.bookand.backend.article.domain.dto.ArticleListDto;
+import kr.co.bookand.backend.article.domain.dto.ArticlePageDto;
+import kr.co.bookand.backend.article.domain.dto.ArticleSearchDto;
 import kr.co.bookand.backend.article.service.ArticleService;
+import kr.co.bookand.backend.bookstore.domain.dto.BookStoreListDto;
+import kr.co.bookand.backend.bookstore.domain.dto.BookStorePageDto;
+import kr.co.bookand.backend.bookstore.domain.dto.BookStoreSearchDto;
 import kr.co.bookand.backend.common.ApiResponse;
 import kr.co.bookand.backend.common.Message;
 import lombok.RequiredArgsConstructor;
@@ -22,24 +28,17 @@ public class ArticleController {
 
     private final ArticleService articleService;
 
-    @ApiOperation(value = "아티클 단일 조회")
-    @GetMapping("/{name}")
-    public ApiResponse<ArticleResponse> getArticle(@PathVariable String name) {
-        ArticleResponse article = articleService.getArticle(name);
-        return ApiResponse.success(article);
-    }
-
-    @ApiOperation(value = "아티클 전체 조회")
-    @GetMapping("")
-    public ApiResponse<Page<ArticleResponse>> getArticleList(@PageableDefault(size = 10) Pageable pageable) {
-        Page<ArticleResponse> articleList = articleService.getArticleList(pageable);
-        return ApiResponse.success(articleList);
-    }
-
     @ApiOperation(value = "아티클 생성")
     @PostMapping("")
     public ApiResponse<ArticleResponse> createArticle(@RequestBody ArticleRequest articleDto) {
         ArticleResponse article = articleService.createArticle(articleDto);
+        return ApiResponse.success(article);
+    }
+
+    @ApiOperation(value = "아티클 단일 조회")
+    @GetMapping("/{id}")
+    public ApiResponse<ArticleResponse> getArticle(@PathVariable Long id) {
+        ArticleResponse article = articleService.getArticle(id);
         return ApiResponse.success(article);
     }
 
@@ -50,10 +49,29 @@ public class ArticleController {
         return ApiResponse.success(article);
     }
 
+    @ApiOperation(value = "아티클 전체 조회")
+    @GetMapping("")
+    public ApiResponse<Page<ArticleResponse>> getArticleList(@PageableDefault(size = 10) Pageable pageable) {
+        Page<ArticleResponse> articleList = articleService.getArticleList(pageable);
+        return ApiResponse.success(articleList);
+    }
+
     @ApiOperation(value = "아티클 삭제")
-    @DeleteMapping("/{name}")
-    public Message removeArticle(@PathVariable String name) {
-        articleService.removeBookStore(name);
+    @DeleteMapping("/{id}")
+    public Message removeArticle(@PathVariable Long id) {
+        articleService.removeBookStore(id);
         return Message.of("아티클 삭제 완료.");
+    }
+
+    @ApiOperation(value = "조건에 맞는 아티클 조회")
+    @PostMapping("/search")
+    public ArticlePageDto findArticleByCriteria(@RequestBody ArticleSearchDto articleSearchDto) {
+        return articleService.searchArticleList(articleSearchDto);
+    }
+
+    @ApiOperation(value = "선택된 서점 삭제")
+    @DeleteMapping("/list")
+    public Message deleteArticleList(@RequestBody ArticleListDto list) {
+        return articleService.deleteArticleList(list);
     }
 }

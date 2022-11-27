@@ -1,13 +1,22 @@
 package kr.co.bookand.backend.article.service;
 
 import kr.co.bookand.backend.article.domain.Article;
+import kr.co.bookand.backend.article.domain.dto.ArticleDto;
+import kr.co.bookand.backend.article.domain.dto.ArticleListDto;
+import kr.co.bookand.backend.article.domain.dto.ArticlePageDto;
+import kr.co.bookand.backend.article.domain.dto.ArticleSearchDto;
 import kr.co.bookand.backend.article.exception.NotFoundArticleException;
 import kr.co.bookand.backend.article.repository.ArticleRepository;
+import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto;
+import kr.co.bookand.backend.bookstore.domain.dto.BookStoreListDto;
+import kr.co.bookand.backend.bookstore.domain.dto.BookStorePageDto;
 import kr.co.bookand.backend.bookstore.exception.NotFoundBookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
+import kr.co.bookand.backend.common.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +34,8 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final BookStoreRepository bookStoreRepository;
 
-    public ArticleResponse getArticle(String name) {
-        Article article = articleRepository.findByTitle(name).orElseThrow(() -> new NotFoundArticleException(name));
+    public ArticleResponse getArticle(Long id) {
+        Article article = articleRepository.findById(id).orElseThrow(() -> new NotFoundArticleException(id));
         return ArticleRequest.of(article);
     }
 
@@ -51,15 +60,33 @@ public class ArticleService {
     }
 
     public ArticleResponse updateArticle(ArticleRequest articleDto) {
-        String name = articleDto.getTitle();
-        Article article = articleRepository.findByTitle(name).orElseThrow(()-> new NotFoundArticleException(name));
-        // 이름 중복 로직
+        Long articleDtoId = articleDto.getId();
+        Article article = articleRepository.findById(articleDtoId).orElseThrow(()-> new NotFoundArticleException(articleDtoId));
         article.updateArticle(articleDto);
         return ArticleRequest.of(article);
     }
 
-    public void removeBookStore(String name) {
-        Article article = articleRepository.findByTitle(name).orElseThrow(() -> new NotFoundArticleException(name));
+    public void removeBookStore(Long id) {
+        Article article = articleRepository.findById(id).orElseThrow(() -> new NotFoundArticleException(id));
         articleRepository.delete(article);
+    }
+
+    public ArticlePageDto searchArticleList(ArticleSearchDto articleSearchDto) {
+        List<ArticleResponse> result = new ArrayList<>();
+        Pageable pageable = PageRequest.of(articleSearchDto.getPage(), articleSearchDto.getRaw());
+        Page<Article> byTitleAndStatus = articleRepository.findByTitleAndStatus(articleSearchDto.getStatus(), articleSearchDto.getSearch(), pageable);
+        byTitleAndStatus
+                .forEach(article -> result.add(ArticleDto.ArticleRequest.of(article)));
+
+        int totalPages = byTitleAndStatus.getTotalPages();
+        int number = byTitleAndStatus.getNumber();
+
+        return ArticlePageDto.of(result, totalPages, number);
+    }
+
+    public Message deleteArticleList(ArticleListDto list) {
+        list.getArticleDtoList().forEach(articleRepository::deleteById);
+        // 예외처리
+        return Message.of("삭제완료");
     }
 }

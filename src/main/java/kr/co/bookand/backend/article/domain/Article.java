@@ -5,6 +5,7 @@ import kr.co.bookand.backend.article.domain.dto.ArticleDto;
 import kr.co.bookand.backend.bookmark.BookMarkArticle;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.common.BaseTimeEntity;
+import kr.co.bookand.backend.common.Status;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,11 +30,14 @@ public class Article extends BaseTimeEntity {
 
     private Integer hit;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @JsonIgnore
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private List<BookMarkArticle> markArticleList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "article")
     private List<BookStore> bookStoreList = new ArrayList();
 
     public void viewCount() {

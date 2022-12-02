@@ -19,9 +19,9 @@ public class PolicyController {
     private final PolicyService policyService;
 
     @ApiOperation(value = "정책 조회")
-    @GetMapping("/{title}")
-    public ApiResponse<PolicyDto> getPolicy(@PathVariable String title) {
-        return ApiResponse.success(policyService.getPolicy(title));
+    @GetMapping("/{id}")
+    public ApiResponse<PolicyDto> getPolicy(@PathVariable Long id) {
+        return ApiResponse.success(policyService.getPolicy(id));
     }
 
     @ApiOperation(value = "정책 수정")
@@ -31,9 +31,9 @@ public class PolicyController {
     }
 
     @ApiOperation(value = "정책 삭제")
-    @DeleteMapping("/{title}")
-    public Message deletePolicy(@PathVariable String title) {
-        policyService.removePolicy(title);
+    @DeleteMapping("/{id}")
+    public Message deletePolicy(@PathVariable Long id) {
+        policyService.removePolicy(id);
         return Message.of("삭제 완료");
     }
 

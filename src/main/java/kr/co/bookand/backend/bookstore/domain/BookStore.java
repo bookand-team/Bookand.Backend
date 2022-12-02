@@ -5,6 +5,7 @@ import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto;
 import kr.co.bookand.backend.common.BaseTimeEntity;
 import kr.co.bookand.backend.bookmark.BookMarkBookStore;
+import kr.co.bookand.backend.common.Status;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,6 +32,9 @@ public class BookStore extends BaseTimeEntity {
     private String sns;
     private String facility;
     private String story;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @Enumerated(EnumType.STRING)
     private Theme theme;

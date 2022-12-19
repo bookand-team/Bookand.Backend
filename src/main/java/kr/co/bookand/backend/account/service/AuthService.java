@@ -66,7 +66,7 @@ public class AuthService {
     private String suffix;
 
     @Transactional
-    public TokenResponse socialAccess(AuthRequest authRequestDto) {
+    public LoginResponse socialAccess(AuthRequest authRequestDto) {
         String userId = getSocialIdWithAccessToken(authRequestDto).getUserId();
         String providerEmail = getSocialIdWithAccessToken(authRequestDto).getEmail();
         authRequestDto.insertId(userId);
@@ -77,8 +77,9 @@ public class AuthService {
         if (account.isPresent()) {
             // 로그인
             TokenDto tokenDto = login(account.get().toAccountRequestDto(suffix).toLoginRequest());
-            return tokenDto.toTokenDto();
-
+            TokenResponse tokenResponse = tokenDto.toTokenDto();
+            LoginResponse loginResponse = LoginResponse.builder().tokenResponse(tokenResponse).message("기존 유저 입니다.").build();
+            return loginResponse;
         }else {
             MiddleAccount middleAccount = MiddleAccount.builder()
                     .email(email)
@@ -88,7 +89,9 @@ public class AuthService {
 
             // 회원가입
             TokenDto tokenMessage = socialSignUp(middleAccount);
-            return tokenMessage.toTokenDto();
+            TokenResponse tokenResponse = tokenMessage.toTokenDto();
+            LoginResponse loginResponse = LoginResponse.builder().tokenResponse(tokenResponse).message("신규 유저 입니다.").build();
+            return loginResponse;
         }
     }
 

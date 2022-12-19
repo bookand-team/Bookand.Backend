@@ -42,4 +42,13 @@ public class TokenDto {
 
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class LoginResponse {
+        public Object tokenResponse;
+        public String message;
+    }
+
 }

@@ -38,6 +38,7 @@ public class SwaggerConfig {
         parameters.add(parameterBuilder.build());
 
         return new Docket(DocumentationType.SWAGGER_2)
+                .host("dev.bookand.co.kr")
                 .globalOperationParameters(parameters)
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentTypes())

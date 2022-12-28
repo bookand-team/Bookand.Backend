@@ -8,6 +8,7 @@ import kr.co.bookand.backend.common.ApiResponse;
 import kr.co.bookand.backend.common.Message;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
@@ -24,25 +25,25 @@ public class AuthController {
 
     @ApiOperation(value = "소셜 로그인")
     @PostMapping("/login")
-    public ApiResponse<TokenResponse> login(@RequestBody AuthRequest authRequest) {
-        return ApiResponse.success(authService.socialAccess(authRequest));
+    public ResponseEntity<TokenResponse> login(@RequestBody AuthRequest authRequest) {
+        return ResponseEntity.ok(authService.socialAccess(authRequest));
     }
 
     @ApiOperation(value = "토큰 재발행")
     @PostMapping("/reissue")
-    public ApiResponse<TokenResponse> reissue(@RequestBody TokenRequest tokenRequestDto) {
-        return ApiResponse.success(authService.reissue(tokenRequestDto));
+    public ResponseEntity<TokenResponse> reissue(@RequestBody TokenRequest tokenRequestDto) {
+        return ResponseEntity.ok(authService.reissue(tokenRequestDto));
     }
 
     @ApiOperation(value = "로그아웃")
     @GetMapping("/logout")
-    public Message logout() {
-        return Message.of(authService.logout().getResult());
+    public ResponseEntity<Message> logout() {
+        return ResponseEntity.ok(authService.logout());
     }
 
     @ApiOperation(value = "어드민 전용")
     @PostMapping("/admin")
-    public ApiResponse<TokenResponse> loginAdmin(@RequestBody LoginRequest loginRequestDto) {
-        return ApiResponse.success(authService.adminLogin(loginRequestDto));
+    public ResponseEntity<TokenResponse> loginAdmin(@RequestBody LoginRequest loginRequestDto) {
+        return ResponseEntity.ok(authService.adminLogin(loginRequestDto));
     }
 }

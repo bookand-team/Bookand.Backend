@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
@@ -30,48 +31,48 @@ public class ArticleController {
 
     @ApiOperation(value = "아티클 생성")
     @PostMapping("")
-    public ApiResponse<ArticleResponse> createArticle(@RequestBody ArticleRequest articleDto) {
+    public ResponseEntity<ArticleResponse> createArticle(@RequestBody ArticleRequest articleDto) {
         ArticleResponse article = articleService.createArticle(articleDto);
-        return ApiResponse.success(article);
+        return ResponseEntity.ok(article);
     }
 
     @ApiOperation(value = "아티클 단일 조회")
     @GetMapping("/{id}")
-    public ApiResponse<ArticleResponse> getArticle(@PathVariable Long id) {
+    public ResponseEntity<ArticleResponse> getArticle(@PathVariable Long id) {
         ArticleResponse article = articleService.getArticle(id);
-        return ApiResponse.success(article);
+        return ResponseEntity.ok(article);
     }
 
     @ApiOperation(value = "아티클 수정")
     @PutMapping("")
-    public ApiResponse<ArticleResponse> updateArticle(@RequestBody ArticleRequest articleDto) {
+    public ResponseEntity<ArticleResponse> updateArticle(@RequestBody ArticleRequest articleDto) {
         ArticleResponse article = articleService.updateArticle(articleDto);
-        return ApiResponse.success(article);
+        return ResponseEntity.ok(article);
     }
 
     @ApiOperation(value = "아티클 전체 조회")
     @GetMapping("")
-    public ApiResponse<Page<ArticleResponse>> getArticleList(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<Page<ArticleResponse>> getArticleList(@PageableDefault(size = 10) Pageable pageable) {
         Page<ArticleResponse> articleList = articleService.getArticleList(pageable);
-        return ApiResponse.success(articleList);
+        return ResponseEntity.ok(articleList);
     }
 
     @ApiOperation(value = "아티클 삭제")
     @DeleteMapping("/{id}")
-    public Message removeArticle(@PathVariable Long id) {
+    public ResponseEntity<Message> removeArticle(@PathVariable Long id) {
         articleService.removeBookStore(id);
-        return Message.of("아티클 삭제 완료.");
+        return ResponseEntity.ok(Message.of("아티클 삭제 완료."));
     }
 
     @ApiOperation(value = "조건에 맞는 아티클 조회")
     @PostMapping("/search")
-    public ArticlePageDto findArticleByCriteria(@RequestBody ArticleSearchDto articleSearchDto) {
-        return articleService.searchArticleList(articleSearchDto);
+    public ResponseEntity<ArticlePageDto> findArticleByCriteria(@RequestBody ArticleSearchDto articleSearchDto) {
+        return ResponseEntity.ok(articleService.searchArticleList(articleSearchDto));
     }
 
     @ApiOperation(value = "선택된 서점 삭제")
     @DeleteMapping("/list")
-    public Message deleteArticleList(@RequestBody ArticleListDto list) {
-        return articleService.deleteArticleList(list);
+    public ResponseEntity<Message> deleteArticleList(@RequestBody ArticleListDto list) {
+        return ResponseEntity.ok(articleService.deleteArticleList(list));
     }
 }

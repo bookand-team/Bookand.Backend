@@ -13,11 +13,13 @@ public class TokenDto {
     private String accessToken;
     private String refreshToken;
     private Long accessTokenExpiresIn;
+    private String role;
 
     public TokenResponse toTokenDto() {
         return TokenDto.TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .role(role)
                 .build();
     }
 
@@ -39,7 +41,17 @@ public class TokenDto {
         private String accessToken;
         @ApiModelProperty(value = "갱신토큰값",example = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NjQ2")
         private String refreshToken;
+        private String role;
 
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class LoginResponse {
+        public Object tokenResponse;
+        public String message;
     }
 
 }

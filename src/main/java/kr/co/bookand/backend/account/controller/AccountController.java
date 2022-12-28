@@ -9,6 +9,7 @@ import kr.co.bookand.backend.account.util.AccountUtil;
 import kr.co.bookand.backend.common.ApiResponse;
 import kr.co.bookand.backend.common.Message;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,27 +30,27 @@ public class AccountController {
 
     @ApiOperation(value = "회원 정보")
     @GetMapping("/me")
-    public ApiResponse<MemberInfo> getMyAccountInfo() {
-        return ApiResponse.success(accountService.getAccount());
+    public ResponseEntity<MemberInfo> getMyAccountInfo() {
+        return ResponseEntity.ok(accountService.getAccount());
     }
 
     @ApiOperation(value = "회원 프로필 변경")
     @PostMapping("/profile")
-    public ApiResponse<MemberInfo> updateNickname(@Valid @RequestBody AccountDto.MemberUpdateRequest memberRequestUpdateDto) {
-        return ApiResponse.success(accountService.updateNickname(memberRequestUpdateDto));
+    public ResponseEntity<MemberInfo> updateNickname(@Valid @RequestBody AccountDto.MemberUpdateRequest memberRequestUpdateDto) {
+        return ResponseEntity.ok(accountService.updateNickname(memberRequestUpdateDto));
     }
 
     @ApiOperation(value = "닉네임 검증 API")
     @GetMapping("/nickname/{nickname}")
-    public ApiResponse<Boolean> validNickname(@PathVariable String nickname) {
-        return ApiResponse.success(accountService.validNickname(nickname));
+    public ResponseEntity<Boolean> validNickname(@PathVariable String nickname) {
+        return ResponseEntity.ok(accountService.validNickname(nickname));
     }
 
     @ApiOperation(value = "회원 삭제(개선할 예정)")
     @DeleteMapping("/remove")
-    public Message removeAccount() {
+    public ResponseEntity<Message> removeAccount() {
         Account account = AccountUtil.getAccount();
         accountService.removeAccount(account);
-        return Message.of("유저 삭제 완료");
+        return ResponseEntity.ok(Message.of("유저 삭제 완료"));
     }
 }

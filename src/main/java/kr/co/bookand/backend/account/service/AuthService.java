@@ -78,7 +78,6 @@ public class AuthService {
             // 로그인
             TokenDto tokenDto = login(account.get().toAccountRequestDto(suffix).toLoginRequest());
             return tokenDto.toTokenDto();
-
         }else {
             MiddleAccount middleAccount = MiddleAccount.builder()
                     .email(email)

@@ -63,7 +63,6 @@ public class TokenFactory {
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                 .refreshToken(refreshToken)
-                .role(authorities)
                 .build();
     }
 

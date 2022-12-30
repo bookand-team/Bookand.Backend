@@ -34,7 +34,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 
 import java.math.BigInteger;
@@ -66,7 +65,7 @@ public class AuthService {
     private String suffix;
 
     @Transactional
-    public TokenResponse socialAccess(AuthRequest authRequestDto) {
+    public LoginResponse socialAccess(AuthRequest authRequestDto) {
         String userId = getSocialIdWithAccessToken(authRequestDto).getUserId();
         String providerEmail = getSocialIdWithAccessToken(authRequestDto).getEmail();
         authRequestDto.insertId(userId);
@@ -77,7 +76,9 @@ public class AuthService {
         if (account.isPresent()) {
             // 로그인
             TokenDto tokenDto = login(account.get().toAccountRequestDto(suffix).toLoginRequest());
-            return tokenDto.toTokenDto();
+            TokenResponse tokenResponse = tokenDto.toTokenDto();
+            return LoginResponse.builder().tokenResponse(tokenResponse).httpStatus(HttpStatus.OK).build();
+
         }else {
             MiddleAccount middleAccount = MiddleAccount.builder()
                     .email(email)
@@ -86,8 +87,9 @@ public class AuthService {
                     .build();
 
             // 회원가입
-            TokenDto tokenMessage = socialSignUp(middleAccount);
-            return tokenMessage.toTokenDto();
+            TokenDto tokenDto = socialSignUp(middleAccount);
+            TokenResponse tokenResponse = tokenDto.toTokenDto();
+            return LoginResponse.builder().tokenResponse(tokenResponse).httpStatus(HttpStatus.FORBIDDEN).build();
         }
     }
 

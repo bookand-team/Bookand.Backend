@@ -2,6 +2,7 @@ package kr.co.bookand.backend.account.domain.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.springframework.http.HttpStatus;
 
 
 @Getter
@@ -13,13 +14,11 @@ public class TokenDto {
     private String accessToken;
     private String refreshToken;
     private Long accessTokenExpiresIn;
-    private String role;
 
     public TokenResponse toTokenDto() {
         return TokenDto.TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .role(role)
                 .build();
     }
 
@@ -41,7 +40,6 @@ public class TokenDto {
         private String accessToken;
         @ApiModelProperty(value = "갱신토큰값",example = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NjQ2")
         private String refreshToken;
-        private String role;
 
     }
 
@@ -50,8 +48,8 @@ public class TokenDto {
     @AllArgsConstructor
     @Builder
     public static class LoginResponse {
-        public Object tokenResponse;
-        public String message;
+        public TokenResponse tokenResponse;
+        public HttpStatus httpStatus;
     }
 
 }

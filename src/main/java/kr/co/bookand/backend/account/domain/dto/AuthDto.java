@@ -75,6 +75,17 @@ public class AuthDto {
                     .build();
         }
 
+        public Account toManager(PasswordEncoder passwordEncoder, String email, String password, String nickname) {
+            return Account.builder()
+                    .email(email)
+                    .provider("manager")
+                    .providerEmail("manager")
+                    .password(passwordEncoder.encode(password))
+                    .role(Role.MANAGER)
+                    .nickname(nickname)
+                    .build();
+        }
+
     }
 
     @Getter

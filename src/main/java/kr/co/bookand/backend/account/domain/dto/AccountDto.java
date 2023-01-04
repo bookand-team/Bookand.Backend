@@ -3,11 +3,13 @@ package kr.co.bookand.backend.account.domain.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import kr.co.bookand.backend.account.domain.Account;
+import kr.co.bookand.backend.account.domain.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class AccountDto {
 
@@ -72,5 +74,9 @@ public class AccountDto {
         }
     }
 
-
+    public record ManagerInfo(
+            String email,
+            String password,
+            String nickname
+    ) {}
 }

@@ -12,9 +12,11 @@ import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.SocialType;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.domain.dto.AppleDto;
+import kr.co.bookand.backend.account.domain.dto.AuthDto;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
 import kr.co.bookand.backend.account.exception.*;
 import kr.co.bookand.backend.account.repository.AccountRepository;
+import kr.co.bookand.backend.account.util.SecurityUtil;
 import kr.co.bookand.backend.common.ApiService;
 import kr.co.bookand.backend.common.Message;
 import kr.co.bookand.backend.config.jwt.JwtException;
@@ -108,9 +110,21 @@ public class AuthService {
         return getTokenDto(loginRequest);
     }
 
+    public TokenDto loginManager(AccountDto.LoginRequest loginRequest){
+        String email = loginRequest.getEmail();
+        Account manager = accountRepository.findByEmail(email).orElseThrow(() -> new NotFoundUserInformationException(email));
+        if (!manager.getRole().equals(Role.MANAGER)) {
+            throw new NotRoleUserException(manager.getRole());
+        }
+        return getTokenDto(loginRequest);
+    }
+
     private TokenDto getTokenDto(AccountDto.LoginRequest loginRequest) {
+        System.out.println("loginRequest = " + loginRequest);
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
+        System.out.println("authenticationToken = " + authenticationToken);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        System.out.println("authentication = " + authentication);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
 
         // refresh token 저장
@@ -259,6 +273,27 @@ public class AuthService {
     public TokenResponse adminLogin(AccountDto.LoginRequest loginRequestDto) {
         TokenDto tokenDto = loginAdmin(loginRequestDto);
         return tokenDto.toTokenDto();
+    }
+
+    public TokenResponse managerLogin(AccountDto.LoginRequest loginRequestDto) {
+        TokenDto tokenDto = loginManager(loginRequestDto);
+        return tokenDto.toTokenDto();
+    }
+
+    public Message createManager(AccountDto.ManagerInfo createRequestDto) {
+        Account admin = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
+                .orElseThrow(()-> new NotFoundUserInformationException(SecurityUtil.getCurrentAccountEmail()));
+        admin.getRole().checkAdmin();
+        duplicateEmailAndNickName(createRequestDto.email(), createRequestDto.nickname());
+
+        AuthDto.MiddleAccount middleAccount = AuthDto.MiddleAccount.builder()
+                .email(createRequestDto.email())
+                .socialType(SocialType.GOOGLE)
+                .providerEmail("providerEmail")
+                .build();
+        Account account = middleAccount.toManager(passwordEncoder, createRequestDto.email(), createRequestDto.password(), createRequestDto.nickname());
+        accountRepository.save(account);
+        return Message.of("생성 완료");
     }
 
 }

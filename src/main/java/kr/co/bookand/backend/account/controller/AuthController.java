@@ -47,4 +47,16 @@ public class AuthController {
     public ResponseEntity<TokenResponse> loginAdmin(@RequestBody LoginRequest loginRequestDto) {
         return ResponseEntity.ok(authService.adminLogin(loginRequestDto));
     }
+
+    @ApiOperation(value = "매니저 전용")
+    @PostMapping("/manager")
+    public ResponseEntity<TokenResponse> loginManager(@RequestBody LoginRequest loginRequestDto) {
+        return ResponseEntity.ok(authService.managerLogin(loginRequestDto));
+    }
+
+    @ApiOperation(value = "매니저 생성")
+    @PostMapping("/admin/manager")
+    public ResponseEntity<Message> createManager(@RequestBody ManagerInfo memberInfoDto) {
+        return ResponseEntity.ok(authService.createManager(memberInfoDto));
+    }
 }

@@ -45,8 +45,7 @@ public class ArticleService {
 
     public ArticleResponse createArticle(ArticleRequest articleDto) {
         String bookStoreList = articleDto.getBookStoreList();
-        List<Long> bookStoreIdList = Stream.of(bookStoreList.split("\\s*,\\s*")).map(Long::parseLong)
-                .collect(Collectors.toList());
+        List<Long> bookStoreIdList = Stream.of(bookStoreList.split("\\s*,\\s*")).map(Long::parseLong).toList();
         List<BookStoreDto> bookStores = new ArrayList<>();
 
         for (Long id : bookStoreIdList) {
@@ -59,9 +58,8 @@ public class ArticleService {
         return ArticleRequest.of(articleSave);
     }
 
-    public ArticleResponse updateArticle(ArticleRequest articleDto) {
-        Long articleDtoId = articleDto.getId();
-        Article article = articleRepository.findById(articleDtoId).orElseThrow(()-> new NotFoundArticleException(articleDtoId));
+    public ArticleResponse updateArticle(Long id, ArticleRequest articleDto) {
+        Article article = articleRepository.findById(id).orElseThrow(()-> new NotFoundArticleException(id));
         article.updateArticle(articleDto);
         return ArticleRequest.of(article);
     }

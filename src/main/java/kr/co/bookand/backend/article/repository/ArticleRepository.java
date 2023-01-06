@@ -1,8 +1,7 @@
 package kr.co.bookand.backend.article.repository;
 
 import kr.co.bookand.backend.article.domain.Article;
-import kr.co.bookand.backend.bookstore.domain.BookStore;
-import kr.co.bookand.backend.bookstore.domain.Theme;
+import kr.co.bookand.backend.article.domain.Category;
 import kr.co.bookand.backend.common.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +21,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             @Param("title") String title,
             Pageable pageable
     );
+
+    Long countBy();
+
+    Long countByCategory(Category category);
 }

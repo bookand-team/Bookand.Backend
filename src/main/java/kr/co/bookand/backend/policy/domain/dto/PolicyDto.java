@@ -1,6 +1,5 @@
 package kr.co.bookand.backend.policy.domain.dto;
 
-import kr.co.bookand.backend.common.BaseTimeEntity;
 import kr.co.bookand.backend.policy.domain.Policy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PolicyDto extends BaseTimeEntity {
+public class PolicyDto {
     String title;
     String context;
 

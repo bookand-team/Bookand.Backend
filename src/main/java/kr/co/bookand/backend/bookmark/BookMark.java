@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Bookmark extends BaseTimeEntity {
+public class BookMark extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class Bookmark extends BaseTimeEntity {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private BookmarkType bookmarkType;
+    private BookMarkType bookMarkType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Account account;

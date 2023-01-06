@@ -44,9 +44,9 @@ public class ArticleController {
     }
 
     @ApiOperation(value = "아티클 수정")
-    @PutMapping("")
-    public ResponseEntity<ArticleResponse> updateArticle(@RequestBody ArticleRequest articleDto) {
-        ArticleResponse article = articleService.updateArticle(articleDto);
+    @PutMapping("/{id}")
+    public ResponseEntity<ArticleResponse> updateArticle(@PathVariable Long id, @RequestBody ArticleRequest articleDto) {
+        ArticleResponse article = articleService.updateArticle(id, articleDto);
         return ResponseEntity.ok(article);
     }
 

@@ -9,14 +9,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface BookStoreRepository extends JpaRepository<BookStore, Long> {
     Optional<BookStore> findByName(String name);
 
     @Query(value = "SELECT b FROM BookStore b WHERE b.status = :status AND b.theme = :theme AND b.name LIKE %:name%",
-    countQuery = "SELECT count (b) FROM BookStore b")
+            countQuery = "SELECT count (b) FROM BookStore b")
     Page<BookStore> findByStatusAndThemeAndName(
             @Param("status") Status status,
             @Param("theme") Theme theme,
@@ -28,7 +27,10 @@ public interface BookStoreRepository extends JpaRepository<BookStore, Long> {
             @Param("status") Status status,
             @Param("theme") Theme theme,
             @Param("name") String name
-            );
+    );
 
 
+    Long countByStatus(Status status);
+
+    Long countBy();
 }

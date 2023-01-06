@@ -5,7 +5,9 @@ import kr.co.bookand.backend.article.domain.dto.ArticleDto;
 import kr.co.bookand.backend.bookmark.BookMarkArticle;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.common.BaseTimeEntity;
+import kr.co.bookand.backend.common.DeviceType;
 import kr.co.bookand.backend.common.Status;
+import kr.co.bookand.backend.common.UserType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,8 +27,15 @@ public class Article extends BaseTimeEntity {
 
     private String title;
     private String content;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     private String mainPicture;
+
+    @Enumerated(EnumType.STRING)
+    private DeviceType deviceType;
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
     private Integer hit;
 

@@ -61,7 +61,7 @@ public class BookStoreDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class BookStoreSimpleDto{
+    public static class BookStoreSimpleDto {
         private Long bookStoreId;
     }
 }

@@ -23,6 +23,7 @@ public class AccountService {
     // 회원 정보 조회
     @Transactional(readOnly = true)
     public MemberInfo getAccount() {
+        System.out.println("getAccount");
         return accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
                 .map(MemberInfo::of)
                 .orElseThrow(()-> new NotFoundUserInformationException(SecurityUtil.getCurrentAccountEmail()));

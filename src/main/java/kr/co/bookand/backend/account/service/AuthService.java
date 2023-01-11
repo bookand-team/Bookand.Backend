@@ -255,6 +255,14 @@ public class AuthService {
                 .orElseThrow(JwtException::new);
         reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
+
+        // refresh token 저장
+        RefreshToken newRefreshToken = RefreshToken.builder()
+                .key(authentication.getName())
+                .value(tokenDto.getRefreshToken())
+                .build();
+        refreshTokenRepository.save(newRefreshToken);
+
         return tokenDto.toTokenDto();
     }
 

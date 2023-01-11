@@ -4,6 +4,7 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/bookand
+    file_exits_behavior: OVERWRITE
 permissions:
   - object: /home/ubuntu/bookand/
     owner: ubuntu

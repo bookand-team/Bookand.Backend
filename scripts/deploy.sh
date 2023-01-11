@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-REPOSITORY=/home/ec2-user/bookand
+REPOSITORY=/home/ubuntu/bookand
 cd $REPOSITORY
 
 APP_NAME=bookand

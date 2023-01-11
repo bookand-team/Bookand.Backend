@@ -120,11 +120,8 @@ public class AuthService {
     }
 
     private TokenDto getTokenDto(AccountDto.LoginRequest loginRequest) {
-        System.out.println("loginRequest = " + loginRequest);
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
-        System.out.println("authenticationToken = " + authenticationToken);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        System.out.println("authentication = " + authentication);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
 
         // refresh token 저장

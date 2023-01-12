@@ -70,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(Arrays.asList("https://dev.bookand.co.kr", "http://localhost:3000", "http://api.bookand.co.kr", "http://devtest.bookand.co.kr"));
+        configuration.setAllowedOrigins(Arrays.asList("https://dev.bookand.co.kr", "http://localhost:3000", "http://api.bookand.co.kr", "https://bookand-admin-page.vercel.app/", "https://bookand-admin-page/"));
         configuration.setAllowedMethods(
                 Arrays.asList(HttpMethod.POST.name(), HttpMethod.GET.name(),
                         HttpMethod.PUT.name(), HttpMethod.DELETE.name(),

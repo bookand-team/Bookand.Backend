@@ -12,9 +12,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(final CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedOrigins("http://api.bookand.co.kr", "https://dev.bookand.co.kr" ,"http://localhost:3000")
+                .allowedOrigins("http://api.bookand.co.kr", "https://dev.bookand.co.kr" ,"http://localhost:3000", "https://bookand-admin-page.vercel.app/", "https://bookand-admin-page/")
                 .allowedHeaders(ALLOWED_HEADER_NAMES)
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","));
     }
+
 }

@@ -91,7 +91,7 @@ public class AuthService {
             // 회원가입
             TokenDto tokenDto = socialSignUp(middleAccount);
             TokenResponse tokenResponse = tokenDto.toTokenDto();
-            return LoginResponse.builder().tokenResponse(tokenResponse).httpStatus(HttpStatus.NOT_FOUND).build();
+            return LoginResponse.builder().tokenResponse(Message.of("Not Found User")).httpStatus(HttpStatus.NOT_FOUND).build();
         }
     }
 

@@ -48,7 +48,7 @@ public class TokenDto {
     @AllArgsConstructor
     @Builder
     public static class LoginResponse {
-        public TokenResponse tokenResponse;
+        public Object tokenResponse;
         public HttpStatus httpStatus;
     }
 

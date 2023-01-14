@@ -25,7 +25,7 @@ public class AuthController {
 
     @ApiOperation(value = "소셜 로그인")
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
         LoginResponse loginResponse = authService.socialAccess(authRequest);
         return ResponseEntity.status(loginResponse.getHttpStatus()).body(loginResponse.getTokenResponse());
     }

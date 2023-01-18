@@ -29,6 +29,12 @@ public class TokenFactory {
     @Autowired
     private PrincipalDetailService principalDetailService;
 
+    @Value("${jwt.accessTokenExpireTime}")
+    public long ACCESS_TOKEN_EXPIRE_TIME;
+
+    @Value("${jwt.refreshTokenExpireTime}")
+    public long REFRESH_TOKEN_EXPIRE_TIME;
+
     private final Key key;
 
     public TokenFactory(@Value("${jwt.secret}") String secretKey) {
@@ -43,7 +49,7 @@ public class TokenFactory {
         System.out.println("authorities = " + authorities);
 
         long now = (new Date()).getTime();
-        Date accessTokenExpiresIn = new Date(now + TokenInfo.ACCESS_TOKEN_EXPIRE_TIME);
+        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
 
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
@@ -52,7 +58,7 @@ public class TokenFactory {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + TokenInfo.REFRESH_TOKEN_EXPIRE_TIME))
+                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .setSubject(authentication.getName())
                 .claim(TokenInfo.AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)

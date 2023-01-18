@@ -35,12 +35,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder();}
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/docs/**","/v2/api-docs","/configuration/ui","/swagger-resources",
-                "/configuration/security","/swagger-ui.html","/webjars/**","/swagger*/**");
-    }
-
-    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().disable()
                 .formLogin().disable()
@@ -56,6 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**", "/api/v1/account/nickname/**").permitAll()
                 .antMatchers("/").permitAll()
+                .antMatchers("/docs/**", "/favicon.ico", "/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
+                        "/configuration/security", "/swagger-ui.html", "/swagger-ui/#", "/webjars/**", "/swagger/**", "/swagger-ui/**", "/", "/csrf", "/error").permitAll()
+
                 .anyRequest().authenticated()
 
 

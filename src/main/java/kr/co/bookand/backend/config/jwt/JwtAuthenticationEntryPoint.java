@@ -1,6 +1,13 @@
 package kr.co.bookand.backend.config.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.co.bookand.backend.common.ApiErrorResponse;
+import kr.co.bookand.backend.common.ErrorCode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -11,14 +18,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+    private final ObjectMapper objectMapper;
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException, ServletException {
+                         AuthenticationException authException) throws IOException {
         log.warn("Unauthorized access = {}", authException.getMessage());
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("utf-8");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        String body = objectMapper.writeValueAsString(
+                ApiErrorResponse.builder().code(ErrorCode.JWT_ERROR.getErrorCode()).message(ErrorCode.JWT_ERROR.getMessage()).build());
+        response.getWriter().write(body);
 
     }
 }

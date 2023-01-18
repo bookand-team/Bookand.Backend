@@ -1,15 +1,15 @@
 package kr.co.bookand.backend.config;
 
-import kr.co.bookand.backend.config.jwt.JwtAccessDeniedHandler;
-import kr.co.bookand.backend.config.jwt.JwtAuthenticationEntryPoint;
-import kr.co.bookand.backend.config.jwt.TokenFactory;
+import kr.co.bookand.backend.config.jwt.*;
+import kr.co.bookand.backend.config.jwt.exception.ExceptionHandlerFilter;
+import kr.co.bookand.backend.config.jwt.exception.JwtAccessDeniedHandler;
+import kr.co.bookand.backend.config.jwt.exception.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenFactory tokenFactory;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder();}
@@ -55,9 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .anyRequest().authenticated()
 
-
                 .and()
-                .apply(new JwtSecurityConfig(tokenFactory));
+                .apply(new JwtSecurityConfig(tokenFactory, exceptionHandlerFilter));
 
 
     }

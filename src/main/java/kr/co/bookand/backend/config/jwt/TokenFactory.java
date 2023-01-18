@@ -1,14 +1,15 @@
 package kr.co.bookand.backend.config.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
+import kr.co.bookand.backend.common.exception.ErrorCode;
+import kr.co.bookand.backend.config.jwt.exception.JwtException;
 import kr.co.bookand.backend.config.security.PrincipalDetailService;
 import kr.co.bookand.backend.config.security.PrincipalDetails;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,8 +27,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TokenFactory {
 
-    @Autowired
+
     private PrincipalDetailService principalDetailService;
+    private ObjectMapper objectMapper;
 
     @Value("${jwt.accessTokenExpireTime}")
     public long ACCESS_TOKEN_EXPIRE_TIME;
@@ -92,15 +94,17 @@ public class TokenFactory {
             return true;
         } catch (io.jsonwebtoken.security.SignatureException | MalformedJwtException e) {
             log.warn("잘못된 JWT 서명입니다.");
+            throw new JwtException(ErrorCode.JWT_ERROR_SIGNATURE, e.getMessage());
         } catch (ExpiredJwtException e) {
             log.warn("만료된 JWT 토큰입니다. ");
+            throw new JwtException(ErrorCode.JWT_ERROR_EXPIRED, e.getMessage());
         } catch (UnsupportedJwtException e) {
             log.warn("지원되지 않는 JWT 토큰입니다. ");
+            throw new JwtException(ErrorCode.JWT_ERROR_UNSUPPORTED, e.getMessage());
         } catch (IllegalArgumentException e) {
             log.warn("JWT 토큰이 잘못되었습니다. ");
+            throw new JwtException(ErrorCode.JWT_ERROR_ILLEGAL, e.getMessage());
         }
-
-        return false;
     }
 
     private Claims parseClaims(String token) {

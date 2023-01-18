@@ -20,7 +20,7 @@ import kr.co.bookand.backend.account.util.SecurityUtil;
 import kr.co.bookand.backend.common.service.RestTemplateService;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import kr.co.bookand.backend.common.domain.Message;
-import kr.co.bookand.backend.config.jwt.JwtException;
+import kr.co.bookand.backend.config.jwt.exception.JwtException;
 import kr.co.bookand.backend.config.jwt.RefreshToken;
 import kr.co.bookand.backend.config.jwt.RefreshTokenRepository;
 import kr.co.bookand.backend.config.jwt.TokenFactory;
@@ -250,11 +250,11 @@ public class AuthService {
     @Transactional
     public TokenResponse reissue(TokenRequest tokenRequestDto) {
         if (!tokenFactory.validateToken(tokenRequestDto.getRefreshToken())) {
-            throw new JwtException();
+            throw new JwtException(ErrorCode.JWT_ERROR, "토큰이 유효하지 않습니다.");
         }
         Authentication authentication = tokenFactory.getAuthentication(tokenRequestDto.getRefreshToken());
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(JwtException::new);
+                .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESHTOKEN, ErrorCode.NOT_FOUND_REFRESHTOKEN.getMessage()));
         reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
 
@@ -270,10 +270,10 @@ public class AuthService {
 
     private void reissueRefreshExceptionCheck(String refreshToken, TokenRequest tokenRequestDto) {
         if (refreshToken == null) {
-            throw new JwtException();
+            throw new JwtException(ErrorCode.NOT_FOUND_REFRESHTOKEN, ErrorCode.NOT_FOUND_REFRESHTOKEN.getMessage());
         }
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
-            throw new JwtException();
+            throw new JwtException(ErrorCode.NOT_MATCH_REFRESHTOKEN, ErrorCode.NOT_MATCH_REFRESHTOKEN.getMessage());
         }
     }
 

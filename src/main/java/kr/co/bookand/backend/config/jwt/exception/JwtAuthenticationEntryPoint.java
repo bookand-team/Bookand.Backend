@@ -1,4 +1,4 @@
-package kr.co.bookand.backend.config.jwt;
+package kr.co.bookand.backend.config.jwt.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.co.bookand.backend.common.exception.ApiErrorResponse;

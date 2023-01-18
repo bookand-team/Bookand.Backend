@@ -254,7 +254,7 @@ public class AuthService {
         }
         Authentication authentication = tokenFactory.getAuthentication(tokenRequestDto.getRefreshToken());
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESHTOKEN, ErrorCode.NOT_FOUND_REFRESHTOKEN.getMessage()));
+                .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getMessage()));
         reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
 
@@ -270,10 +270,10 @@ public class AuthService {
 
     private void reissueRefreshExceptionCheck(String refreshToken, TokenRequest tokenRequestDto) {
         if (refreshToken == null) {
-            throw new JwtException(ErrorCode.NOT_FOUND_REFRESHTOKEN, ErrorCode.NOT_FOUND_REFRESHTOKEN.getMessage());
+            throw new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getMessage());
         }
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
-            throw new JwtException(ErrorCode.NOT_MATCH_REFRESHTOKEN, ErrorCode.NOT_MATCH_REFRESHTOKEN.getMessage());
+            throw new JwtException(ErrorCode.NOT_MATCH_REFRESH_TOKEN, ErrorCode.NOT_MATCH_REFRESH_TOKEN.getMessage());
         }
     }
 

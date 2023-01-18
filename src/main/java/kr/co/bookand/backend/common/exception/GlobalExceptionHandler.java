@@ -21,31 +21,38 @@ import java.io.IOException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccountException.class)
-    public ResponseEntity<ApiErrorResponse> handle(AccountException ex){
-        log.error("handleException {} : {}",ex.errorCode.getErrorCode(), ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handle(AccountException ex) {
+        log.error("handleException {} : {}", ex.errorCode.getErrorCode(), ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ex.errorCode.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ex.errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(BookStoreException.class)
-    public ResponseEntity<ApiErrorResponse> handle(BookStoreException ex){
-        log.error("handleException {} : {}",ex.errorCode.getErrorCode(), ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handle(BookStoreException ex) {
+        log.error("handleException {} : {}", ex.errorCode.getErrorCode(), ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ex.errorCode.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ex.errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(ArticleException.class)
-    public ResponseEntity<ApiErrorResponse> handle(ArticleException ex){
-        log.error("handleException {} : {}",ex.errorCode.getErrorCode(), ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handle(ArticleException ex) {
+        log.error("handleException {} : {}", ex.errorCode.getErrorCode(), ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ex.errorCode.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ex.errorCode.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(PolicyException.class)
-    public ResponseEntity<ApiErrorResponse> handle(PolicyException ex){
-        log.error("handleException {} : {}",ex.errorCode.getErrorCode(), ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handle(PolicyException ex) {
+        log.error("handleException {} : {}", ex.errorCode.getErrorCode(), ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ex.errorCode.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ex.errorCode.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiErrorResponse> handle(JwtException ex) {
+        log.error("GlobalExceptionHandler JwtException {}", ex.getMessage());
+        ApiErrorResponse response = ApiErrorResponse.builder().code(ex.errorCode.getErrorCode()).message(ex.getMessage()).build();
+        return ResponseEntity.status(ErrorCode.JWT_ERROR.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(Exception.class)
@@ -56,35 +63,28 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IOException.class)
-    public ResponseEntity<ApiErrorResponse> handle(IOException ex){
+    public ResponseEntity<ApiErrorResponse> handle(IOException ex) {
         log.error("GlobalExceptionHandler IOException {}", ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INTER_SERVER_ERROR.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ErrorCode.INTER_SERVER_ERROR.getHttpStatus()).body(response);
     }
 
-    @ExceptionHandler(JwtException.class)
-    public ResponseEntity<ApiErrorResponse> handle(JwtException ex){
-        log.error("GlobalExceptionHandler JwtException {}", ex.getMessage());
-        ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.JWT_ERROR.getErrorCode()).message(ex.getMessage()).build();
-        return ResponseEntity.status(ErrorCode.JWT_ERROR.getHttpStatus()).body(response);
-    }
-
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ApiErrorResponse> handle(HttpRequestMethodNotSupportedException ex){
+    public ResponseEntity<ApiErrorResponse> handle(HttpRequestMethodNotSupportedException ex) {
         log.error("GlobalExceptionHandler HttpRequestMethodNotSupportedException {}", ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INTER_SERVER_ERROR.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ErrorCode.INTER_SERVER_ERROR.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
-    public ResponseEntity<ApiErrorResponse> handle(HttpClientErrorException ex){
+    public ResponseEntity<ApiErrorResponse> handle(HttpClientErrorException ex) {
         log.error("GlobalExceptionHandler HttpClientErrorException {}", ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.HTTP_CLIENT_ERROR.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ErrorCode.HTTP_CLIENT_ERROR.getHttpStatus()).body(response);
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ApiErrorResponse> handle(ValidationException ex){
+    public ResponseEntity<ApiErrorResponse> handle(ValidationException ex) {
         log.error("GlobalExceptionHandler ValidationException {}", ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INPUT_VALID_ERROR.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ErrorCode.INPUT_VALID_ERROR.getHttpStatus()).body(response);

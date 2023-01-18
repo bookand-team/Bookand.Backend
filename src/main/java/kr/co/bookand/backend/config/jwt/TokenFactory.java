@@ -10,6 +10,7 @@ import kr.co.bookand.backend.config.jwt.exception.JwtException;
 import kr.co.bookand.backend.config.security.PrincipalDetailService;
 import kr.co.bookand.backend.config.security.PrincipalDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TokenFactory {
 
-
+    @Autowired
     private PrincipalDetailService principalDetailService;
     private ObjectMapper objectMapper;
 

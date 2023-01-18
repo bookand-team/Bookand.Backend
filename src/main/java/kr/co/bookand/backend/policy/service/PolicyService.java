@@ -33,7 +33,7 @@ public class PolicyService {
     public PolicyDto createPolicy(PolicyDto policyDto) {
         Optional<Policy> policy1 = policyRepository.findByTitle(policyDto.getTitle());
         if (policy1.isPresent()) {
-            throw new RuntimeException();
+            throw new PolicyException(ErrorCode.ALREADY_EXIST_POLICY, policyDto);
         }
         Policy policy = policyDto.toPolicy();
         Policy save = policyRepository.save(policy);

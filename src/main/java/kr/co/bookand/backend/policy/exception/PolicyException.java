@@ -1,13 +1,13 @@
-package kr.co.bookand.backend.account.exception;
+package kr.co.bookand.backend.policy.exception;
 
 import kr.co.bookand.backend.common.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AccountException extends RuntimeException {
+public class PolicyException extends RuntimeException {
     public ErrorCode errorCode;
 
-    public AccountException(ErrorCode errorCode, Object exception) {
+    public PolicyException(ErrorCode errorCode, Object exception) {
         super(exception != null ? errorCode.getMessage() : exception.toString());
         this.errorCode = errorCode;
     }

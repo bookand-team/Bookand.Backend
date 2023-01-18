@@ -5,7 +5,9 @@ import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto;
 import kr.co.bookand.backend.bookstore.domain.dto.BookStoreListDto;
 import kr.co.bookand.backend.bookstore.domain.dto.BookStorePageDto;
 import kr.co.bookand.backend.bookstore.domain.dto.BookStoreSearchDto;
+import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
+import kr.co.bookand.backend.common.ErrorCode;
 import kr.co.bookand.backend.common.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,23 +31,23 @@ public class BookStoreService {
     }
 
     public BookStoreDto getBookStore(Long id) {
-        return bookStoreRepository.findById(id).map(BookStoreDto::of).orElseThrow(RuntimeException::new);
+        return bookStoreRepository.findById(id).map(BookStoreDto::of).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
     }
 
     public BookStoreDto updateBookStore(BookStoreDto bookStoreDto) {
         Long bookStoreId = bookStoreDto.getId();
-        BookStore bookStore = bookStoreRepository.findById(bookStoreId).orElseThrow(RuntimeException::new);
+        BookStore bookStore = bookStoreRepository.findById(bookStoreId).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, bookStoreId));
         // 검증 로직 추가
         bookStore.updateBookStoreData(bookStoreDto);
         return BookStoreDto.of(bookStore);
     }
 
     public void removeBookStore(Long id) {
-        BookStore bookStore = bookStoreRepository.findById(id).orElseThrow(RuntimeException::new);
+        BookStore bookStore = bookStoreRepository.findById(id).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
         bookStoreRepository.delete(bookStore);
     }
 
-    public BookStorePageDto searchBookStoreList(BookStoreSearchDto bookStoreSearchDto){
+    public BookStorePageDto searchBookStoreList(BookStoreSearchDto bookStoreSearchDto) {
         List<BookStoreDto> result = new ArrayList<>();
         Pageable pageable = PageRequest.of(bookStoreSearchDto.getPage(), bookStoreSearchDto.getRaw());
         Page<BookStore> byStatusAndThemeAndName = bookStoreRepository.findByStatusAndThemeAndName(bookStoreSearchDto.getStatus(), bookStoreSearchDto.getCategory(), bookStoreSearchDto.getSearch(), pageable);

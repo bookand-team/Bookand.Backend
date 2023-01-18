@@ -1,7 +1,7 @@
 package kr.co.bookand.backend.account.util;
 
 import kr.co.bookand.backend.account.exception.AccountException;
-import kr.co.bookand.backend.common.ErrorCode;
+import kr.co.bookand.backend.common.exception.ErrorCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

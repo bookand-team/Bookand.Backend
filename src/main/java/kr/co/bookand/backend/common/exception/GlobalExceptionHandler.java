@@ -1,8 +1,10 @@
-package kr.co.bookand.backend.common;
+package kr.co.bookand.backend.common.exception;
 
 import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.article.exception.ArticleException;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
+import kr.co.bookand.backend.common.exception.ApiErrorResponse;
+import kr.co.bookand.backend.common.exception.ErrorCode;
 import kr.co.bookand.backend.config.jwt.JwtException;
 import kr.co.bookand.backend.policy.exception.PolicyException;
 import lombok.extern.slf4j.Slf4j;

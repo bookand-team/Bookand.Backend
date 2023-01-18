@@ -17,9 +17,9 @@ import kr.co.bookand.backend.account.domain.dto.TokenDto;
 import kr.co.bookand.backend.account.exception.*;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
-import kr.co.bookand.backend.common.ApiService;
-import kr.co.bookand.backend.common.ErrorCode;
-import kr.co.bookand.backend.common.Message;
+import kr.co.bookand.backend.common.service.RestTemplateService;
+import kr.co.bookand.backend.common.exception.ErrorCode;
+import kr.co.bookand.backend.common.domain.Message;
 import kr.co.bookand.backend.config.jwt.JwtException;
 import kr.co.bookand.backend.config.jwt.RefreshToken;
 import kr.co.bookand.backend.config.jwt.RefreshTokenRepository;
@@ -60,7 +60,7 @@ public class AuthService {
     private final TokenFactory tokenFactory;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final AccountRepository accountRepository;
-    private final ApiService<MultiValueMap<String, String>> apiService;
+    private final RestTemplateService<MultiValueMap<String, String>> apiService;
     private final PasswordEncoder passwordEncoder;
     ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE = new ParameterizedTypeReference<>() {
     };

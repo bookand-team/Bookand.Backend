@@ -1,4 +1,4 @@
-package kr.co.bookand.backend.common;
+package kr.co.bookand.backend.common.service;
 
 import kr.co.bookand.backend.account.domain.dto.AppleDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +13,12 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @Service
-public class ApiService<T> {
+public class RestTemplateService<T> {
 
     private final RestTemplate restTemplate;
 
     @Autowired
-    public ApiService(RestTemplate restTemplate) {
+    public RestTemplateService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 

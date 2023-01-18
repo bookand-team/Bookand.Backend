@@ -2,9 +2,7 @@ package kr.co.bookand.backend.policy.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import kr.co.bookand.backend.account.domain.dto.AccountDto;
-import kr.co.bookand.backend.common.ApiResponse;
-import kr.co.bookand.backend.common.Message;
+import kr.co.bookand.backend.common.domain.Message;
 import kr.co.bookand.backend.policy.domain.dto.PolicyDto;
 import kr.co.bookand.backend.policy.service.PolicyService;
 import lombok.RequiredArgsConstructor;

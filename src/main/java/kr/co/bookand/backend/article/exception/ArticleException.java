@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.article.exception;
 
-import kr.co.bookand.backend.common.ErrorCode;
+import kr.co.bookand.backend.common.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

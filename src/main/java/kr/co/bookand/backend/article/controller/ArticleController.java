@@ -2,16 +2,11 @@ package kr.co.bookand.backend.article.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import kr.co.bookand.backend.article.domain.dto.ArticleDto;
 import kr.co.bookand.backend.article.domain.dto.ArticleListDto;
 import kr.co.bookand.backend.article.domain.dto.ArticlePageDto;
 import kr.co.bookand.backend.article.domain.dto.ArticleSearchDto;
 import kr.co.bookand.backend.article.service.ArticleService;
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreListDto;
-import kr.co.bookand.backend.bookstore.domain.dto.BookStorePageDto;
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreSearchDto;
-import kr.co.bookand.backend.common.ApiResponse;
-import kr.co.bookand.backend.common.Message;
+import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

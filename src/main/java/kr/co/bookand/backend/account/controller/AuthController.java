@@ -4,8 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.bookand.backend.account.service.AuthService;
 
-import kr.co.bookand.backend.common.ApiResponse;
-import kr.co.bookand.backend.common.Message;
+import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;

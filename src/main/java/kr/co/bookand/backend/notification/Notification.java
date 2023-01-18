@@ -1,7 +1,7 @@
 package kr.co.bookand.backend.notification;
 
 import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.common.BaseTimeEntity;
+import kr.co.bookand.backend.common.domain.BaseTimeEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

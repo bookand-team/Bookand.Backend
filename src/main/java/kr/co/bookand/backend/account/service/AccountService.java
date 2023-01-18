@@ -4,7 +4,7 @@ import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
-import kr.co.bookand.backend.common.ErrorCode;
+import kr.co.bookand.backend.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

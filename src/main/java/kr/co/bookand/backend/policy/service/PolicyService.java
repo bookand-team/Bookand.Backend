@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.policy.service;
 
-import kr.co.bookand.backend.common.ErrorCode;
+import kr.co.bookand.backend.common.exception.ErrorCode;
 import kr.co.bookand.backend.policy.domain.Policy;
 import kr.co.bookand.backend.policy.domain.dto.PolicyDto;
 import kr.co.bookand.backend.policy.exception.PolicyException;

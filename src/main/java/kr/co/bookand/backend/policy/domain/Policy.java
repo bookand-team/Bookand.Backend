@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.policy.domain;
 
-import kr.co.bookand.backend.common.BaseTimeEntity;
+import kr.co.bookand.backend.common.domain.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

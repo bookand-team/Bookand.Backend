@@ -1,4 +1,4 @@
-package kr.co.bookand.backend.common;
+package kr.co.bookand.backend.common.exception;
 
 import lombok.*;
 

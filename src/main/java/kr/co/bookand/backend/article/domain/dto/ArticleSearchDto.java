@@ -1,9 +1,8 @@
 package kr.co.bookand.backend.article.domain.dto;
 
 import kr.co.bookand.backend.bookstore.domain.Theme;
-import kr.co.bookand.backend.common.Status;
+import kr.co.bookand.backend.common.domain.Status;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

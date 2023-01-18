@@ -2,14 +2,13 @@ package kr.co.bookand.backend.bookstore.repository;
 
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.Theme;
-import kr.co.bookand.backend.common.Status;
+import kr.co.bookand.backend.common.domain.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface BookStoreRepository extends JpaRepository<BookStore, Long> {

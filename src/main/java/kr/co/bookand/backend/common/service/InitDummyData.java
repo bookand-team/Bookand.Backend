@@ -1,4 +1,4 @@
-package kr.co.bookand.backend.common;
+package kr.co.bookand.backend.common.service;
 
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.SocialType;

@@ -17,9 +17,10 @@ import kr.co.bookand.backend.account.domain.dto.TokenDto;
 import kr.co.bookand.backend.account.exception.*;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
-import kr.co.bookand.backend.common.ApiService;
-import kr.co.bookand.backend.common.Message;
-import kr.co.bookand.backend.config.jwt.JwtException;
+import kr.co.bookand.backend.common.service.RestTemplateService;
+import kr.co.bookand.backend.common.exception.ErrorCode;
+import kr.co.bookand.backend.common.domain.Message;
+import kr.co.bookand.backend.config.jwt.exception.JwtException;
 import kr.co.bookand.backend.config.jwt.RefreshToken;
 import kr.co.bookand.backend.config.jwt.RefreshTokenRepository;
 import kr.co.bookand.backend.config.jwt.TokenFactory;
@@ -59,9 +60,10 @@ public class AuthService {
     private final TokenFactory tokenFactory;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final AccountRepository accountRepository;
-    private final ApiService<MultiValueMap<String, String>> apiService;
+    private final RestTemplateService<MultiValueMap<String, String>> apiService;
     private final PasswordEncoder passwordEncoder;
-    ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE  =  new ParameterizedTypeReference<>(){};
+    ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE = new ParameterizedTypeReference<>() {
+    };
 
     @Value("${bookand.suffix}")
     private String suffix;
@@ -81,7 +83,7 @@ public class AuthService {
             TokenResponse tokenResponse = tokenDto.toTokenDto();
             return LoginResponse.builder().tokenResponse(tokenResponse).httpStatus(HttpStatus.OK).build();
 
-        }else {
+        } else {
             MiddleAccount middleAccount = MiddleAccount.builder()
                     .email(email)
                     .socialType(socialType)
@@ -95,26 +97,26 @@ public class AuthService {
         }
     }
 
-    public TokenDto login(AccountDto.LoginRequest loginRequest){
+    public TokenDto login(AccountDto.LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
-        accountRepository.findByEmail(email).orElseThrow(() -> new NotFoundUserInformationException(email));
+        accountRepository.findByEmail(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
         return getTokenDto(loginRequest);
     }
 
-    public TokenDto loginAdmin(AccountDto.LoginRequest loginRequest){
+    public TokenDto loginAdmin(AccountDto.LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
-        Account admin = accountRepository.findByEmail(email).orElseThrow(() -> new NotFoundUserInformationException(email));
+        Account admin = accountRepository.findByEmail(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
         if (!admin.getRole().equals(Role.ADMIN)) {
-            throw new NotRoleUserException(admin.getRole());
+            throw new AccountException(ErrorCode.NOT_ROLE_MEMBER, admin.getRole());
         }
         return getTokenDto(loginRequest);
     }
 
-    public TokenDto loginManager(AccountDto.LoginRequest loginRequest){
+    public TokenDto loginManager(AccountDto.LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
-        Account manager = accountRepository.findByEmail(email).orElseThrow(() -> new NotFoundUserInformationException(email));
+        Account manager = accountRepository.findByEmail(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
         if (!manager.getRole().equals(Role.MANAGER)) {
-            throw new NotRoleUserException(manager.getRole());
+            throw new AccountException(ErrorCode.NOT_ROLE_MEMBER, manager.getRole());
         }
         return getTokenDto(loginRequest);
     }
@@ -137,7 +139,7 @@ public class AuthService {
     public TokenDto socialSignUp(MiddleAccount middleAccount) {
         String nickname = nicknameRandom();
         duplicateEmailAndNickName(middleAccount.getEmail(), nickname);
-        Account account = middleAccount.toAccount(passwordEncoder,suffix, nickname, middleAccount.getProviderEmail());
+        Account account = middleAccount.toAccount(passwordEncoder, suffix, nickname, middleAccount.getProviderEmail());
         accountRepository.save(account);
         return login(account.toAccountRequestDto(suffix).toLoginRequest());
 
@@ -147,7 +149,7 @@ public class AuthService {
         String url = "https://nickname.hwanmoo.kr/?format=json&count=1&max_length=10";
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
         ResponseEntity<Map<String, Object>> response = apiService.httpEntityPost(url, HttpMethod.GET, request, RESPONSE_TYPE);
         Map<String, Object> stringObjectMap = Objects.requireNonNull(response.getBody());
         return stringObjectMap.get("words").toString().replaceAll("\\[", "").replaceAll("]", "");
@@ -155,10 +157,10 @@ public class AuthService {
 
     private void duplicateEmailAndNickName(String email, String nickname) {
         if (accountRepository.existsByEmail(email)) {
-            throw new DuplicateEmailException(email);
+            throw new AccountException(ErrorCode.EMAIL_DUPLICATION, email);
         }
         if (accountRepository.existsByNickname(nickname)) {
-            throw new DuplicateNicknameException(nickname);
+            throw new AccountException(ErrorCode.NICKNAME_DUPLICATION, nickname);
         }
     }
 
@@ -178,26 +180,26 @@ public class AuthService {
         String url = data.getSocialType().getUserInfoUrl();
         HttpMethod method = data.getSocialType().getMethod();
         HttpHeaders headers = setHeaders(data.getAccessToken());
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
         ResponseEntity<Map<String, Object>> response = apiService.httpEntityPost(url, method, request, RESPONSE_TYPE);
         String userId = (String) response.getBody().get("sub");
         String providerEmail = (String) response.getBody().get("email");
         return ProviderIdAndEmail.toProviderDto(userId, providerEmail);
     }
 
-    private AppleDto getAppleAuthPublicKey(){
+    private AppleDto getAppleAuthPublicKey() {
         String url = SocialType.APPLE.getUserInfoUrl();
         HttpMethod method = SocialType.APPLE.getMethod();
         HttpHeaders headers = new HttpHeaders();
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
-        ResponseEntity<AppleDto> response =  apiService.getAppleKeys(url,method, request, AppleDto.class);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
+        ResponseEntity<AppleDto> response = apiService.getAppleKeys(url, method, request, AppleDto.class);
         return response.getBody();
     }
 
     private ProviderIdAndEmail getAppleId(String identityToken) {
         AppleDto appleKeyStorage = getAppleAuthPublicKey();
         try {
-            String headerToken = identityToken.substring(0,identityToken.indexOf("."));
+            String headerToken = identityToken.substring(0, identityToken.indexOf("."));
             Map<String, String> header = new ObjectMapper().readValue(new String(Base64.getDecoder().decode(headerToken), StandardCharsets.UTF_8), Map.class);
             AppleDto.AppleKey key = appleKeyStorage.getMatchedKeyBy(header.get("kid"), header.get("alg")).orElseThrow();
 
@@ -213,12 +215,12 @@ public class AuthService {
 
             Claims claims = Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(identityToken).getBody();
             String subject = claims.getSubject();
-            String email = (String)claims.get("email");
+            String email = (String) claims.get("email");
             return ProviderIdAndEmail.toProviderDto(subject, email);
 
         } catch (JsonProcessingException | NoSuchAlgorithmException | InvalidKeySpecException | SignatureException |
                 MalformedJwtException | ExpiredJwtException | IllegalArgumentException e) {
-            throw new AppleLoginException(e);
+            throw new AccountException(ErrorCode.APPLE_LOGIN_ERROR, e);
         }
     }
 
@@ -235,24 +237,24 @@ public class AuthService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginAccount = authentication.getName();
         if (accountRepository.findByEmail(loginAccount).isPresent() ||
-                refreshTokenRepository.findByKey(authentication.getName()).isPresent()){
+                refreshTokenRepository.findByKey(authentication.getName()).isPresent()) {
             // 리프레시 토큰 삭제
             RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName()).get();
             refreshTokenRepository.delete(refreshToken);
-        }else{
-            throw new NotFoundUserInformationException(loginAccount);
+        } else {
+            throw new AccountException(ErrorCode.NOT_FOUND_MEMBER, loginAccount);
         }
         return Message.of("로그아웃 성공");
     }
 
     @Transactional
-    public TokenResponse reissue(TokenRequest tokenRequestDto){
-        if (!tokenFactory.validateToken(tokenRequestDto.getRefreshToken())){
-            throw new JwtException();
+    public TokenResponse reissue(TokenRequest tokenRequestDto) {
+        if (!tokenFactory.validateToken(tokenRequestDto.getRefreshToken())) {
+            throw new JwtException(ErrorCode.JWT_ERROR, "토큰이 유효하지 않습니다.");
         }
         Authentication authentication = tokenFactory.getAuthentication(tokenRequestDto.getRefreshToken());
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(JwtException::new);
+                .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getMessage()));
         reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
 
@@ -266,12 +268,12 @@ public class AuthService {
         return tokenDto.toTokenDto();
     }
 
-    private void reissueRefreshExceptionCheck(String refreshToken, TokenRequest tokenRequestDto){
-        if (refreshToken == null){
-            throw new JwtException();
+    private void reissueRefreshExceptionCheck(String refreshToken, TokenRequest tokenRequestDto) {
+        if (refreshToken == null) {
+            throw new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getMessage());
         }
-        if (!refreshToken.equals(tokenRequestDto.getRefreshToken())){
-            throw new JwtException();
+        if (!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
+            throw new JwtException(ErrorCode.NOT_MATCH_REFRESH_TOKEN, ErrorCode.NOT_MATCH_REFRESH_TOKEN.getMessage());
         }
     }
 
@@ -287,7 +289,7 @@ public class AuthService {
 
     public Message createManager(AccountDto.ManagerInfo createRequestDto) {
         Account admin = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
-                .orElseThrow(()-> new NotFoundUserInformationException(SecurityUtil.getCurrentAccountEmail()));
+                .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
         admin.getRole().checkAdmin();
         duplicateEmailAndNickName(createRequestDto.email(), createRequestDto.nickname());
 

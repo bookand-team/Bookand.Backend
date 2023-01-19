@@ -7,12 +7,10 @@ import kr.co.bookand.backend.bookstore.domain.dto.BookStoreListDto;
 import kr.co.bookand.backend.bookstore.domain.dto.BookStorePageDto;
 import kr.co.bookand.backend.bookstore.domain.dto.BookStoreSearchDto;
 import kr.co.bookand.backend.bookstore.service.BookStoreService;
-import kr.co.bookand.backend.common.Message;
+import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/bookstore")

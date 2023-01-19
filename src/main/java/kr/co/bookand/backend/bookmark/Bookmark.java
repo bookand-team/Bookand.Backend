@@ -2,7 +2,7 @@ package kr.co.bookand.backend.bookmark;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.common.BaseTimeEntity;
+import kr.co.bookand.backend.common.domain.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

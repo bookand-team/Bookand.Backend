@@ -4,9 +4,8 @@ import io.swagger.annotations.ApiModelProperty;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.SocialType;
-import kr.co.bookand.backend.common.Message;
+import kr.co.bookand.backend.common.domain.Message;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class AuthDto {

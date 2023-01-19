@@ -1,9 +1,7 @@
 package kr.co.bookand.backend.article.repository;
 
 import kr.co.bookand.backend.article.domain.Article;
-import kr.co.bookand.backend.bookstore.domain.BookStore;
-import kr.co.bookand.backend.bookstore.domain.Theme;
-import kr.co.bookand.backend.common.Status;
+import kr.co.bookand.backend.common.domain.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

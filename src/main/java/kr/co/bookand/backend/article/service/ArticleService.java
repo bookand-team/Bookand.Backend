@@ -5,15 +5,13 @@ import kr.co.bookand.backend.article.domain.dto.ArticleDto;
 import kr.co.bookand.backend.article.domain.dto.ArticleListDto;
 import kr.co.bookand.backend.article.domain.dto.ArticlePageDto;
 import kr.co.bookand.backend.article.domain.dto.ArticleSearchDto;
-import kr.co.bookand.backend.article.exception.NotFoundArticleException;
+import kr.co.bookand.backend.article.exception.ArticleException;
 import kr.co.bookand.backend.article.repository.ArticleRepository;
-import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto;
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreListDto;
-import kr.co.bookand.backend.bookstore.domain.dto.BookStorePageDto;
-import kr.co.bookand.backend.bookstore.exception.NotFoundBookStoreException;
+import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
-import kr.co.bookand.backend.common.Message;
+import kr.co.bookand.backend.common.exception.ErrorCode;
+import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +33,7 @@ public class ArticleService {
     private final BookStoreRepository bookStoreRepository;
 
     public ArticleResponse getArticle(Long id) {
-        Article article = articleRepository.findById(id).orElseThrow(() -> new NotFoundArticleException(id));
+        Article article = articleRepository.findById(id).orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, id));
         return ArticleRequest.of(article);
     }
 
@@ -50,7 +48,7 @@ public class ArticleService {
         List<BookStoreDto> bookStores = new ArrayList<>();
 
         for (Long id : bookStoreIdList) {
-            BookStoreDto bookStoreDto = bookStoreRepository.findById(id).map(BookStoreDto::of).orElseThrow(() -> new NotFoundBookStoreException(id));
+            BookStoreDto bookStoreDto = bookStoreRepository.findById(id).map(BookStoreDto::of).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
             bookStores.add(bookStoreDto);
         }
         Article article = articleDto.toArticle(bookStores);
@@ -61,13 +59,13 @@ public class ArticleService {
 
     public ArticleResponse updateArticle(ArticleRequest articleDto) {
         Long articleDtoId = articleDto.getId();
-        Article article = articleRepository.findById(articleDtoId).orElseThrow(()-> new NotFoundArticleException(articleDtoId));
+        Article article = articleRepository.findById(articleDtoId).orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, articleDtoId));
         article.updateArticle(articleDto);
         return ArticleRequest.of(article);
     }
 
     public void removeBookStore(Long id) {
-        Article article = articleRepository.findById(id).orElseThrow(() -> new NotFoundArticleException(id));
+        Article article = articleRepository.findById(id).orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, id));
         articleRepository.delete(article);
     }
 

@@ -2,7 +2,7 @@ package kr.co.bookand.backend.account.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
-import kr.co.bookand.backend.bookmark.Bookmark;
+import kr.co.bookand.backend.bookmark.BookMark;
 import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import kr.co.bookand.backend.common.domain.BaseTimeEntity;
 import kr.co.bookand.backend.notification.Notification;
@@ -34,7 +34,7 @@ public class Account extends BaseTimeEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<Bookmark> bookmarkList = new ArrayList<>();
+    private List<BookMark> bookmarkList = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
@@ -45,17 +45,10 @@ public class Account extends BaseTimeEntity {
     private List<ReportBookStore> tipList = new ArrayList<>();
 
     public AccountDto.MemberRequest toAccountRequestDto(String suffix) {
-        return new AccountDto.MemberRequest(email, email+suffix, nickname, provider);
+        return new AccountDto.MemberRequest(email, email + suffix, nickname, provider);
     }
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
 }
-
-
-
-
-
-
-

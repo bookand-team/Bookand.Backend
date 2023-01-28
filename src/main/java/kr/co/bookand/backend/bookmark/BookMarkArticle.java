@@ -21,5 +21,5 @@ public class BookMarkArticle extends BaseTimeEntity {
     private Article article;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Bookmark bookmark;
+    private BookMark bookmark;
 }

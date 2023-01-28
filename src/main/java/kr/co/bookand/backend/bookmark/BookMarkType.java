@@ -1,5 +1,5 @@
 package kr.co.bookand.backend.bookmark;
 
-public enum BookmarkType {
+public enum BookMarkType {
     BOOKSTORE, ARTICLE
 }

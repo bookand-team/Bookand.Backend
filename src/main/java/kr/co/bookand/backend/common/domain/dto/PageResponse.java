@@ -1,4 +1,4 @@
-package kr.co.bookand.backend.common.domain;
+package kr.co.bookand.backend.common.domain.dto;
 
 import lombok.Builder;
 import lombok.Getter;

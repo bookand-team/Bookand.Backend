@@ -22,7 +22,7 @@ import java.util.List;
 
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.BookStoreResponse.of;
-import static kr.co.bookand.backend.common.domain.PageStateDto.*;
+import static kr.co.bookand.backend.common.domain.dto.PageStateDto.*;
 
 @Service
 @RequiredArgsConstructor

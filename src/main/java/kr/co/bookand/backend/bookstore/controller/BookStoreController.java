@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
-import static kr.co.bookand.backend.common.domain.PageStateDto.*;
+import static kr.co.bookand.backend.common.domain.dto.PageStateDto.*;
 
 @RestController
 @RequestMapping("api/v1/bookstore")

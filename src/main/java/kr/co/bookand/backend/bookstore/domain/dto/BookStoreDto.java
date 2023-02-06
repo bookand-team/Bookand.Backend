@@ -4,7 +4,7 @@ import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
 import kr.co.bookand.backend.bookstore.domain.Status;
 import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
-import kr.co.bookand.backend.common.domain.PageResponse;
+import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 

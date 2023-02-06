@@ -5,6 +5,8 @@ import kr.co.bookand.backend.article.domain.dto.ArticleDto;
 import kr.co.bookand.backend.bookmark.BookMarkArticle;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.common.domain.BaseTimeEntity;
+import kr.co.bookand.backend.common.domain.DeviceOSFilter;
+import kr.co.bookand.backend.common.domain.MemberIdFilter;
 import kr.co.bookand.backend.common.domain.Status;
 import lombok.*;
 
@@ -26,27 +28,29 @@ public class Article extends BaseTimeEntity {
     private String title;
     private String content;
 
-    private String mainPicture;
-
-    private Integer hit;
+    @Enumerated(EnumType.STRING)
+    private ArticleCategory category;
+    private String writer;
+    private int view;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Enumerated(EnumType.STRING)
+    private DeviceOSFilter deviceOSFilter;
+
+    @Enumerated(EnumType.STRING)
+    private MemberIdFilter memberIdFilter;
+
     @JsonIgnore
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookMarkArticle> markArticleList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article" , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookStore> bookStoreList = new ArrayList();
 
     public void viewCount() {
-        this.hit = hit + 1;
+        this.view = view + 1;
     }
-
-    public void updateArticle(ArticleDto.ArticleRequest articleDto) {
-        this.title = articleDto.getTitle();
-        this.content = articleDto.getContent();
-        this.mainPicture = articleDto.getMainPicture();
-    }
+    
 }

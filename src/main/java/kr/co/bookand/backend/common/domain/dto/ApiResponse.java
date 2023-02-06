@@ -1,5 +1,6 @@
-package kr.co.bookand.backend.common.domain;
+package kr.co.bookand.backend.common.domain.dto;
 
+import kr.co.bookand.backend.common.domain.Message;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

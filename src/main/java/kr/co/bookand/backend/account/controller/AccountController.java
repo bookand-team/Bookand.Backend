@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
 
 @RestController
-@RequestMapping("api/v1/account")
+@RequestMapping("api/v1/members")
 @RequiredArgsConstructor
 @Api(tags = "회원 API", hidden = true)
 public class AccountController {

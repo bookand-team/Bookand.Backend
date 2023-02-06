@@ -2,7 +2,6 @@ package kr.co.bookand.backend.article.domain.dto;
 
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto;
 import kr.co.bookand.backend.common.domain.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 
 @Getter
 @AllArgsConstructor
@@ -28,10 +29,10 @@ public class ArticleDto {
         private String mainPicture;
         private String bookStoreList;
 
-        public Article toArticle(List<BookStoreDto> bookStoreIdList) {
+        public Article toArticle(List<BookStoreResponse> bookStoreIdList) {
             List<BookStore> bookStores = new ArrayList<>();
-            for (BookStoreDto b : bookStoreIdList) {
-                bookStores.add(b.toBookStore());
+            for (BookStoreResponse b : bookStoreIdList) {
+                bookStores.add(b.toEntity());
             }
             return Article.builder()
                     .id(id)
@@ -44,9 +45,9 @@ public class ArticleDto {
         }
 
         public static ArticleResponse of(Article article) {
-            List<BookStoreDto> bookStoreDtoList = new ArrayList<>();
+            List<BookStoreResponse> bookStoreDtoList = new ArrayList<>();
             for (BookStore b : article.getBookStoreList()) {
-                bookStoreDtoList.add(BookStoreDto.of(b));
+                bookStoreDtoList.add(BookStoreResponse.of(b));
             }
             return ArticleResponse.builder()
                     .id(article.getId())
@@ -68,7 +69,7 @@ public class ArticleDto {
         private String content;
         private String mainPicture;
         private Integer hit;
-        private List<BookStoreDto> bookStoreDto;
+        private List<BookStoreResponse> bookStoreDto;
         private String status;
 
     }

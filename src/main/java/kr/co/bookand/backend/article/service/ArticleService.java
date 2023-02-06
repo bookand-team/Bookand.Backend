@@ -7,7 +7,6 @@ import kr.co.bookand.backend.article.domain.dto.ArticlePageDto;
 import kr.co.bookand.backend.article.domain.dto.ArticleSearchDto;
 import kr.co.bookand.backend.article.exception.ArticleException;
 import kr.co.bookand.backend.article.repository.ArticleRepository;
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
 import kr.co.bookand.backend.common.exception.ErrorCode;
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
+import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 
 @Service
 @RequiredArgsConstructor
@@ -45,10 +45,10 @@ public class ArticleService {
         String bookStoreList = articleDto.getBookStoreList();
         List<Long> bookStoreIdList = Stream.of(bookStoreList.split("\\s*,\\s*")).map(Long::parseLong)
                 .collect(Collectors.toList());
-        List<BookStoreDto> bookStores = new ArrayList<>();
+        List<BookStoreResponse> bookStores = new ArrayList<>();
 
         for (Long id : bookStoreIdList) {
-            BookStoreDto bookStoreDto = bookStoreRepository.findById(id).map(BookStoreDto::of).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
+            BookStoreResponse bookStoreDto = bookStoreRepository.findById(id).map(BookStoreResponse::of).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
             bookStores.add(bookStoreDto);
         }
         Article article = articleDto.toArticle(bookStores);
@@ -71,7 +71,7 @@ public class ArticleService {
 
     public ArticlePageDto searchArticleList(ArticleSearchDto articleSearchDto) {
         List<ArticleResponse> result = new ArrayList<>();
-        Pageable pageable = PageRequest.of(articleSearchDto.getPage(), articleSearchDto.getRaw());
+        Pageable pageable = PageRequest.of(articleSearchDto.getPage(), articleSearchDto.getRow());
         Page<Article> byTitleAndStatus = articleRepository.findByTitleAndStatus(articleSearchDto.getStatus(), articleSearchDto.getSearch(), pageable);
         byTitleAndStatus
                 .forEach(article -> result.add(ArticleDto.ArticleRequest.of(article)));

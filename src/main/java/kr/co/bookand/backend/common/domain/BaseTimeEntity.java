@@ -12,23 +12,31 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public class BaseTimeEntity {
+public abstract class BaseTimeEntity {
 
     @CreatedDate
-    private String createdAt;
-
+    protected String createdAt;
     @LastModifiedDate
-    public String modifiedAt;
+    protected String modifiedAt;
+    protected boolean visibility = true;
 
     @PrePersist
-    public void onPrePersist(){
+    protected void onPrePersist(){
         this.createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
         this.modifiedAt = this.createdAt;
     }
 
     @PreUpdate
-    public void onPreUpdate(){
+    protected void onPreUpdate(){
         this.modifiedAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+    }
+
+    public void softDelete() {
+        visibility = false;
+    }
+
+    public void setVisible() {
+        visibility = true;
     }
 
 }

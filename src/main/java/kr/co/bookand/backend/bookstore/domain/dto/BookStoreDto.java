@@ -2,7 +2,7 @@ package kr.co.bookand.backend.bookstore.domain.dto;
 
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
-import kr.co.bookand.backend.bookstore.domain.BookstoreStatus;
+import kr.co.bookand.backend.bookstore.domain.Status;
 import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
 import kr.co.bookand.backend.common.domain.PageResponse;
 import lombok.Builder;
@@ -46,7 +46,7 @@ public class BookStoreDto {
                     .mainImage(mainImage)
                     .subImages(bookStoreImageList)
                     .introduction(introduction)
-                    .status(BookstoreStatus.INVISIBLE)
+                    .status(Status.INVISIBLE)
                     .view(view)
                     .bookmark(bookmark)
                     .build();
@@ -115,7 +115,7 @@ public class BookStoreDto {
                     .theme(theme)
                     .mainImage(mainImage)
                     .introduction(introduction)
-                    .status(BookstoreStatus.valueOf(status))
+                    .status(Status.valueOf(status))
                     .view(view)
                     .bookmark(bookmark)
                     .build();

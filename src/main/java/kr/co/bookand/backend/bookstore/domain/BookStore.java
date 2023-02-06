@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.common.domain.BaseTimeEntity;
 import kr.co.bookand.backend.bookmark.BookMarkBookStore;
+import kr.co.bookand.backend.common.domain.Status;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,7 +38,7 @@ public class BookStore extends BaseTimeEntity {
     private List<BookStoreImage> subImages = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private BookstoreStatus status;
+    private Status status;
 
     private int view;
     private int bookmark;
@@ -61,11 +62,11 @@ public class BookStore extends BaseTimeEntity {
         this.sns = bookStoreRequest.sns();
         this.introduction = bookStoreRequest.introduction();
         this.mainImage = bookStoreRequest.mainImage();
-        this.status = BookstoreStatus.valueOf(bookStoreRequest.status());
+        this.status = Status.valueOf(bookStoreRequest.status());
         this.theme = BookstoreTheme.valueOf(bookStoreRequest.theme());
     }
 
-    public void updateBookStoreStatus(BookstoreStatus status) {
+    public void updateBookStoreStatus(Status status) {
         this.status = status;
     }
 

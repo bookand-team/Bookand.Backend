@@ -17,5 +17,6 @@ public class BookStoreImage {
     private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bookstore_id")
     private BookStore bookStore;
 }

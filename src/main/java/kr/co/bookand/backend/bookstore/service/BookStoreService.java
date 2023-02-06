@@ -3,11 +3,11 @@ package kr.co.bookand.backend.bookstore.service;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
-import kr.co.bookand.backend.bookstore.domain.BookstoreStatus;
 import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreImageRepository;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
+import kr.co.bookand.backend.common.domain.Status;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +68,7 @@ public class BookStoreService {
         String bookstoreTheme = pageStateRequest.theme();
         BookstoreTheme theme = BookstoreTheme.valueOf(bookstoreTheme);
         String bookstoreStatus = pageStateRequest.status();
-        BookstoreStatus status = BookstoreStatus.valueOf(bookstoreStatus);
+        Status status = Status.valueOf(bookstoreStatus);
         Page<BookStoreResponse> bookStorePage;
         if (search == null && theme == null && status == null) {
             bookStorePage = bookStoreRepository.findAll(pageable).map(BookStoreResponse::of);
@@ -124,11 +124,11 @@ public class BookStoreService {
     }
 
     @Transactional
-    public BookStoreResponse updateBookStoreVisiable(Long id) {
+    public BookStoreResponse updateBookStoreVisible(Long id) {
         accountService.isAccountAdmin();
         BookStore bookStore = bookStoreRepository.findById(id).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
         bookStore.updateBookStoreStatus(
-                bookStore.getStatus() == BookstoreStatus.VISIBLE ? BookstoreStatus.INVISIBLE : BookstoreStatus.VISIBLE
+                bookStore.getStatus() == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE
         );
         return BookStoreResponse.of(bookStore);
     }

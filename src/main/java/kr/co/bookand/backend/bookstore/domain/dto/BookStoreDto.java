@@ -2,14 +2,16 @@ package kr.co.bookand.backend.bookstore.domain.dto;
 
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
-import kr.co.bookand.backend.bookstore.domain.Status;
 import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
+import kr.co.bookand.backend.common.domain.Status;
 import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreImageDto.*;
 
 public class BookStoreDto {
 
@@ -60,12 +62,13 @@ public class BookStoreDto {
             BookstoreTheme theme,
             String introduction,
             String mainImage,
-            List<String> subImage,
+            List<BookStoreImageResponse> subImage,
             String status,
             int view,
             int bookmark,
             String createdDate,
-            String modifiedDate
+            String modifiedDate,
+            boolean visibility
     ) {
         @Builder
         public BookStoreResponse {
@@ -80,11 +83,9 @@ public class BookStoreDto {
                     .sns(bookStore.getSns())
                     .build();
 
-            List<BookStoreImage> subImages = bookStore.getSubImages();
-            List<String> subImageList = new ArrayList<>();
-            for (BookStoreImage subImage : subImages) {
-                subImageList.add(subImage.getUrl());
-            }
+            List<BookStoreImageResponse> subImages = bookStore.getSubImages().stream()
+                    .map(BookStoreImageResponse::of)
+                    .toList();
 
             return BookStoreResponse.builder()
                     .id(bookStore.getId())
@@ -92,13 +93,14 @@ public class BookStoreDto {
                     .info(bookStoreInfo)
                     .theme(bookStore.getTheme())
                     .mainImage(bookStore.getMainImage())
-                    .subImage(subImageList)
+                    .subImage(subImages)
                     .introduction(bookStore.getIntroduction())
                     .status(bookStore.getStatus().toString())
                     .view(bookStore.getView())
                     .bookmark(bookStore.getBookmark())
                     .createdDate(bookStore.getCreatedAt())
                     .modifiedDate(bookStore.getModifiedAt())
+                    .visibility(bookStore.isVisibility())
                     .status(bookStore.getStatus().toString())
                     .build();
         }

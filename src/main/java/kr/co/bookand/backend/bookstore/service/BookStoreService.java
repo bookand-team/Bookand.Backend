@@ -39,15 +39,14 @@ public class BookStoreService {
         duplicateBookStoreName(bookStoreRequest.name());
         List<String> subImageList = bookStoreRequest.subImage();
         List<BookStoreImage> bookStoreImageList = new ArrayList<>();
-        for (String image : subImageList) {
-            BookStoreImage bookStoreImage = BookStoreImage.builder()
-                    .url(image)
-                    .build();
+
+        subImageList.stream().map(image -> BookStoreImage.builder().url(image).build()).forEach(bookStoreImage -> {
             bookStoreImageRepository.save(bookStoreImage);
             bookStoreImageList.add(bookStoreImage);
-        }
+        });
 
         BookStore bookStore = bookStoreRequest.toEntity(bookStoreImageList);
+        bookStoreImageList.forEach(bookStoreImage -> bookStoreImage.updateBookStore(bookStore));
         BookStore saveBookStore = bookStoreRepository.save(bookStore);
         return of(saveBookStore);
     }
@@ -59,6 +58,11 @@ public class BookStoreService {
     public void duplicateBookStoreName(String name) {
         if (bookStoreRepository.existsByName(name))
             throw new BookStoreException(ErrorCode.DUPLICATE_BOOKSTORE_NAME, name);
+    }
+
+    public BookStorePageResponse getBookStoreList(Pageable pageable) {
+        Page<BookStoreResponse> bookStorePage = bookStoreRepository.findAll(pageable).map(BookStoreResponse::of);
+        return BookStorePageResponse.of(bookStorePage);
     }
 
     @Transactional
@@ -86,7 +90,7 @@ public class BookStoreService {
             bookStorePage = bookStoreRepository.findAllByThemeAndStatus(theme, status, pageable).map(BookStoreResponse::of);
         } else if (search != null && theme != null && status != null) {
             bookStorePage = bookStoreRepository.findAllByNameAndThemeAndStatus(search, theme, status, pageable).map(BookStoreResponse::of);
-        }  else {
+        } else {
             throw new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, "검색 조건이 잘못되었습니다.");
         }
 
@@ -97,6 +101,15 @@ public class BookStoreService {
     public BookStoreResponse updateBookStore(Long bookStoreId, BookStoreRequest bookStoreRequest) {
         accountService.isAccountAdmin();
         BookStore bookStore = bookStoreRepository.findById(bookStoreId).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, bookStoreId));
+        List<BookStoreImage> subImages = bookStore.getSubImages();
+        bookStoreImageRepository.deleteAll(subImages);
+        for (String id : bookStoreRequest.subImage()) {
+            BookStoreImage image = BookStoreImage.builder()
+                    .url(id)
+                    .bookStore(bookStore)
+                    .build();
+            bookStoreImageRepository.save(image);
+        }
         bookStore.updateBookStoreData(bookStoreRequest);
         return BookStoreResponse.of(bookStore);
     }
@@ -118,18 +131,11 @@ public class BookStoreService {
         return Message.of("삭제완료");
     }
 
-    public BookStorePageResponse getBookStoreList(Pageable pageable) {
-        Page<BookStoreResponse> bookStorePage = bookStoreRepository.findAll(pageable).map(BookStoreResponse::of);
-        return BookStorePageResponse.of(bookStorePage);
-    }
-
     @Transactional
-    public BookStoreResponse updateBookStoreVisible(Long id) {
+    public BookStoreResponse updateBookStoreStatus(Long id) {
         accountService.isAccountAdmin();
         BookStore bookStore = bookStoreRepository.findById(id).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
-        bookStore.updateBookStoreStatus(
-                bookStore.getStatus() == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE
-        );
+        bookStore.updateBookStoreStatus(bookStore.getStatus() == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE);
         return BookStoreResponse.of(bookStore);
     }
 }

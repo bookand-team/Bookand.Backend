@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.common.domain;
 
+import kr.co.bookand.backend.article.domain.ArticleBookStore;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

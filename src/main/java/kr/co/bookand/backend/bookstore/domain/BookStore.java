@@ -2,6 +2,7 @@ package kr.co.bookand.backend.bookstore.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.article.domain.Article;
+import kr.co.bookand.backend.article.domain.ArticleBookStore;
 import kr.co.bookand.backend.common.domain.BaseTimeEntity;
 import kr.co.bookand.backend.bookmark.BookMarkBookStore;
 import kr.co.bookand.backend.common.domain.Status;
@@ -46,12 +47,12 @@ public class BookStore extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private BookstoreTheme theme;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Article article;
+    @OneToMany(mappedBy = "bookStore")
+    private List<ArticleBookStore> articleBookStoreList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "bookStore", cascade = CascadeType.ALL)
-    private List<BookMarkBookStore> mark_bookStoreList = new ArrayList<>();
+    @OneToMany(mappedBy = "bookStore")
+    private List<BookMarkBookStore> bookmarkBookStoreList = new ArrayList<>();
 
     public void updateBookStoreData(BookStoreRequest bookStoreRequest) {
         this.name = bookStoreRequest.name();
@@ -70,6 +71,17 @@ public class BookStore extends BaseTimeEntity {
         this.status = status;
     }
 
+    public void addArticleBookStore(ArticleBookStore articleBookStore) {
+        if (articleBookStoreList == null) {
+            articleBookStoreList = new ArrayList<>();
+        }
+        this.articleBookStoreList.add(articleBookStore);
+    }
+
+    public void removeArticleBookStore(ArticleBookStore articleBookStore) {
+        this.articleBookStoreList.remove(articleBookStore);
+    }
+
     public void updateBookStoreView() {
         this.view++;
     }
@@ -84,16 +96,6 @@ public class BookStore extends BaseTimeEntity {
 
     public void updateBookStoreImage(BookStoreResponse bookStoreDto) {
         this.mainImage = bookStoreDto.mainImage();
-    }
-
-    public void updateBookStoreSubImage(BookStoreResponse bookStoreDto) {
-        bookStoreDto.subImage().forEach(subImage -> {
-            BookStoreImage bookStoreImage = BookStoreImage.builder()
-                    .bookStore(this)
-                    .url(subImage)
-                    .build();
-            this.subImages.add(bookStoreImage);
-        });
     }
 
     public void updateBookStoreSubImageDelete(String url) {

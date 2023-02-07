@@ -65,8 +65,8 @@ public class BookStoreController {
     }
 
     @ApiOperation(value = "서점 보기 변경")
-    @PutMapping("/{id}/visible")
-    public ResponseEntity<BookStoreResponse> updateBookStoreVisible(@PathVariable Long id) {
-        return ResponseEntity.ok(bookStoreService.updateBookStoreVisible(id));
+    @PutMapping("/{id}/status")
+    public ResponseEntity<BookStoreResponse> updateBookStoreStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(bookStoreService.updateBookStoreStatus(id));
     }
 }

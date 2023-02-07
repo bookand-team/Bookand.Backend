@@ -46,11 +46,35 @@ public class Article extends BaseTimeEntity {
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookMarkArticle> markArticleList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article" , cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BookStore> bookStoreList = new ArrayList();
+    @OneToMany(mappedBy = "article")
+    private List<ArticleBookStore> articleBookStoreList = new ArrayList();
 
     public void viewCount() {
         this.view = view + 1;
     }
-    
+
+    public void updateArticle(ArticleDto.ArticleRequest articleRequest) {
+        this.title = articleRequest.title();
+        this.content = articleRequest.content();
+        this.category = ArticleCategory.valueOf(articleRequest.category());
+        this.status = Status.valueOf(articleRequest.status());
+    }
+
+    public void updateArticleStatus(Status status) {
+        this.status = status;
+    }
+
+    public void addArticleBookStore(ArticleBookStore articleBookStore) {
+        if (articleBookStoreList == null) {
+            articleBookStoreList = new ArrayList<>();
+        }
+        this.articleBookStoreList.add(articleBookStore);
+    }
+
+    public void updateArticleBookStore(ArticleBookStore articleBookStore) {
+        this.articleBookStoreList.add(articleBookStore);
+    }
+    public void removeArticleAndBookStore(ArticleBookStore articleBookStore) {
+        this.articleBookStoreList.remove(articleBookStore);
+    }
 }

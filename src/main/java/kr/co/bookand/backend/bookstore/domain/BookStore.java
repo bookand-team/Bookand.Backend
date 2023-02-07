@@ -71,7 +71,7 @@ public class BookStore extends BaseTimeEntity {
         this.status = status;
     }
 
-    public void addArticleBookStore(ArticleBookStore articleBookStore) {
+    public void updateArticleBookStore(ArticleBookStore articleBookStore) {
         if (articleBookStoreList == null) {
             articleBookStoreList = new ArrayList<>();
         }

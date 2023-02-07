@@ -50,7 +50,7 @@ public class ArticleService {
         for (BookStore bookStore : bookStoreList) {
             ArticleBookStore articleBookStore = ArticleBookStore.of(saveArticle, bookStore);
             articleBookStoreRepository.save(articleBookStore);
-            bookStore.addArticleBookStore(articleBookStore);
+            bookStore.updateArticleBookStore(articleBookStore);
             saveArticle.addArticleBookStore(articleBookStore);
         }
         return ArticleResponse.of(saveArticle);
@@ -91,7 +91,7 @@ public class ArticleService {
         for (BookStore bookStore : bookStoreList) {
             ArticleBookStore articleBookStore1 = ArticleBookStore.of(article, bookStore);
             articleBookStoreRepository.save(articleBookStore1);
-            bookStore.addArticleBookStore(articleBookStore1);
+            bookStore.updateArticleBookStore(articleBookStore1);
             article.addArticleBookStore(articleBookStore1);
         }
         return ArticleResponse.of(article);

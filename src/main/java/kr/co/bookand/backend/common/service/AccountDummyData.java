@@ -8,18 +8,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 
 @Component
 @RequiredArgsConstructor
-public class InitDummyData {
+public class AccountDummyData {
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     @Value("${admin.secret}")
     private CharSequence ADMIN_PASSWORD;
 
+    @Transactional
     @PostConstruct
     public void dummyData() {
         AuthDto.MiddleAccount middleAccount = AuthDto.MiddleAccount.builder()

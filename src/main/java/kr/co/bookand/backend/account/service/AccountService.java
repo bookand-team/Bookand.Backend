@@ -1,6 +1,7 @@
 package kr.co.bookand.backend.account.service;
 
 import kr.co.bookand.backend.account.domain.Account;
+import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
+import static kr.co.bookand.backend.config.security.SecurityUtils.getCurrentAccountEmail;
 
 @Slf4j
 @Service
@@ -18,6 +20,17 @@ import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+
+    public Account getCurrentAccount() {
+        return accountRepository.findByEmail(getCurrentAccountEmail()).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
+    }
+
+    public void isAccountAdmin() {
+        Role role = getCurrentAccount().getRole();
+        if (!role.toString().equals("ADMIN")) {
+            throw new AccountException(ErrorCode.ROLE_ACCESS_ERROR, role);
+        }
+    }
 
     // 회원 정보 조회
     @Transactional(readOnly = true)

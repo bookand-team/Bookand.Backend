@@ -91,10 +91,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    protected ResponseEntity<ApiErrorResponse> validationException(final ConstraintViolationException ex) {
+    public ResponseEntity<ApiErrorResponse> validationException(final ConstraintViolationException ex) {
         log.warn("GlobalExceptionHandler ConstraintViolationException {} - {}", ex.getClass().getSimpleName(), ex.getMessage());
         String message = ex.getConstraintViolations().iterator().next().getMessage();
         ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INPUT_VALID_ERROR.getErrorCode()).message(message).build();
+        return ResponseEntity.status(ErrorCode.INPUT_VALID_ERROR.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponse> handle(IllegalArgumentException ex) {
+        log.error("GlobalExceptionHandler IllegalArgumentException {}", ex.getMessage());
+        ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INPUT_VALID_ERROR.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ErrorCode.INPUT_VALID_ERROR.getHttpStatus()).body(response);
     }
 }

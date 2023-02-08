@@ -2,7 +2,6 @@ package kr.co.bookand.backend.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -38,7 +37,12 @@ public enum ErrorCode {
 
     NOT_FOUND_ARTICLE("ARTICLE-ERR-100", "NOT FOUND ARTICLE", 404),
     DUPLICATE_ARTICLE("ARTICLE-ERR-101", "DUPLICATE ARTICLE", 400),
-    ;
+
+    AWS_S3_UPLOAD_FAIL("AWS-S3-ERROR-100","AWS S3 upload fail.", 400),
+    AWS_S3_DELETE_FAIL( "AWS-S3-ERROR-101","AWS S3 delete fail.", 400),
+    AWS_S3_FILE_SIZE_EXCEEDED("AWS-S3-ERROR-102", "exceeded file size.", 400);
+
+
 
     private String errorCode;
     private String message;

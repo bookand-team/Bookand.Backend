@@ -17,22 +17,15 @@ public interface BookStoreRepository extends JpaRepository<BookStore, Long> {
 
     Page<BookStore> findAllByStatus(Status status, Pageable pageable);
 
-    @Query("select b from BookStore b where b.name like %:name% ")
-    Page<BookStore> findAllByName(@Param("name") String name, Pageable pageable);
+    Page<BookStore> findAllByNameContaining(String name, Pageable pageable);
 
-    @Query("select b from BookStore b where b.name like %:name% and b.theme = :theme")
-    Page<BookStore> findAllByNameAndTheme(@Param("name") String name, @Param("theme") BookstoreTheme theme, Pageable pageable);
+    Page<BookStore> findAllByNameContainingAndTheme(String name, BookstoreTheme theme, Pageable pageable);
 
-    @Query("select b from BookStore b where b.name like %:name% and b.status = :status")
-    Page<BookStore> findAllByNameAndStatus(@Param("name") String name, @Param("status") Status status, Pageable pageable);
+    Page<BookStore> findAllByNameContainingAndStatus(String name, Status status, Pageable pageable);
 
-    @Query("select b from BookStore b where b.theme = :theme and b.status = :status")
-    Page<BookStore> findAllByThemeAndStatus(@Param("theme") BookstoreTheme theme, @Param("status") Status status, Pageable pageable);
+    Page<BookStore> findAllByThemeAndStatus( BookstoreTheme theme,  Status status, Pageable pageable);
 
-    @Query("select b from BookStore b where b.name like %:name% and b.theme = :theme and b.status = :status")
-    Page<BookStore> findAllByNameAndThemeAndStatus(@Param("name") String name, @Param("theme") BookstoreTheme theme, @Param("status") Status status, Pageable pageable);
-
-    Optional<BookStore> findByName(String name);
+    Page<BookStore> findAllByNameContainingAndThemeAndStatus(String name,  BookstoreTheme theme,  Status status, Pageable pageable);
 
     boolean existsByName(String name);
 }

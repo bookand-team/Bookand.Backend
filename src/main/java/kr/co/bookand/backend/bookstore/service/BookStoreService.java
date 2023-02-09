@@ -76,22 +76,20 @@ public class BookStoreService {
         Page<BookStoreResponse> bookStorePage;
         if (search == null && theme == null && status == null) {
             bookStorePage = bookStoreRepository.findAll(pageable).map(BookStoreResponse::of);
-        } else if (search == null && theme != null && status == null) {
+        } else if (search == null && status == null) {
             bookStorePage = bookStoreRepository.findAllByTheme(theme, pageable).map(BookStoreResponse::of);
-        } else if (search == null && theme == null && status != null) {
+        } else if (search == null && theme == null) {
             bookStorePage = bookStoreRepository.findAllByStatus(status, pageable).map(BookStoreResponse::of);
-        } else if (search != null && theme == null && status == null) {
-            bookStorePage = bookStoreRepository.findAllByName(search, pageable).map(BookStoreResponse::of);
-        } else if (search != null && theme != null && status == null) {
-            bookStorePage = bookStoreRepository.findAllByNameAndTheme(search, theme, pageable).map(BookStoreResponse::of);
-        } else if (search != null && theme == null && status != null) {
-            bookStorePage = bookStoreRepository.findAllByNameAndStatus(search, status, pageable).map(BookStoreResponse::of);
-        } else if (search == null && theme != null && status != null) {
+        } else if (theme == null && status == null) {
+            bookStorePage = bookStoreRepository.findAllByNameContaining(search, pageable).map(BookStoreResponse::of);
+        } else if (status == null) {
+            bookStorePage = bookStoreRepository.findAllByNameContainingAndTheme(search, theme, pageable).map(BookStoreResponse::of);
+        } else if (theme == null) {
+            bookStorePage = bookStoreRepository.findAllByNameContainingAndStatus(search, status, pageable).map(BookStoreResponse::of);
+        } else if (search == null) {
             bookStorePage = bookStoreRepository.findAllByThemeAndStatus(theme, status, pageable).map(BookStoreResponse::of);
-        } else if (search != null && theme != null && status != null) {
-            bookStorePage = bookStoreRepository.findAllByNameAndThemeAndStatus(search, theme, status, pageable).map(BookStoreResponse::of);
         } else {
-            throw new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, "검색 조건이 잘못되었습니다.");
+            bookStorePage = bookStoreRepository.findAllByNameContainingAndThemeAndStatus(search, theme, status, pageable).map(BookStoreResponse::of);
         }
 
         return BookStorePageResponse.of(bookStorePage);
@@ -110,6 +108,7 @@ public class BookStoreService {
                     .build();
             bookStoreImageRepository.save(image);
         }
+        duplicateBookStoreName(bookStoreRequest.name());
         bookStore.updateBookStoreData(bookStoreRequest);
         return BookStoreResponse.of(bookStore);
     }

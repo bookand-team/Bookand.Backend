@@ -22,7 +22,7 @@ public class BookStoreController {
     private final BookStoreService bookStoreService;
 
     @ApiOperation(value = "서점 등록")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<BookStoreResponse> createBookStore(@RequestBody BookStoreRequest bookStoreDto) {
         return ResponseEntity.ok(bookStoreService.createBookStore(bookStoreDto));
     }
@@ -34,7 +34,7 @@ public class BookStoreController {
     }
 
     @ApiOperation(value = "서점 조건 조회")
-    @PostMapping("")
+    @PostMapping("/search")
     public ResponseEntity<BookStorePageResponse> searchBookStoreList(@RequestBody PageStateRequest pageStateRequest) {
         return ResponseEntity.ok(bookStoreService.searchBookStoreList(pageStateRequest));
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import kr.co.bookand.backend.config.jwt.exception.JwtException;
@@ -23,6 +24,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
+import static kr.co.bookand.backend.account.domain.dto.TokenDto.*;
 
 @Component
 @Slf4j
@@ -45,11 +49,38 @@ public class TokenFactory {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
+
+    public SignDto createSignTokenDto(MiddleAccount middleAccount) {
+        long now = (new Date()).getTime();
+        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+
+        String signToken = Jwts.builder()
+                .setSubject(middleAccount.getEmail()+"_"+middleAccount.getProviderEmail()+"_"+middleAccount.getSocialType())
+                .claim("sign", Role.USER)
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
+        return SignDto.builder()
+                .signToken(signToken)
+                .build();
+    }
+
+    public SigningAccount getSignKey(String signToken) {
+        Claims body = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(signToken)
+                .getBody();
+        String email = body.getSubject();
+        String[] split = email.split("_");
+        return new SigningAccount(split[0], split[1], split[2]);
+    }
+
     public TokenDto generateTokenDto(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-        System.out.println("authorities = " + authorities);
 
         long now = (new Date()).getTime();
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
@@ -67,7 +98,7 @@ public class TokenFactory {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-        return TokenDto.builder()
+        return builder()
                 .grantType(TokenInfo.BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())

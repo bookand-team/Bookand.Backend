@@ -2,11 +2,13 @@ package kr.co.bookand.backend.account.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import kr.co.bookand.backend.account.domain.dto.TokenDto;
 import kr.co.bookand.backend.account.service.AuthService;
 
 import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,13 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
         LoginResponse loginResponse = authService.socialAccess(authRequest);
         return ResponseEntity.status(loginResponse.getHttpStatus()).body(loginResponse.getTokenResponse());
+    }
+
+    @ApiOperation(value = "회원 가입")
+    @PostMapping("/sign")
+    public ResponseEntity<TokenResponse> sign(@RequestBody SignDto signDto) {
+        TokenResponse tokenResponse = authService.socialSignUp(signDto);
+        return ResponseEntity.status(HttpStatus.OK).body(tokenResponse);
     }
 
     @ApiOperation(value = "토큰 재발행")

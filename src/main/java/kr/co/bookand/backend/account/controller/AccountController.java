@@ -2,6 +2,7 @@ package kr.co.bookand.backend.account.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.service.AccountService;
@@ -28,24 +29,28 @@ public class AccountController {
     private final AccountService accountService;
 
     @ApiOperation(value = "회원 정보")
+    @Operation(summary = "회원 정보", description = "헤더 값을 넣어서 자신의 회원 정보를 받아옵니다.")
     @GetMapping("/me")
     public ResponseEntity<MemberInfo> getMyAccountInfo() {
         return ResponseEntity.ok(accountService.getAccount());
     }
 
     @ApiOperation(value = "회원 프로필 변경")
-    @PostMapping("/profile")
-    public ResponseEntity<MemberInfo> updateNickname(@Valid @RequestBody AccountDto.MemberUpdateRequest memberRequestUpdateDto) {
+    @Operation(summary = "회원 프로필 변경", description = "닉네임 정보를 넣어서 회원 정보를 변경합니다")
+    @PutMapping("/profile")
+    public ResponseEntity<MemberInfo> updateNickname(@Valid @RequestBody MemberUpdateRequest memberRequestUpdateDto) {
         return ResponseEntity.ok(accountService.updateNickname(memberRequestUpdateDto));
     }
 
     @ApiOperation(value = "닉네임 검증 API")
+    @Operation(summary = "닉네임 검증 API", description = "닉네임을 검증합니다. 중복되면 true, 중복되지 않으면 false 를 반환합니다.")
     @GetMapping("/nickname/{nickname}")
     public ResponseEntity<Boolean> validNickname(@PathVariable String nickname) {
         return ResponseEntity.ok(accountService.validNickname(nickname));
     }
 
-    @ApiOperation(value = "회원 삭제(개선할 예정)")
+    @ApiOperation(value = "회원 삭제")
+    @Operation(summary = "회원 삭제", description = "회원을 삭제합니다.")
     @DeleteMapping("/remove")
     public ResponseEntity<Message> removeAccount() {
         Account account = AccountUtil.getAccount();

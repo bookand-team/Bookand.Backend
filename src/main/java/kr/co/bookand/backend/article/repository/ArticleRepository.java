@@ -1,14 +1,11 @@
 package kr.co.bookand.backend.article.repository;
 
-import com.google.common.io.Files;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleCategory;
 import kr.co.bookand.backend.common.domain.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 

@@ -89,13 +89,14 @@ public class AuthService {
                     .socialType(socialType)
                     .providerEmail(providerEmail)
                     .build();
-
             // 회원가입
-            TokenDto tokenDto = socialSignUp(middleAccount);
-            TokenResponse tokenResponse = tokenDto.toTokenDto();
-            return LoginResponse.builder().tokenResponse(Message.of("Not Found User")).httpStatus(HttpStatus.NOT_FOUND).build();
+            SignDto signTokenDto = tokenFactory.createSignTokenDto(middleAccount);
+            return LoginResponse.builder().tokenResponse(signTokenDto).httpStatus(HttpStatus.NOT_FOUND).build();
         }
     }
+
+
+
 
     public TokenDto login(AccountDto.LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
@@ -136,13 +137,25 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto socialSignUp(MiddleAccount middleAccount) {
+    public TokenResponse socialSignUp(SignDto signTokenDto) {
+        String signToken = signTokenDto.signToken();
+        SigningAccount signKey = tokenFactory.getSignKey(signToken);
+        checkSignUp(signKey);
         String nickname = nicknameRandom();
-        duplicateEmailAndNickName(middleAccount.getEmail(), nickname);
-        Account account = middleAccount.toAccount(passwordEncoder, suffix, nickname, middleAccount.getProviderEmail());
+        String email = signKey.email();
+        String socialType = signKey.socialType();
+        String providerEmail = signKey.providerEmail();
+        duplicateEmailAndNickName(email, nickname);
+        Account account = signTokenDto.toAccount(email, socialType, providerEmail, passwordEncoder, suffix, nickname);
         accountRepository.save(account);
-        return login(account.toAccountRequestDto(suffix).toLoginRequest());
+        TokenDto tokenDto = login(account.toAccountRequestDto(suffix).toLoginRequest());
+        return tokenDto.toTokenDto();
+    }
 
+    public void checkSignUp(SigningAccount signKey) {
+        if (signKey.email() == null || signKey.socialType() == null || signKey.providerEmail() == null) {
+            throw new AccountException(ErrorCode.INVALID_SIGN_TOKEN, signKey);
+        }
     }
 
     private String nicknameRandom() {

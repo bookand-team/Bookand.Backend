@@ -52,16 +52,6 @@ public class AuthDto {
         private String providerEmail;
         private SocialType socialType;
 
-        public Account toAccount(PasswordEncoder passwordEncoder, String suffix, String nickname, String providerEmail) {
-            return Account.builder()
-                    .email(email)
-                    .provider(socialType.toString())
-                    .providerEmail(providerEmail)
-                    .password(passwordEncoder.encode(email + suffix))
-                    .role(Role.USER)
-                    .nickname(nickname)
-                    .build();
-        }
 
         public Account toAdmin(PasswordEncoder passwordEncoder, CharSequence ADMIN_PASSWORD) {
             return Account.builder()
@@ -106,4 +96,32 @@ public class AuthDto {
             return new ProviderIdAndEmail(userId, email);
         }
     }
+
+
+    public record SignDto(String signToken) {
+
+        @Builder
+        public SignDto {
+        }
+
+        public Account toAccount(String email, String socialType, String providerEmail, PasswordEncoder passwordEncoder, String suffix, String nickname ) {
+            return Account.builder()
+                    .email(email)
+                    .provider(socialType)
+                    .providerEmail(providerEmail)
+                    .password(passwordEncoder.encode(email + suffix))
+                    .role(Role.USER)
+                    .nickname(nickname)
+                    .build();
+        }
+    }
+
+    public record SigningAccount(String email, String providerEmail, String socialType) {
+
+        @Builder
+        public SigningAccount {
+        }
+    }
+
+
 }

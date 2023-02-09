@@ -1,32 +1,25 @@
 package kr.co.bookand.backend.policy.domain.dto;
 
-import kr.co.bookand.backend.common.domain.BaseEntity;
 import kr.co.bookand.backend.policy.domain.Policy;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class PolicyDto extends BaseEntity {
-    String title;
-    String context;
-
+public record PolicyDto(
+    Long policyId,
+    String title,
+    String context
+) {
     public static PolicyDto of(Policy policy) {
-        return PolicyDto.builder()
-                .title(policy.getTitle())
-                .context(policy.getContext())
-                .build();
+        return new PolicyDto(
+            policy.getId(),
+            policy.getTitle(),
+            policy.getContext()
+        );
     }
 
     public Policy toPolicy() {
         return Policy.builder()
-                .title(title)
-                .context(context)
-                .build();
+            .title(title)
+            .context(context)
+            .build();
     }
 }
 

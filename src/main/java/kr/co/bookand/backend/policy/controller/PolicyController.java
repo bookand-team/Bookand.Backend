@@ -24,9 +24,9 @@ public class PolicyController {
     }
 
     @ApiOperation(value = "정책 수정")
-    @PutMapping()
-    public ResponseEntity<PolicyDto> updatePolicy(@RequestBody PolicyDto policyDto) {
-        return ResponseEntity.ok(policyService.updatePolicy(policyDto));
+    @PutMapping("/{id}")
+    public ResponseEntity<PolicyDto> updatePolicy(@RequestBody PolicyDto policyDto, @PathVariable Long id) {
+        return ResponseEntity.ok(policyService.updatePolicy(id, policyDto));
     }
 
     @ApiOperation(value = "정책 삭제")

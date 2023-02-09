@@ -62,6 +62,7 @@ public class AccountDto {
     @AllArgsConstructor
     @Builder
     public static class MemberInfo{
+        private Long id;
         @ApiModelProperty(value = "이메일", example = "bookand@example.com")
         private String email;
         @ApiModelProperty(value = "소셜 이메일 정보", example = "bookand@example.com")
@@ -70,13 +71,23 @@ public class AccountDto {
         private String nickname;
 
         public static MemberInfo of(Account account) {
-            return new MemberInfo(account.getEmail(), account.getProviderEmail(), account.getNickname());
+           return MemberInfo.builder()
+                    .id(account.getId())
+                    .email(account.getEmail())
+                    .providerEmail(account.getProviderEmail())
+                    .nickname(account.getNickname())
+                    .build();
         }
     }
 
     public record ManagerInfo(
+            Long id,
             String email,
             String password,
             String nickname
+    ) {}
+
+    public record IsAvailableNickname(
+            boolean isAvailable
     ) {}
 }

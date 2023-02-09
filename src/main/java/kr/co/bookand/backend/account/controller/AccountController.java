@@ -21,7 +21,7 @@ import javax.validation.Valid;
 import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
 
 @RestController
-@RequestMapping("api/v1/members")
+@RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
 @Api(tags = "회원 API", hidden = true)
 public class AccountController {
@@ -35,6 +35,20 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccount());
     }
 
+    @ApiOperation(value = "회원 조회 (id)")
+    @Operation(summary = "회원 조회", description = "회원의 정보를 조회합니다.")
+    @GetMapping("/{id}")
+    public ResponseEntity<MemberInfo> getAccountInfo(@PathVariable Long id) {
+        return ResponseEntity.ok(accountService.getAccount(id));
+    }
+
+    @ApiOperation(value = "회원 조회 (닉네임)")
+    @Operation(summary = "회원 조회", description = "회원의 정보를 조회합니다.")
+    @GetMapping("/nickname/{nickname}")
+    public ResponseEntity<MemberInfo> getAccountInfo(@PathVariable String nickname) {
+        return ResponseEntity.ok(accountService.getAccount(nickname));
+    }
+
     @ApiOperation(value = "회원 프로필 변경")
     @Operation(summary = "회원 프로필 변경", description = "닉네임 정보를 넣어서 회원 정보를 변경합니다")
     @PutMapping("/profile")
@@ -42,10 +56,10 @@ public class AccountController {
         return ResponseEntity.ok(accountService.updateNickname(memberRequestUpdateDto));
     }
 
-    @ApiOperation(value = "닉네임 검증 API")
-    @Operation(summary = "닉네임 검증 API", description = "닉네임을 검증합니다. 중복되면 true, 중복되지 않으면 false 를 반환합니다.")
-    @GetMapping("/nickname/{nickname}")
-    public ResponseEntity<Boolean> validNickname(@PathVariable String nickname) {
+    @ApiOperation(value = "닉네임 검증")
+    @Operation(summary = "닉네임 검증", description = "닉네임을 검증합니다. 중복되면 true, 중복되지 않으면 false 를 반환합니다.")
+    @GetMapping("/nickname/{nickname}/check")
+    public ResponseEntity<IsAvailableNickname> validNickname(@PathVariable String nickname) {
         return ResponseEntity.ok(accountService.validNickname(nickname));
     }
 

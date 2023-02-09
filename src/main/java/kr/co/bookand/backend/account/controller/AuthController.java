@@ -17,7 +17,7 @@ import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
 import static kr.co.bookand.backend.account.domain.dto.TokenDto.*;
 
 @RestController
-@RequestMapping("api/v1/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Api(tags = "로그인 API")
 public class AuthController {
@@ -32,8 +32,8 @@ public class AuthController {
     }
 
     @ApiOperation(value = "회원 가입")
-    @PostMapping("/sign")
-    public ResponseEntity<TokenResponse> sign(@RequestBody SignDto signDto) {
+    @PostMapping("/signup")
+    public ResponseEntity<TokenResponse> signUp(@RequestBody SignDto signDto) {
         TokenResponse tokenResponse = authService.socialSignUp(signDto);
         return ResponseEntity.status(HttpStatus.OK).body(tokenResponse);
     }

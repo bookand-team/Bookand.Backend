@@ -5,7 +5,7 @@ import kr.co.bookand.backend.account.domain.dto.AccountDto;
 
 import kr.co.bookand.backend.bookmark.BookMark;
 import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
-import kr.co.bookand.backend.common.domain.BaseTimeEntity;
+import kr.co.bookand.backend.common.domain.BaseEntity;
 import kr.co.bookand.backend.notification.Notification;
 import lombok.*;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class Account extends BaseTimeEntity {
+public class Account extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

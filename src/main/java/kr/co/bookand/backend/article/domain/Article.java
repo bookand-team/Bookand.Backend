@@ -3,8 +3,7 @@ package kr.co.bookand.backend.article.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.article.domain.dto.ArticleDto;
 import kr.co.bookand.backend.bookmark.BookMarkArticle;
-import kr.co.bookand.backend.bookstore.domain.BookStore;
-import kr.co.bookand.backend.common.domain.BaseTimeEntity;
+import kr.co.bookand.backend.common.domain.BaseEntity;
 import kr.co.bookand.backend.common.domain.DeviceOSFilter;
 import kr.co.bookand.backend.common.domain.MemberIdFilter;
 import kr.co.bookand.backend.common.domain.Status;
@@ -19,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Article extends BaseTimeEntity {
+public class Article extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

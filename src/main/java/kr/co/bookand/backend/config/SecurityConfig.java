@@ -46,15 +46,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
 
-
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth/**", "/api/v1/account/nickname/**").permitAll()
+                .antMatchers("/api/v1/auth/**", "/api/v1/members/nickname/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/docs/**", "/favicon.ico", "/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
                         "/configuration/security", "/swagger-ui.html", "/swagger-ui/#", "/webjars/**", "/swagger/**", "/swagger-ui/**", "/", "/csrf", "/error").permitAll()
-
-                .anyRequest().authenticated()
+                .anyRequest()
+                .authenticated()
 
                 .and()
                 .apply(new JwtSecurityConfig(tokenFactory, exceptionHandlerFilter));

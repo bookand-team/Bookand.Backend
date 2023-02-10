@@ -38,8 +38,8 @@ class PolicyServiceTest {
         PolicyDto policyDto = policyService.getPolicy(1L);
 
         //then
-        assertEquals(policyDto.getTitle(), policyRequest.getTitle());
-        assertEquals(policyDto.getContext(), policyRequest.getContext());
+        assertEquals(policyDto.title(), policyRequest.title());
+        assertEquals(policyDto.context(), policyRequest.context());
     }
 
     @Test
@@ -54,8 +54,8 @@ class PolicyServiceTest {
         PolicyDto policyDto = policyService.createPolicy(policyRequest);
 
         //then
-        assertEquals(policyDto.getTitle(), policyRequest.getTitle());
-        assertEquals(policyDto.getContext(), policyRequest.getContext());
+        assertEquals(policyDto.title(), policyRequest.title());
+        assertEquals(policyDto.context(), policyRequest.context());
     }
 
     @Test
@@ -70,8 +70,8 @@ class PolicyServiceTest {
         PolicyDto policyDto = policyService.updatePolicy(1L, policyRequest);
 
         //then
-        assertEquals(policyDto.getTitle(), policyRequest.getTitle());
-        assertEquals(policyDto.getContext(), policyRequest.getContext());
+        assertEquals(policyDto.title(), policyRequest.title());
+        assertEquals(policyDto.context(), policyRequest.context());
     }
 
     @Test

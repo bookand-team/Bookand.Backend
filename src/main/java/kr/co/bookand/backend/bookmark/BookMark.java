@@ -2,7 +2,7 @@ package kr.co.bookand.backend.bookmark;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.common.domain.BaseTimeEntity;
+import kr.co.bookand.backend.common.domain.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BookMark extends BaseTimeEntity {
+public class BookMark extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

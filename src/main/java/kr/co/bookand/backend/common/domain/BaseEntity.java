@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public abstract class BaseTimeEntity {
+public abstract class BaseEntity {
 
     @CreatedDate
     protected String createdAt;

@@ -1,9 +1,8 @@
 package kr.co.bookand.backend.bookstore.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleBookStore;
-import kr.co.bookand.backend.common.domain.BaseTimeEntity;
+import kr.co.bookand.backend.common.domain.BaseEntity;
 import kr.co.bookand.backend.bookmark.BookMarkBookStore;
 import kr.co.bookand.backend.common.domain.Status;
 import lombok.*;
@@ -19,7 +18,7 @@ import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class BookStore extends BaseTimeEntity {
+public class BookStore extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -67,7 +67,7 @@ class PolicyServiceTest {
         given(policyRepository.findByTitle(any())).willReturn(Optional.of(policy));
 
         //when
-        PolicyDto policyDto = policyService.updatePolicy(policyRequest);
+        PolicyDto policyDto = policyService.updatePolicy(1L, policyRequest);
 
         //then
         assertEquals(policyDto.getTitle(), policyRequest.getTitle());

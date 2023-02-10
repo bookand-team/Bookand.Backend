@@ -69,7 +69,7 @@ public class ArticleController {
     }
 
     @ApiOperation(value = "아티클 상태 변경")
-    @PutMapping("/status/{id}")
+    @PutMapping("/{id}/status")
     public ResponseEntity<ArticleResponse> updateArticleStatus(@PathVariable Long id) {
         ArticleResponse article = articleService.updateArticleStatus(id);
         return ResponseEntity.ok(article);

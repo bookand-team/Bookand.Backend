@@ -15,6 +15,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.io.IOException;
+import java.security.SignatureException;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestControllerAdvice
@@ -56,7 +58,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handle(Exception ex) {
+    public ResponseEntity<ApiErrorResponse> handle(Exception ex) {
         log.warn("GlobalExceptionHandler Exception {} - {}", ex.getClass().getSimpleName(), ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INTER_SERVER_ERROR.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ErrorCode.INTER_SERVER_ERROR.getHttpStatus()).body(response);
@@ -104,4 +106,41 @@ public class GlobalExceptionHandler {
         ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INPUT_VALID_ERROR.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ErrorCode.INPUT_VALID_ERROR.getHttpStatus()).body(response);
     }
+
+    @ExceptionHandler(SignatureException.class)
+    public ResponseEntity<ApiErrorResponse> handle(SignatureException ex) {
+        log.error("GlobalExceptionHandler SignatureException {}", ex.getMessage());
+        ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.JWT_ERROR_SIGNATURE.getErrorCode()).message(ex.getMessage()).build();
+        return ResponseEntity.status(ErrorCode.JWT_ERROR_SIGNATURE.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiErrorResponse> handle(RuntimeException ex) {
+        log.error("GlobalExceptionHandler RuntimeException {}", ex.getMessage());
+        ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INTER_SERVER_ERROR.getErrorCode()).message(ex.getMessage()).build();
+        return ResponseEntity.status(ErrorCode.INTER_SERVER_ERROR.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ApiErrorResponse> handle(NullPointerException ex) {
+        log.error("GlobalExceptionHandler NullPointerException {}", ex.getMessage());
+        ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INTER_SERVER_ERROR.getErrorCode()).message(ex.getMessage()).build();
+        return ResponseEntity.status(ErrorCode.INTER_SERVER_ERROR.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ApiErrorResponse> handle(NoSuchElementException ex) {
+        log.error("GlobalExceptionHandler NoSuchElementException {}", ex.getMessage());
+        ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INTER_SERVER_ERROR.getErrorCode()).message(ex.getMessage()).build();
+        return ResponseEntity.status(ErrorCode.INTER_SERVER_ERROR.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ResponseEntity<ApiErrorResponse> handle(UnsupportedOperationException ex) {
+        log.error("GlobalExceptionHandler UnsupportedOperationException {}", ex.getMessage());
+        ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INTER_SERVER_ERROR.getErrorCode()).message(ex.getMessage()).build();
+        return ResponseEntity.status(ErrorCode.INTER_SERVER_ERROR.getHttpStatus()).body(response);
+    }
+
+
 }

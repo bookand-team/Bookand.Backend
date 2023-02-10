@@ -58,4 +58,8 @@ public class Account extends BaseEntity {
     public void updateIsSign() {
         this.isSign = !isSign;
     }
+
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
 }

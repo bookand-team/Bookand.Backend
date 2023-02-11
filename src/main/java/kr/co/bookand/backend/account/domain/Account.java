@@ -3,7 +3,7 @@ package kr.co.bookand.backend.account.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
 
-import kr.co.bookand.backend.bookmark.BookMark;
+import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import kr.co.bookand.backend.common.domain.BaseEntity;
 import kr.co.bookand.backend.notification.Notification;
@@ -37,7 +37,7 @@ public class Account extends BaseEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<BookMark> bookmarkList = new ArrayList<>();
+    private List<Bookmark> bookmarkList = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)

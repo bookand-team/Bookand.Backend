@@ -2,7 +2,7 @@ package kr.co.bookand.backend.article.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.article.domain.dto.ArticleDto;
-import kr.co.bookand.backend.bookmark.BookMarkArticle;
+import kr.co.bookand.backend.bookmark.domain.BookmarkArticle;
 import kr.co.bookand.backend.common.domain.BaseEntity;
 import kr.co.bookand.backend.common.domain.DeviceOSFilter;
 import kr.co.bookand.backend.common.domain.MemberIdFilter;
@@ -43,7 +43,7 @@ public class Article extends BaseEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BookMarkArticle> markArticleList = new ArrayList<>();
+    private List<BookmarkArticle> markArticleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "article")
     private List<ArticleBookStore> articleBookStoreList = new ArrayList();

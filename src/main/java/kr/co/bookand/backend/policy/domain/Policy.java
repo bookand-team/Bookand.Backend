@@ -17,9 +17,9 @@ public class Policy extends BaseEntity {
     private Long id;
 
     private String title;
-    private String context;
+    private String content;
 
-    public void updateContext(String context) {
-        this.context = context;
+    public void updateContent(String content) {
+        this.content = content;
     }
 }

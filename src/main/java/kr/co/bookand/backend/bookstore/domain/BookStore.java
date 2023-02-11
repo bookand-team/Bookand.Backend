@@ -3,7 +3,7 @@ package kr.co.bookand.backend.bookstore.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.bookand.backend.article.domain.ArticleBookStore;
 import kr.co.bookand.backend.common.domain.BaseEntity;
-import kr.co.bookand.backend.bookmark.BookMarkBookStore;
+import kr.co.bookand.backend.bookmark.domain.BookmarkBookStore;
 import kr.co.bookand.backend.common.domain.Status;
 import lombok.*;
 
@@ -51,7 +51,7 @@ public class BookStore extends BaseEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "bookStore")
-    private List<BookMarkBookStore> bookmarkBookStoreList = new ArrayList<>();
+    private List<BookmarkBookStore> bookmarkBookStoreList = new ArrayList<>();
 
     public void updateBookStoreData(BookStoreRequest bookStoreRequest) {
         this.name = bookStoreRequest.name();

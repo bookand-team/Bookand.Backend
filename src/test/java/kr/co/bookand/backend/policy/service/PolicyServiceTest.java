@@ -49,34 +49,36 @@ class PolicyServiceTest {
 
         //then
         assertEquals(policyDto.title(), policyRequest.title());
-        assertEquals(policyDto.context(), policyRequest.context());
+        assertEquals(policyDto.content(), policyRequest.content());
     }
 
-//    @Test
-//    @DisplayName("정책 생성")
-//    void createPolicy() {
-//        // given
-//        Account account = AccountTemplate.makeAccount1();
-//        given(accountRepository.findByEmail(any())).willReturn(Optional.of(account));
-//        given(accountService.getCurrentAccount()).willReturn(account);
-//
-//        PolicyDto policyRequest = PolicyMockUtils.createPolicyRequest();
-//        Policy mockPolicy = PolicyMockUtils.getMockPolicy();
-//
-//        given(policyRepository.save(any())).willReturn(mockPolicy);
-//
-//        //when
-//        PolicyDto policyDto = policyService.createPolicy(policyRequest);
-//
-//        //then
-//        assertEquals(mockPolicy.getTitle(), policyDto.title());
-//        assertEquals(mockPolicy.getContext(), policyDto.context());
-//    }
+    @Test
+    @DisplayName("정책 생성")
+    void createPolicy() {
+        // given
+        Account account = AccountTemplate.makeAccount1();
+        given(accountService.getCurrentAccount()).willReturn(account);
+
+        PolicyDto policyRequest = PolicyMockUtils.createPolicyRequest();
+        Policy mockPolicy = PolicyMockUtils.getMockPolicy();
+
+        given(policyRepository.save(any())).willReturn(mockPolicy);
+
+        //when
+        PolicyDto policyDto = policyService.createPolicy(policyRequest);
+
+        //then
+        assertEquals(mockPolicy.getTitle(), policyDto.title());
+        assertEquals(mockPolicy.getContent(), policyDto.content());
+    }
 
     @Test
     @DisplayName("정책 수정")
     void updatePolicy() {
         // given
+        Account account = AccountTemplate.makeAccount1();
+        given(accountService.getCurrentAccount()).willReturn(account);
+
         PolicyDto policyRequest = PolicyMockUtils.createPolicyRequest();
         Policy policy = policyRequest.toPolicy();
         given(policyRepository.findById(any())).willReturn(Optional.of(policy));
@@ -86,13 +88,16 @@ class PolicyServiceTest {
 
         //then
         assertEquals(policyDto.title(), policyRequest.title());
-        assertEquals(policyDto.context(), policyRequest.context());
+        assertEquals(policyDto.content(), policyRequest.content());
     }
 
     @Test
     @DisplayName("정책 삭제")
     void removePolicy() {
         // given
+        Account account = AccountTemplate.makeAccount1();
+        given(accountService.getCurrentAccount()).willReturn(account);
+        
         PolicyDto policyRequest = PolicyMockUtils.createPolicyRequest();
         Policy policy = policyRequest.toPolicy();
         given(policyRepository.findById(any())).willReturn(Optional.of(policy));

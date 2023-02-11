@@ -32,6 +32,7 @@ import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -105,21 +106,31 @@ public class AuthService {
     }
 
     public TokenDto loginAdmin(AccountDto.LoginRequest loginRequest) {
-        String email = loginRequest.getEmail();
-        Account admin = accountRepository.findByEmail(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
-        if (!admin.getRole().equals(Role.ADMIN)) {
-            throw new AccountException(ErrorCode.NOT_ROLE_MEMBER, admin.getRole());
+
+        UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            String authority = grantedAuthority.getAuthority();
+            checkRole(Role.ADMIN.name(), authority);
         }
+
         return getTokenDto(loginRequest);
     }
 
     public TokenDto loginManager(AccountDto.LoginRequest loginRequest) {
-        String email = loginRequest.getEmail();
-        Account manager = accountRepository.findByEmail(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
-        if (!manager.getRole().equals(Role.MANAGER)) {
-            throw new AccountException(ErrorCode.NOT_ROLE_MEMBER, manager.getRole());
+        UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            String authority = grantedAuthority.getAuthority();
+            checkRole(Role.MANAGER.name(), authority);
         }
         return getTokenDto(loginRequest);
+    }
+
+    private void checkRole(String role_manager, String authority) {
+        if (!role_manager.equals(authority)) {
+            throw new AccountException(ErrorCode.NOT_ROLE_MEMBER, authority);
+        }
     }
 
     private TokenDto getTokenDto(AccountDto.LoginRequest loginRequest) {

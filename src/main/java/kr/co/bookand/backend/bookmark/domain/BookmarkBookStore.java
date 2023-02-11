@@ -1,25 +1,27 @@
-package kr.co.bookand.backend.bookmark;
+package kr.co.bookand.backend.bookmark.domain;
 
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.common.domain.BaseEntity;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BookMarkBookStore extends BaseEntity {
+@AllArgsConstructor
+@Builder
+public class BookmarkBookStore extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bookmark_bookstore_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private BookStore bookStore;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private BookMark bookmark;
+    @JoinColumn(name = "bookmark_id")
+    private Bookmark bookmark;
 }

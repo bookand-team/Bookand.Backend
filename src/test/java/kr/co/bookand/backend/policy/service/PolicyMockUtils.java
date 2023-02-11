@@ -10,7 +10,7 @@ public class PolicyMockUtils {
     public static PolicyDto createPolicyRequest() {
         return PolicyDto.builder()
                 .title("title")
-                .context("context")
+                .content("content")
                 .build();
 
     }

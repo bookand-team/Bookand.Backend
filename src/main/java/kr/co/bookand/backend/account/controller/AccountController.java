@@ -59,8 +59,9 @@ public class AccountController {
     @ApiOperation(value = "닉네임 검증")
     @Operation(summary = "닉네임 검증", description = "닉네임을 검증합니다. 중복되면 true, 중복되지 않으면 false 를 반환합니다.")
     @GetMapping("/nickname/{nickname}/check")
-    public ResponseEntity<IsAvailableNickname> validNickname(@PathVariable String nickname) {
-        return ResponseEntity.ok(accountService.validNickname(nickname));
+    public ResponseEntity<Message> validNickname(@PathVariable String nickname) {
+        Message message = accountService.checkNickname(nickname);
+        return ResponseEntity.status(message.statusCode()).body(message);
     }
 
     @ApiOperation(value = "회원 삭제")

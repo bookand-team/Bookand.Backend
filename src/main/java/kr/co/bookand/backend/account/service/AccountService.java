@@ -74,6 +74,11 @@ public class AccountService {
         return new IsAvailableNickname(exists);
     }
 
+    public Message checkNickname(String nickname) {
+        boolean exists = accountRepository.existsByNickname(nickname);
+        return exists ? Message.of("CONFLICT", 409) : Message.of("OK", 200);
+    }
+
     @Transactional
     public void removeAccount(Account account) {
         account.softDelete();

@@ -21,9 +21,12 @@ public class PolicyService {
     private final PolicyRepository policyRepository;
     private final AccountService accountService;
 
+    @Transactional
     public PolicyDto updatePolicy(Long id, PolicyDto policyDto) {
+        Account currentAccount = accountService.getCurrentAccount();
+        currentAccount.getRole().checkAdmin();
         Policy policy = policyRepository.findById(id).orElseThrow(() -> new PolicyException(ErrorCode.NOT_FOUND_POLICY, policyDto));
-        policy.updateContext(policyDto.context());
+        policy.updateContent(policyDto.content());
         return PolicyDto.of(policy);
     }
 
@@ -49,6 +52,8 @@ public class PolicyService {
     }
 
     public void removePolicy(Long id) {
+        Account currentAccount = accountService.getCurrentAccount();
+        currentAccount.getRole().checkAdmin();
         Policy policy = policyRepository.findById(id).orElseThrow(() -> new PolicyException(ErrorCode.NOT_FOUND_POLICY, id));
         policyRepository.delete(policy);
     }

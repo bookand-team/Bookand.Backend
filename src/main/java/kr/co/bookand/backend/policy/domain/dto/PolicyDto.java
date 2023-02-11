@@ -6,7 +6,7 @@ import lombok.Builder;
 public record PolicyDto(
     Long policyId,
     String title,
-    String context
+    String content
 ) {
     @Builder
     public PolicyDto {
@@ -16,14 +16,14 @@ public record PolicyDto(
         return new PolicyDto(
             policy.getId(),
             policy.getTitle(),
-            policy.getContext()
+            policy.getContent()
         );
     }
 
     public Policy toPolicy() {
         return Policy.builder()
             .title(title)
-            .context(context)
+            .content(content)
             .build();
     }
 }

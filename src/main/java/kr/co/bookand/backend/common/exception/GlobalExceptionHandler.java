@@ -7,6 +7,7 @@ import kr.co.bookand.backend.config.jwt.exception.JwtException;
 import kr.co.bookand.backend.policy.exception.PolicyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -139,6 +140,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handle(UnsupportedOperationException ex) {
         log.error("GlobalExceptionHandler UnsupportedOperationException {}", ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INTER_SERVER_ERROR.getErrorCode()).message(ex.getMessage()).build();
+        return ResponseEntity.status(ErrorCode.INTER_SERVER_ERROR.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handle(BadCredentialsException ex) {
+        log.error("GlobalExceptionHandler BadCredentialsException {}", ex.getMessage());
+        ApiErrorResponse response = ApiErrorResponse.builder().code(ErrorCode.INTER_SERVER_ERROR.getErrorCode()).message("NOT FOUND MEMBER").build();
         return ResponseEntity.status(ErrorCode.INTER_SERVER_ERROR.getHttpStatus()).body(response);
     }
 

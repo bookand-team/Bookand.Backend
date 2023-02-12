@@ -76,4 +76,8 @@ public class Article extends BaseEntity {
     public void removeArticleAndBookStore(ArticleBookStore articleBookStore) {
         this.articleBookStoreList.remove(articleBookStore);
     }
+
+    public void removeBookmarkArticle(BookmarkArticle bookmarkArticle) {
+        this.markArticleList.remove(bookmarkArticle);
+    }
 }

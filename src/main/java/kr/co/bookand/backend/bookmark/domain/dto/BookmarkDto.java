@@ -92,7 +92,7 @@ public class BookmarkDto {
         }
     }
 
-    public record BookmarkAddContentRequest(
+    public record BookmarkContentListRequest(
             List<Long> contentIdList,
             BookmarkType bookmarkType
     ) {

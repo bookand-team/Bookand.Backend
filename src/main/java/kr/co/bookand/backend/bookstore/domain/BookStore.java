@@ -101,4 +101,8 @@ public class BookStore extends BaseEntity {
         this.subImages.removeIf(subImage -> subImage.getUrl().equals(url));
     }
 
+    public void removeBookmarkBookStore(BookmarkBookStore bookmarkBookStore) {
+        this.bookmarkBookStoreList.remove(bookmarkBookStore);
+    }
+
 }

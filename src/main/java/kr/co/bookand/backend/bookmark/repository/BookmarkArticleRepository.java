@@ -5,8 +5,13 @@ import kr.co.bookand.backend.bookmark.domain.BookmarkArticle;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookmarkArticleRepository extends JpaRepository<BookmarkArticle, Long> {
 
     List<BookmarkArticle> findAllByBookmark(Bookmark bookmark);
+
+    void deleteByIdAndBookmarkId(Long contentId, Long bookmarkId);
+
+    Optional<BookmarkArticle> findByBookmarkIdAndArticleId(Long bookmarkId, Long contentId);
 }

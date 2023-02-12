@@ -9,12 +9,14 @@ import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookmark.domain.BookmarkArticle;
 import kr.co.bookand.backend.bookmark.domain.BookmarkBookStore;
 import kr.co.bookand.backend.bookmark.domain.BookmarkType;
+import kr.co.bookand.backend.bookmark.domain.dto.BookmarkDto;
 import kr.co.bookand.backend.bookmark.exception.BookmarkException;
 import kr.co.bookand.backend.bookmark.repository.BookmarkArticleRepository;
 import kr.co.bookand.backend.bookmark.repository.BookmarkBookStoreRepository;
 import kr.co.bookand.backend.bookmark.repository.BookmarkRepository;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
+import kr.co.bookand.backend.common.domain.Message;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +45,7 @@ public class BookmarkService {
     private final BookStoreRepository bookStoreRepository;
     private final ArticleRepository articleRepository;
 
+    // 북마크 폴더 생성
     @Transactional
     public BookmarkResponse createBookmarkFolder(BookmarkRequest bookmarkRequest) {
         Account currentAccount = getCurrentAccount(accountRepository);
@@ -83,30 +86,12 @@ public class BookmarkService {
         Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
 
-        if (bookmark.getBookmarkType().equals(BookmarkType.BOOKSTORE)) {
-            List<BookmarkBookStore> bookmarkBookStoreList = bookmarkBookStoreRepository.findAllByBookmark(bookmark);
-            List<BookmarkInfo> bookmarkInfoList = new ArrayList<>();
-            for (BookmarkBookStore bookmarkBookStore : bookmarkBookStoreList) {
-                if(bookmarkBookStore.getBookStore() != null) {
-                    bookmarkInfoList.add(BookmarkInfo.ofBookStore(bookmarkBookStore.getBookStore()));
-                }
-            }
-            Page<BookmarkInfo> bookmarkInfo = new PageImpl<>(bookmarkInfoList);
-            return BookmarkResponse.of(bookmark, bookmarkInfo);
-        } else {
-            List<BookmarkArticle> bookmarkArticleList = bookmarkArticleRepository.findAllByBookmark(bookmark);
-            List<BookmarkInfo> bookmarkInfoList = new ArrayList<>();
-            for (BookmarkArticle bookmarkArticle : bookmarkArticleList) {
-                bookmarkInfoList.add(BookmarkInfo.ofArticle(bookmarkArticle.getArticle()));
-            }
-            Page<BookmarkInfo> bookmarkInfo = new PageImpl<>(bookmarkInfoList);
-            return BookmarkResponse.of(bookmark, bookmarkInfo);
-        }
+        return getBookmarkResponse(bookmark);
     }
 
     // 북마크 폴더 내용 추가
     @Transactional
-    public BookmarkResponse updateBookmarkFolder(Long bookmarkId, BookmarkAddContentRequest request) {
+    public BookmarkResponse updateBookmarkFolder(Long bookmarkId, BookmarkContentListRequest request) {
         Account currentAccount = getCurrentAccount(accountRepository);
         Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
@@ -127,7 +112,7 @@ public class BookmarkService {
                 bookmarkBookStoreList.add(bookmarkBookStore);
             });
             bookmark.updateBookmarkBookStore(bookmarkBookStoreList);
-        }else {
+        } else {
             List<BookmarkArticle> bookmarkArticleList = new ArrayList<>();
             request.contentIdList().forEach(contentId -> {
                 // 아티클이 있는지 먼저 체크
@@ -148,7 +133,6 @@ public class BookmarkService {
         return getBookmarkFolder(bookmarkId);
     }
 
-
     // 북마크 이름 변경
     @Transactional
     public BookmarkResponse updateBookmarkFolderName(Long bookmarkId, BookmarkFolderNameRequest title) {
@@ -159,4 +143,91 @@ public class BookmarkService {
         return getBookmarkFolder(bookmarkId);
     }
 
+    // 북마크 폴더 내용 삭제 -> 모아보기로 이동
+    @Transactional
+    public Message deleteBookmarkFolderContent(Long bookmarkId, BookmarkContentListRequest request) {
+        Account currentAccount = getCurrentAccount(accountRepository);
+
+        Bookmark bookmarkCollect = bookmarkRepository.findByAccountAndFolderName(currentAccount, "모아보기")
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, "모아보기"));
+
+        for (Long contentId : request.contentIdList()) {
+            if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
+                BookmarkBookStore bookmarkBookStore = bookmarkBookStoreRepository.findByBookmarkIdAndBookStoreId(bookmarkId, contentId)
+                        .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK_CONTENT, contentId));
+                bookmarkBookStore.updateBookmark(bookmarkCollect);
+            } else {
+                BookmarkArticle bookmarkArticle = bookmarkArticleRepository.findByBookmarkIdAndArticleId(bookmarkId, contentId)
+                        .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK_CONTENT, contentId));
+                bookmarkArticle.updateBookmark(bookmarkCollect);
+            }
+        }
+
+        return Message.of("북마크 폴더 내용 삭제 성공");
+    }
+
+    // 모아보기에서 북마크 삭제
+    @Transactional
+    public Message deleteBookmarkContent(Long bookmarkId, BookmarkContentListRequest request) {
+        Bookmark bookmark = bookmarkRepository.findById(bookmarkId)
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
+        if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
+            for (Long contentId : request.contentIdList()) {
+                bookmarkBookStoreRepository.findById(contentId)
+                        .ifPresent(
+                                bookmarkBookStore -> {
+                                    bookmark.removeBookmarkBookStore(bookmarkBookStore);
+                                    bookmarkBookStore.getBookStore().removeBookmarkBookStore(bookmarkBookStore);
+                                }
+                        );
+                bookmarkBookStoreRepository.deleteByIdAndBookmarkId(contentId, bookmarkId);
+                bookmark.updateBookmarkBookStore(bookmarkBookStoreRepository.findAllByBookmark(bookmark));
+            }
+        } else {
+            for (Long contentId : request.contentIdList()) {
+                bookmarkArticleRepository.findById(contentId)
+                        .ifPresent(
+                                bookmarkArticle -> {
+                                    bookmark.removeBookmarkArticle(bookmarkArticle);
+                                    bookmarkArticle.getArticle().removeBookmarkArticle(bookmarkArticle);
+                                }
+                        );
+                bookmarkArticleRepository.deleteByIdAndBookmarkId(contentId, bookmarkId);
+                bookmark.updateBookmarkArticle(bookmarkArticleRepository.findAllByBookmark(bookmark));
+            }
+        }
+
+        return Message.of("북마크 삭제 완료");
+    }
+
+    // 모아보기 북마크 폴더 내용 조회
+    public BookmarkResponse getBookmarkCollect(Long bookmarkFolderId) {
+        Account currentAccount = getCurrentAccount(accountRepository);
+        Bookmark bookmark = bookmarkRepository.findByAccountAndFolderName(currentAccount, "모아보기")
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkFolderId));
+
+        return getBookmarkResponse(bookmark);
+    }
+
+    private BookmarkResponse getBookmarkResponse(Bookmark bookmark) {
+        if (bookmark.getBookmarkType().equals(BookmarkType.BOOKSTORE)) {
+            List<BookmarkBookStore> bookmarkBookStoreList = bookmarkBookStoreRepository.findAllByBookmark(bookmark);
+            List<BookmarkInfo> bookmarkInfoList = new ArrayList<>();
+            for (BookmarkBookStore bookmarkBookStore : bookmarkBookStoreList) {
+                if (bookmarkBookStore.getBookStore() != null)
+                    bookmarkInfoList.add(BookmarkInfo.ofBookStore(bookmarkBookStore.getBookStore()));
+            }
+            Page<BookmarkInfo> bookmarkInfo = new PageImpl<>(bookmarkInfoList);
+            return BookmarkResponse.of(bookmark, bookmarkInfo);
+        } else {
+            List<BookmarkArticle> bookmarkArticleList = bookmarkArticleRepository.findAllByBookmark(bookmark);
+            List<BookmarkInfo> bookmarkInfoList = new ArrayList<>();
+            for (BookmarkArticle bookmarkArticle : bookmarkArticleList) {
+                if (bookmarkArticle.getArticle() != null)
+                    bookmarkInfoList.add(BookmarkInfo.ofArticle(bookmarkArticle.getArticle()));
+            }
+            Page<BookmarkInfo> bookmarkInfo = new PageImpl<>(bookmarkInfoList);
+            return BookmarkResponse.of(bookmark, bookmarkInfo);
+        }
+    }
 }

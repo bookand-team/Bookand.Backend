@@ -24,4 +24,8 @@ public class BookmarkArticle extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bookmark_id")
     private Bookmark bookmark;
+
+    public void updateBookmark(Bookmark bookmark) {
+        this.bookmark = bookmark;
+    }
 }

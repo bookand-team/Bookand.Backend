@@ -17,6 +17,8 @@ public class Policy extends BaseEntity {
     private Long id;
 
     private String title;
+
+    @Column(columnDefinition = "TEXT", length = 30000)
     private String content;
 
     public void updateContent(String content) {

@@ -26,6 +26,7 @@ public class Article extends BaseEntity {
 
     private String title;
     private String content;
+    private String mainImage;
 
     @Enumerated(EnumType.STRING)
     private ArticleCategory category;

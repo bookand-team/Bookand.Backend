@@ -67,4 +67,8 @@ public class Bookmark extends BaseEntity {
         this.bookmarkArticleList.add(bookmarkArticle);
     }
 
+    public void updateFolderImage(String folderImage) {
+        this.folderImage = folderImage;
+    }
+
 }

@@ -171,6 +171,7 @@ public class BookmarkService {
                         .bookStore(bookStore)
                         .build();
                 bookmarkBookStoreRepository.save(bookmarkBookStore);
+                bookmark.updateFolderImage(bookStore.getMainImage());
                 // 북마크에 추가
                 bookmarkBookStoreList.add(bookmarkBookStore);
             });
@@ -187,14 +188,15 @@ public class BookmarkService {
                             throw new BookmarkException(ErrorCode.ALREADY_EXIST_ARTICLE_BOOKMARK, contentId);
                         });
                 // 아티클이 있는지 먼저 체크
-                Article bookStore = articleRepository.findById(contentId)
+                Article article = articleRepository.findById(contentId)
                         .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, contentId));
                 // 북마크-아티클에 추가
                 BookmarkArticle bookmarkBookStore = BookmarkArticle.builder()
                         .bookmark(bookmark)
-                        .article(bookStore)
+                        .article(article)
                         .build();
                 bookmarkArticleRepository.save(bookmarkBookStore);
+                bookmark.updateFolderImage(article.getMainImage());
                 // 북마크에 추가
                 bookmarkArticleList.add(bookmarkBookStore);
             });
@@ -225,12 +227,14 @@ public class BookmarkService {
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
         BookmarkType bookmarkType = bookmark.getBookmarkType();
 
-        Bookmark bookmarkCollect = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkType)
+        Bookmark bookmarkCollect = bookmarkRepository
+                .findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkType)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, INIT_BOOKMARK_FOLDER_NAME));
 
         for (Long contentId : request.contentIdList()) {
             if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
-                BookmarkBookStore bookmarkBookStore = bookmarkBookStoreRepository.findByBookmarkIdAndBookStoreId(bookmarkId, contentId)
+                BookmarkBookStore bookmarkBookStore = bookmarkBookStoreRepository
+                        .findByBookmarkIdAndBookStoreId(bookmarkId, contentId)
                         .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK_CONTENT, contentId));
 
                 // 모아보기에 해당 정보가 없을 시 추가
@@ -240,7 +244,8 @@ public class BookmarkService {
                     }
                 }
             } else {
-                BookmarkArticle bookmarkArticle = bookmarkArticleRepository.findByBookmarkIdAndArticleId(bookmarkId, contentId)
+                BookmarkArticle bookmarkArticle = bookmarkArticleRepository
+                        .findByBookmarkIdAndArticleId(bookmarkId, contentId)
                         .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK_CONTENT, contentId));
 
                 // 모아보기에 해당 정보가 없을 시 추가
@@ -251,13 +256,27 @@ public class BookmarkService {
                 }
             }
         }
+        bookmarkRepository.flush();
+        // 최근 이미지 설정
+        if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
+            int size = bookmark.getBookmarkBookStoreList().size();
+            log.info("size : {}", size);
+            BookmarkBookStore bookStore = bookmark.getBookmarkBookStoreList().get(size - 1);
+            log.info("bookStore : {}", bookStore.getBookStore().getMainImage());
+            bookmark.updateFolderImage(bookStore.getBookStore().getMainImage());
+        } else {
+            int size = bookmark.getBookmarkArticleList().size();
+            BookmarkArticle article = bookmark.getBookmarkArticleList().get(size - 1);
+            bookmark.updateFolderImage(article.getArticle().getMainImage());
+        }
         return Message.of("북마크 폴더 내용 삭제 성공");
     }
 
     // 모아보기에서 북마크 삭제
     @Transactional
     public Message deleteBookmarkContent(Long bookmarkId, BookmarkContentListRequest request) {
-        Bookmark bookmark = bookmarkRepository.findByIdAndFolderNameAndBookmarkType(bookmarkId, INIT_BOOKMARK_FOLDER_NAME, request.bookmarkType())
+        Bookmark bookmark = bookmarkRepository
+                .findByIdAndFolderNameAndBookmarkType(bookmarkId, INIT_BOOKMARK_FOLDER_NAME, request.bookmarkType())
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
         if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
             for (Long contentId : request.contentIdList()) {
@@ -292,7 +311,8 @@ public class BookmarkService {
     public BookmarkResponse getBookmarkCollect(String bookmarkType) {
         Account currentAccount = getCurrentAccount(accountRepository);
         BookmarkType bookmarkTypeEnum = BookmarkType.valueOf(bookmarkType.toUpperCase());
-        Bookmark bookmark = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkTypeEnum)
+        Bookmark bookmark = bookmarkRepository
+                .findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkTypeEnum)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkType));
 
         return getBookmarkResponse(bookmark);

@@ -45,6 +45,8 @@ public class BookmarkService {
     private final BookStoreRepository bookStoreRepository;
     private final ArticleRepository articleRepository;
 
+    private static final String INIT_BOOKMARK_FOLDER_NAME = "모아보기";
+
     // 북마크 폴더 생성
     @Transactional
     public BookmarkResponse createBookmarkFolder(BookmarkRequest bookmarkRequest) {
@@ -95,9 +97,9 @@ public class BookmarkService {
         Account currentAccount = getCurrentAccount(accountRepository);
 
         // 내 모아보기에 있는지 확인
-        bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, "모아보기", request.bookmarkType())
+        bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, request.bookmarkType())
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_INIT_BOOKMARK, bookmarkId));
-        
+
         Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
 
@@ -149,6 +151,9 @@ public class BookmarkService {
         Account currentAccount = getCurrentAccount(accountRepository);
         Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
+        if (bookmark.getFolderName().equals(INIT_BOOKMARK_FOLDER_NAME)) {
+            throw new BookmarkException(ErrorCode.NOT_CHANGE_INIT_BOOKMARK, bookmarkId);
+        }
         bookmark.updateFolderName(title.folderName());
         return getBookmarkFolder(bookmarkId);
     }
@@ -160,8 +165,8 @@ public class BookmarkService {
         Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
         BookmarkType bookmarkType = bookmark.getBookmarkType();
-        Bookmark bookmarkCollect = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, "모아보기", bookmarkType)
-                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, "모아보기"));
+        Bookmark bookmarkCollect = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkType)
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, INIT_BOOKMARK_FOLDER_NAME));
 
         for (Long contentId : request.contentIdList()) {
             if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
@@ -181,7 +186,7 @@ public class BookmarkService {
     // 모아보기에서 북마크 삭제
     @Transactional
     public Message deleteBookmarkContent(Long bookmarkId, BookmarkContentListRequest request) {
-        Bookmark bookmark = bookmarkRepository.findByIdAndFolderNameAndBookmarkType(bookmarkId, "모아보기", request.bookmarkType())
+        Bookmark bookmark = bookmarkRepository.findByIdAndFolderNameAndBookmarkType(bookmarkId, INIT_BOOKMARK_FOLDER_NAME, request.bookmarkType())
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
         if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
             for (Long contentId : request.contentIdList()) {
@@ -216,7 +221,7 @@ public class BookmarkService {
     public BookmarkResponse getBookmarkCollect(String bookmarkType) {
         Account currentAccount = getCurrentAccount(accountRepository);
         BookmarkType bookmarkTypeEnum = BookmarkType.valueOf(bookmarkType.toUpperCase());
-        Bookmark bookmark = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, "모아보기", bookmarkTypeEnum)
+        Bookmark bookmark = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkTypeEnum)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkType));
 
         return getBookmarkResponse(bookmark);

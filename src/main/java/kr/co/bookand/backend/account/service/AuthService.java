@@ -67,6 +67,9 @@ public class AuthService {
     private final BookmarkRepository bookmarkRepository;
     private final RestTemplateService<MultiValueMap<String, String>> apiService;
     private final PasswordEncoder passwordEncoder;
+
+    private static final String INIT_BOOKMARK_FOLDER_NAME = "모아보기";
+
     ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE = new ParameterizedTypeReference<>() {
     };
 
@@ -172,12 +175,12 @@ public class AuthService {
     private List<Bookmark> createInitBookmark(Account saveAccount) {
         Bookmark initBookmarkArticle = Bookmark.builder()
                 .account(saveAccount)
-                .folderName("모아보기")
+                .folderName(INIT_BOOKMARK_FOLDER_NAME)
                 .bookmarkType(BookmarkType.ARTICLE)
                 .build();
         Bookmark initBookmarkBookStore = Bookmark.builder()
                 .account(saveAccount)
-                .folderName("모아보기")
+                .folderName(INIT_BOOKMARK_FOLDER_NAME)
                 .bookmarkType(BookmarkType.BOOKSTORE)
                 .build();
 

@@ -27,6 +27,8 @@ public class AccountDummyData {
     @Value("${admin.secret}")
     private CharSequence ADMIN_PASSWORD;
 
+    private static final String INIT_BOOKMARK_FOLDER_NAME = "모아보기";
+
     @Transactional
     @PostConstruct
     public void dummyData() {
@@ -45,12 +47,12 @@ public class AccountDummyData {
     private List<Bookmark> createInitBookmark(Account saveAccount) {
         Bookmark initBookmarkArticle = Bookmark.builder()
                 .account(saveAccount)
-                .folderName("모아보기")
+                .folderName(INIT_BOOKMARK_FOLDER_NAME)
                 .bookmarkType(BookmarkType.ARTICLE)
                 .build();
         Bookmark initBookmarkBookStore = Bookmark.builder()
                 .account(saveAccount)
-                .folderName("모아보기")
+                .folderName(INIT_BOOKMARK_FOLDER_NAME)
                 .bookmarkType(BookmarkType.BOOKSTORE)
                 .build();
 

@@ -159,21 +159,21 @@ public class BookmarkService {
                         .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKSTORE, contentId));
                 // 기존 정보에 있는지 확인
                 bookmarkBookStoreRepository.findByBookmarkIdAndBookStoreId(bookmark.getId(), contentId)
-                        .ifPresent(bookmarkBookStore -> {
-                            throw new BookmarkException(ErrorCode.ALREADY_EXIST_BOOKSTORE_BOOKMARK, contentId);
+                        .ifPresentOrElse(bookmarkArticle -> {
+                        }, () -> {
+                            // 서점이 있는지 먼저 체크
+                            BookStore bookStore = bookStoreRepository.findById(contentId)
+                                    .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKSTORE, contentId));
+                            // 북마크-서점에 추가
+                            BookmarkBookStore bookmarkBookStore = BookmarkBookStore.builder()
+                                    .bookmark(bookmark)
+                                    .bookStore(bookStore)
+                                    .build();
+                            bookmarkBookStoreRepository.save(bookmarkBookStore);
+                            bookmark.updateFolderImage(bookStore.getMainImage());
+                            // 북마크에 추가
+                            bookmarkBookStoreList.add(bookmarkBookStore);
                         });
-                // 서점이 있는지 먼저 체크
-                BookStore bookStore = bookStoreRepository.findById(contentId)
-                        .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKSTORE, contentId));
-                // 북마크-서점에 추가
-                BookmarkBookStore bookmarkBookStore = BookmarkBookStore.builder()
-                        .bookmark(bookmark)
-                        .bookStore(bookStore)
-                        .build();
-                bookmarkBookStoreRepository.save(bookmarkBookStore);
-                bookmark.updateFolderImage(bookStore.getMainImage());
-                // 북마크에 추가
-                bookmarkBookStoreList.add(bookmarkBookStore);
             });
             bookmark.updateBookmarkBookStore(bookmarkBookStoreList);
         } else {
@@ -184,21 +184,22 @@ public class BookmarkService {
                         .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_ARTICLE, contentId));
                 // 기존 정보에 있는지 확인
                 bookmarkArticleRepository.findByBookmarkIdAndArticleId(bookmark.getId(), contentId)
-                        .ifPresent(bookmarkArticle -> {
-                            throw new BookmarkException(ErrorCode.ALREADY_EXIST_ARTICLE_BOOKMARK, contentId);
+                        .ifPresentOrElse(bookmarkArticle -> {
+                        }, () -> {
+                            // 아티클이 있는지 먼저 체크
+                            Article article = articleRepository.findById(contentId)
+                                    .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, contentId));
+                            // 북마크-아티클에 추가
+                            BookmarkArticle bookmarkBookStore = BookmarkArticle.builder()
+                                    .bookmark(bookmark)
+                                    .article(article)
+                                    .build();
+                            bookmarkArticleRepository.save(bookmarkBookStore);
+                            bookmark.updateFolderImage(article.getMainImage());
+                            // 북마크에 추가
+                            bookmarkArticleList.add(bookmarkBookStore);
                         });
-                // 아티클이 있는지 먼저 체크
-                Article article = articleRepository.findById(contentId)
-                        .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, contentId));
-                // 북마크-아티클에 추가
-                BookmarkArticle bookmarkBookStore = BookmarkArticle.builder()
-                        .bookmark(bookmark)
-                        .article(article)
-                        .build();
-                bookmarkArticleRepository.save(bookmarkBookStore);
-                bookmark.updateFolderImage(article.getMainImage());
-                // 북마크에 추가
-                bookmarkArticleList.add(bookmarkBookStore);
+
             });
             bookmark.updateBookmarkArticle(bookmarkArticleList);
         }

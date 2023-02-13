@@ -34,6 +34,13 @@ public class AccountService {
         }
     }
 
+    public Account checkAccountUser() {
+        Role role = getCurrentAccount().getRole();
+        if (!role.toString().equals("USER"))
+            throw new AccountException(ErrorCode.ROLE_ACCESS_ERROR, role);
+        return getCurrentAccount();
+    }
+
     // 내 정보 조회
     public MemberInfo getAccount() {
         return accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())

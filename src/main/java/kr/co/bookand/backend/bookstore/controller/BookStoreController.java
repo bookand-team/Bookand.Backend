@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.bookand.backend.bookstore.service.BookStoreService;
 import kr.co.bookand.backend.common.domain.Message;
+import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -69,4 +70,24 @@ public class BookStoreController {
     public ResponseEntity<BookStoreResponse> updateBookStoreStatus(@PathVariable Long id) {
         return ResponseEntity.ok(bookStoreService.updateBookStoreStatus(id));
     }
+
+    @ApiOperation(value = "새로운 서점 제보")
+    @PostMapping("/report")
+    public ResponseEntity<Message> reportBookStore(@RequestBody ReportBookStoreRequest reportBookStoreRequest) {
+        return ResponseEntity.ok(bookStoreService.reportBookStore(reportBookStoreRequest));
+    }
+
+    @ApiOperation(value = "서점 제보 답변")
+    @PutMapping("/report/{reportId}/answer")
+    public ResponseEntity<Message> answerReportBookStore(@PathVariable Long reportId, @RequestBody AnswerReportRequest answerReportRequest) {
+        return ResponseEntity.ok(bookStoreService.answerReportBookStore(reportId, answerReportRequest));
+    }
+
+    @ApiOperation(value = "서점 전체 조회")
+    @GetMapping("/report")
+    public ResponseEntity<PageResponse<BookStoreReportList>> getBookStoreReportList(@PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(bookStoreService.getBookStoreReportList(pageable));
+    }
+
+
 }

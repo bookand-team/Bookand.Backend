@@ -1,13 +1,17 @@
 package kr.co.bookand.backend.bookstore.service;
 
+import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
 import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
+import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreImageRepository;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
+import kr.co.bookand.backend.bookstore.repository.ReportBookStoreRepository;
 import kr.co.bookand.backend.common.domain.Status;
+import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,7 @@ public class BookStoreService {
 
     private final BookStoreRepository bookStoreRepository;
     private final BookStoreImageRepository bookStoreImageRepository;
+    private final ReportBookStoreRepository reportBookStoreRepository;
     private final AccountService accountService;
 
     @Transactional
@@ -136,5 +141,27 @@ public class BookStoreService {
         BookStore bookStore = bookStoreRepository.findById(id).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
         bookStore.updateBookStoreStatus(bookStore.getStatus() == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE);
         return BookStoreResponse.of(bookStore);
+    }
+
+    @Transactional
+    public Message reportBookStore(ReportBookStoreRequest reportBookStoreRequest) {
+        Account account = accountService.checkAccountUser();
+        ReportBookStore reportBookStore = reportBookStoreRequest.toEntity(account);
+        reportBookStoreRepository.save(reportBookStore);
+        return Message.of("제보 완료");
+    }
+
+    @Transactional
+    public Message answerReportBookStore(Long reportId, AnswerReportRequest answerReportRequest) {
+        accountService.isAccountAdmin();
+        ReportBookStore reportBookStore = reportBookStoreRepository.findById(reportId).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE_REPORT, reportId));
+        reportBookStore.updateAnswer(answerReportRequest);
+        return Message.of("답변 완료");
+    }
+
+    public PageResponse<BookStoreReportList> getBookStoreReportList(Pageable pageable) {
+        accountService.isAccountAdmin();
+        List<BookStoreReportList> bookStoreReportLists = reportBookStoreRepository.findAll().stream().map(BookStoreReportList::of).toList();
+        return PageResponse.of(pageable, bookStoreReportLists);
     }
 }

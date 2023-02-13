@@ -1,14 +1,15 @@
 package kr.co.bookand.backend.bookstore.domain.dto;
 
+import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
 import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
+import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import kr.co.bookand.backend.common.domain.Status;
 import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreImageDto.*;
@@ -122,8 +123,6 @@ public class BookStoreDto {
                     .bookmark(bookmark)
                     .build();
         }
-
-
     }
 
     public record BookStoreListRequest(
@@ -169,6 +168,60 @@ public class BookStoreDto {
                     .bookstore(PageResponse.of(bookStoreResponsePage))
                     .build();
         }
+    }
 
+    public record ReportBookStoreRequest(
+            String name,
+            String address
+
+    ) {
+        @Builder
+        public ReportBookStoreRequest {
+        }
+
+        public ReportBookStore toEntity(Account account) {
+            return ReportBookStore.builder()
+                    .name(name)
+                    .address(address)
+                    .isAnswered(false)
+                    .answerContent("미답변")
+                    .account(account)
+                    .build();
+        }
+    }
+
+    public record AnswerReportRequest(
+            String answerTitle,
+            String answerContent
+    ) {
+        @Builder
+        public AnswerReportRequest {
+        }
+    }
+
+    public record BookStoreReportList(
+            Long reportId,
+            String providerEmail,
+            String bookStoreName,
+            int reportCount,
+            Boolean isAnswered,
+            String createdAt,
+            String answeredAt
+    ) {
+        @Builder
+        public BookStoreReportList {
+        }
+
+        public static BookStoreReportList of(ReportBookStore reportBookStore) {
+            return BookStoreReportList.builder()
+                    .reportId(reportBookStore.getId())
+                    .providerEmail(reportBookStore.getAccount().getEmail())
+                    .bookStoreName(reportBookStore.getName())
+                    .reportCount(1)
+                    .isAnswered(reportBookStore.getIsAnswered())
+                    .createdAt(reportBookStore.getCreatedAt())
+                    .answeredAt(reportBookStore.getAnsweredAt())
+                    .build();
+        }
     }
 }

@@ -83,7 +83,7 @@ public class BookStoreController {
         return ResponseEntity.ok(bookStoreService.answerReportBookStore(reportId, answerReportRequest));
     }
 
-    @ApiOperation(value = "서점 전체 조회")
+    @ApiOperation(value = "서점 제보 전체 조회")
     @GetMapping("/report")
     public ResponseEntity<PageResponse<BookStoreReportList>> getBookStoreReportList(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(bookStoreService.getBookStoreReportList(pageable));

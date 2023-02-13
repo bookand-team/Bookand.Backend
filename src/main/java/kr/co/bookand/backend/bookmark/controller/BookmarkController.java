@@ -70,7 +70,7 @@ public class BookmarkController {
     }
 
     @ApiOperation(value = "서점 북마크 추가")
-    @PostMapping("/bookstore/{bookstoreId}")
+    @PostMapping("/bookstores/{bookstoreId}")
     public Message createStoreBookmark(@PathVariable Long bookstoreId) {
         return bookmarkService.createBookStoreBookmark(bookstoreId);
     }

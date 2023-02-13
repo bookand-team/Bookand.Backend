@@ -15,7 +15,7 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    @ApiOperation(value = "북마크 생성")
+    @ApiOperation(value = "북마크 폴더 생성")
     @PostMapping("")
     public BookmarkResponse createBookmarkFolder(@RequestBody BookmarkRequest bookmarkRequest) {
         return bookmarkService.createBookmarkFolder(bookmarkRequest);
@@ -63,4 +63,15 @@ public class BookmarkController {
         return bookmarkService.deleteBookmarkFolderContent(bookmarkFolderId, bookmarkRequest);
     }
 
+    @ApiOperation(value = "아티클 북마크 추가")
+    @PostMapping("/articles/{articleId}")
+    public Message createArticleBookmark(@PathVariable Long articleId) {
+        return bookmarkService.createArticleBookmark(articleId);
+    }
+
+    @ApiOperation(value = "서점 북마크 추가")
+    @PostMapping("/bookstore/{bookstoreId}")
+    public Message createStoreBookmark(@PathVariable Long bookstoreId) {
+        return bookmarkService.createBookStoreBookmark(bookstoreId);
+    }
 }

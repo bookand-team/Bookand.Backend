@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.article.service;
 
+import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleBookStore;
@@ -8,6 +9,7 @@ import kr.co.bookand.backend.article.exception.ArticleException;
 import kr.co.bookand.backend.article.repository.ArticleBookStoreRepository;
 import kr.co.bookand.backend.article.repository.ArticleRepository;
 
+import kr.co.bookand.backend.bookmark.domain.BookmarkArticle;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
 import kr.co.bookand.backend.common.domain.Status;

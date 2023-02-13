@@ -47,6 +47,50 @@ public class BookmarkService {
 
     private static final String INIT_BOOKMARK_FOLDER_NAME = "모아보기";
 
+
+    public Bookmark getMyBookmark(Account account, BookmarkType bookmarkType) {
+        return bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(account, INIT_BOOKMARK_FOLDER_NAME, bookmarkType)
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_INIT_BOOKMARK, bookmarkType));
+    }
+
+    // 아티클 북마크 추가
+    @Transactional
+    public Message createArticleBookmark(Long articleId) {
+        Bookmark myBookmark = getMyBookmark(getCurrentAccount(accountRepository), BookmarkType.ARTICLE);
+        // 아티클이 있는지 먼저 체크
+        Article bookStore = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, articleId));
+        // 북마크-아티클에 추가
+        BookmarkArticle bookmarkArticle = BookmarkArticle.builder()
+                .bookmark(myBookmark)
+                .article(bookStore)
+                .build();
+        bookmarkArticleRepository.save(bookmarkArticle);
+        // 북마크에 추가
+        myBookmark.addBookmarkArticle(bookmarkArticle);
+
+        return Message.of("Article 추가");
+    }
+
+    // 서점 북마크 추가
+    @Transactional
+    public Message createBookStoreBookmark(Long bookmarkId) {
+        Bookmark myBookmark = getMyBookmark(getCurrentAccount(accountRepository), BookmarkType.ARTICLE);
+        // 서점이 있는지 먼저 체크
+        BookStore bookStore = bookStoreRepository.findById(bookmarkId)
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKSTORE, bookmarkId));
+        // 북마크-서점에 추가
+        BookmarkBookStore bookmarkBookStore = BookmarkBookStore.builder()
+                .bookmark(myBookmark)
+                .bookStore(bookStore)
+                .build();
+        bookmarkBookStoreRepository.save(bookmarkBookStore);
+        // 북마크에 추가
+        myBookmark.addBookmarkBookStore(bookmarkBookStore);
+
+        return Message.of("BookStore 추가");
+    }
+
     // 북마크 폴더 생성
     @Transactional
     public BookmarkResponse createBookmarkFolder(BookmarkRequest bookmarkRequest) {
@@ -96,14 +140,13 @@ public class BookmarkService {
     public BookmarkResponse updateBookmarkFolder(Long bookmarkId, BookmarkContentListRequest request) {
         Account currentAccount = getCurrentAccount(accountRepository);
 
-        // 내 모아보기에 있는지 확인
-        bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, request.bookmarkType())
+        Bookmark myBookmark = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, request.bookmarkType())
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_INIT_BOOKMARK, bookmarkId));
 
         Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
 
-        // 북마크 ID와 request 가 일치하는 지 확인
+        // 북마크 Id와 request 의 타입이 일치하는 지 확인
         if (!bookmark.getBookmarkType().equals(request.bookmarkType())) {
             throw new BookmarkException(ErrorCode.NOT_MATCH_BOOKMARK_TYPE, bookmarkId);
         }
@@ -111,6 +154,10 @@ public class BookmarkService {
         if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
             List<BookmarkBookStore> bookmarkBookStoreList = new ArrayList<>();
             request.contentIdList().forEach(contentId -> {
+                // 모아보기에 있는지 체크
+                bookmarkBookStoreRepository.findByBookmarkIdAndBookStoreId(myBookmark.getId(), contentId)
+                        .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKSTORE, contentId));
+
                 // 서점이 있는지 먼저 체크
                 BookStore bookStore = bookStoreRepository.findById(contentId)
                         .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKSTORE, contentId));
@@ -127,6 +174,10 @@ public class BookmarkService {
         } else {
             List<BookmarkArticle> bookmarkArticleList = new ArrayList<>();
             request.contentIdList().forEach(contentId -> {
+                // 모아보기에 있는지 체크
+                bookmarkArticleRepository.findByBookmarkIdAndArticleId(myBookmark.getId(), contentId)
+                        .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_ARTICLE, contentId));
+
                 // 아티클이 있는지 먼저 체크
                 Article bookStore = articleRepository.findById(contentId)
                         .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, contentId));

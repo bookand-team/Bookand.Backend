@@ -27,7 +27,7 @@ public class BookmarkController {
         return bookmarkService.getBookmarkFolderList(bookmarkType);
     }
 
-    @ApiOperation(value = "북마크 내용 조회")
+    @ApiOperation(value = "북마크 상세 조회")
     @GetMapping("/folders/{bookmarkFolderId}")
     public BookmarkResponse getBookmarkFolder(@PathVariable Long bookmarkFolderId) {
         return bookmarkService.getBookmarkFolder(bookmarkFolderId);
@@ -46,9 +46,9 @@ public class BookmarkController {
     }
 
     @ApiOperation(value = "모아보기 북마크 보기")
-    @GetMapping("/{bookmarkFolderId}")
-    public BookmarkResponse getBookmarkCollect(@PathVariable Long bookmarkFolderId) {
-        return bookmarkService.getBookmarkCollect(bookmarkFolderId);
+    @GetMapping("/collections")
+    public BookmarkResponse getBookmarkCollect(@RequestParam String bookmarkType) {
+        return bookmarkService.getBookmarkCollect(bookmarkType);
     }
 
     @ApiOperation(value = "모아보기 북마크 삭제")

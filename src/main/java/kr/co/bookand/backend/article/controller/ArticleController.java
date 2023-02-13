@@ -15,7 +15,7 @@ import static kr.co.bookand.backend.common.domain.dto.PageStateDto.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/article")
+@RequestMapping("/api/v1/article")
 @Api(tags = "아티클 API")
 public class ArticleController {
 

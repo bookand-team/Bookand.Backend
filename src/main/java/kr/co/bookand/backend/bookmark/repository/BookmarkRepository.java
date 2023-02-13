@@ -13,5 +13,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     Optional<Bookmark> findByIdAndAccount(Long bookmarkId, Account currentAccount);
 
-    Optional<Bookmark> findByAccountAndFolderName(Account currentAccount, String folderName);
+    Optional<Bookmark> findByAccountAndFolderNameAndBookmarkType(Account currentAccount, String folderName, BookmarkType bookmarkType);
+
+    Optional<Bookmark> findByIdAndFolderNameAndBookmarkType(Long bookmarkId, String folderName, BookmarkType bookmarkType);
 }

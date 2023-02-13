@@ -14,7 +14,7 @@ import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 import static kr.co.bookand.backend.common.domain.dto.PageStateDto.*;
 
 @RestController
-@RequestMapping("api/v1/bookstore")
+@RequestMapping("/api/v1/bookstore")
 @RequiredArgsConstructor
 @Api(tags = "서점 API")
 public class BookStoreController {

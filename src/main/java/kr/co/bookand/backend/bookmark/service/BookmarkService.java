@@ -93,8 +93,18 @@ public class BookmarkService {
     @Transactional
     public BookmarkResponse updateBookmarkFolder(Long bookmarkId, BookmarkContentListRequest request) {
         Account currentAccount = getCurrentAccount(accountRepository);
+
+        // 내 모아보기에 있는지 확인
+        bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, "모아보기", request.bookmarkType())
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_INIT_BOOKMARK, bookmarkId));
+        
         Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
+
+        // 북마크 ID와 request 가 일치하는 지 확인
+        if (!bookmark.getBookmarkType().equals(request.bookmarkType())) {
+            throw new BookmarkException(ErrorCode.NOT_MATCH_BOOKMARK_TYPE, bookmarkId);
+        }
 
         if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
             List<BookmarkBookStore> bookmarkBookStoreList = new ArrayList<>();
@@ -147,8 +157,10 @@ public class BookmarkService {
     @Transactional
     public Message deleteBookmarkFolderContent(Long bookmarkId, BookmarkContentListRequest request) {
         Account currentAccount = getCurrentAccount(accountRepository);
-
-        Bookmark bookmarkCollect = bookmarkRepository.findByAccountAndFolderName(currentAccount, "모아보기")
+        Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
+        BookmarkType bookmarkType = bookmark.getBookmarkType();
+        Bookmark bookmarkCollect = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, "모아보기", bookmarkType)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, "모아보기"));
 
         for (Long contentId : request.contentIdList()) {
@@ -169,30 +181,30 @@ public class BookmarkService {
     // 모아보기에서 북마크 삭제
     @Transactional
     public Message deleteBookmarkContent(Long bookmarkId, BookmarkContentListRequest request) {
-        Bookmark bookmark = bookmarkRepository.findById(bookmarkId)
+        Bookmark bookmark = bookmarkRepository.findByIdAndFolderNameAndBookmarkType(bookmarkId, "모아보기", request.bookmarkType())
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
         if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
             for (Long contentId : request.contentIdList()) {
-                bookmarkBookStoreRepository.findById(contentId)
+                bookmarkBookStoreRepository.findByBookStoreIdAndBookmark(contentId, bookmark)
                         .ifPresent(
                                 bookmarkBookStore -> {
                                     bookmark.removeBookmarkBookStore(bookmarkBookStore);
                                     bookmarkBookStore.getBookStore().removeBookmarkBookStore(bookmarkBookStore);
                                 }
                         );
-                bookmarkBookStoreRepository.deleteByIdAndBookmarkId(contentId, bookmarkId);
+                bookmarkBookStoreRepository.deleteByBookStoreIdAndBookmarkId(contentId, bookmarkId);
                 bookmark.updateBookmarkBookStore(bookmarkBookStoreRepository.findAllByBookmark(bookmark));
             }
         } else {
             for (Long contentId : request.contentIdList()) {
-                bookmarkArticleRepository.findById(contentId)
+                bookmarkArticleRepository.findByArticleIdAndBookmark(contentId, bookmark)
                         .ifPresent(
                                 bookmarkArticle -> {
                                     bookmark.removeBookmarkArticle(bookmarkArticle);
                                     bookmarkArticle.getArticle().removeBookmarkArticle(bookmarkArticle);
                                 }
                         );
-                bookmarkArticleRepository.deleteByIdAndBookmarkId(contentId, bookmarkId);
+                bookmarkArticleRepository.deleteByArticleIdAndBookmarkId(contentId, bookmarkId);
                 bookmark.updateBookmarkArticle(bookmarkArticleRepository.findAllByBookmark(bookmark));
             }
         }
@@ -201,10 +213,11 @@ public class BookmarkService {
     }
 
     // 모아보기 북마크 폴더 내용 조회
-    public BookmarkResponse getBookmarkCollect(Long bookmarkFolderId) {
+    public BookmarkResponse getBookmarkCollect(String bookmarkType) {
         Account currentAccount = getCurrentAccount(accountRepository);
-        Bookmark bookmark = bookmarkRepository.findByAccountAndFolderName(currentAccount, "모아보기")
-                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkFolderId));
+        BookmarkType bookmarkTypeEnum = BookmarkType.valueOf(bookmarkType.toUpperCase());
+        Bookmark bookmark = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, "모아보기", bookmarkTypeEnum)
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkType));
 
         return getBookmarkResponse(bookmark);
     }

@@ -51,4 +51,24 @@ public class Bookmark extends BaseEntity {
         this.bookmarkArticleList = bookmarkArticle;
     }
 
+    public void removeBookmarkBookStore(BookmarkBookStore bookmarkBookStore) {
+        this.bookmarkBookStoreList.remove(bookmarkBookStore);
+    }
+
+    public void removeBookmarkArticle(BookmarkArticle bookmarkArticle) {
+        this.bookmarkArticleList.remove(bookmarkArticle);
+    }
+
+    public void addBookmarkBookStore(BookmarkBookStore bookmarkBookStore) {
+        this.bookmarkBookStoreList.add(bookmarkBookStore);
+    }
+
+    public void addBookmarkArticle(BookmarkArticle bookmarkArticle) {
+        this.bookmarkArticleList.add(bookmarkArticle);
+    }
+
+    public void updateFolderImage(String folderImage) {
+        this.folderImage = folderImage;
+    }
+
 }

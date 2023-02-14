@@ -104,7 +104,7 @@ public class AuthDto {
         public SignDto {
         }
 
-        public Account toAccount(String email, String socialType, String providerEmail, PasswordEncoder passwordEncoder, String suffix, String nickname ) {
+        public Account toAccount(String email, String socialType, String providerEmail, PasswordEncoder passwordEncoder, String suffix, String nickname) {
             return Account.builder()
                     .email(email)
                     .provider(socialType)

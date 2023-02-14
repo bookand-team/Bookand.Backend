@@ -33,8 +33,6 @@ public class Account extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean isSign = false;
-
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Bookmark> bookmarkList = new ArrayList<>();
@@ -55,11 +53,14 @@ public class Account extends BaseEntity {
         this.nickname = nickname;
     }
 
-    public void updateIsSign() {
-        this.isSign = !isSign;
-    }
-
     public void setIdForTest(Long id) {
         this.id = id;
+    }
+
+    public void updateBookmarkList(List<Bookmark> bookmark) {
+        if (bookmarkList == null) {
+            bookmarkList = new ArrayList<>();
+        }
+        bookmarkList.addAll(bookmark);
     }
 }

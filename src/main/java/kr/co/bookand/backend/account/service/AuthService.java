@@ -17,6 +17,9 @@ import kr.co.bookand.backend.account.domain.dto.TokenDto;
 import kr.co.bookand.backend.account.exception.*;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
+import kr.co.bookand.backend.bookmark.domain.Bookmark;
+import kr.co.bookand.backend.bookmark.domain.BookmarkType;
+import kr.co.bookand.backend.bookmark.repository.BookmarkRepository;
 import kr.co.bookand.backend.common.service.RestTemplateService;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import kr.co.bookand.backend.common.domain.Message;
@@ -61,8 +64,12 @@ public class AuthService {
     private final TokenFactory tokenFactory;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final AccountRepository accountRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final RestTemplateService<MultiValueMap<String, String>> apiService;
     private final PasswordEncoder passwordEncoder;
+
+    private static final String INIT_BOOKMARK_FOLDER_NAME = "모아보기";
+
     ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE = new ParameterizedTypeReference<>() {
     };
 
@@ -95,8 +102,6 @@ public class AuthService {
             return LoginResponse.builder().tokenResponse(signTokenDto).httpStatus(HttpStatus.NOT_FOUND).build();
         }
     }
-
-
 
 
     public TokenDto login(AccountDto.LoginRequest loginRequest) {
@@ -158,9 +163,30 @@ public class AuthService {
         String providerEmail = signKey.providerEmail();
         duplicateEmailAndNickName(email, nickname);
         Account account = signTokenDto.toAccount(email, socialType, providerEmail, passwordEncoder, suffix, nickname);
-        accountRepository.save(account);
+        Account saveAccount = accountRepository.save(account);
+
+        List<Bookmark> initBookmark = createInitBookmark(saveAccount);
+        saveAccount.updateBookmarkList(initBookmark);
+
         TokenDto tokenDto = login(account.toAccountRequestDto(suffix).toLoginRequest());
         return tokenDto.toTokenDto();
+    }
+
+    private List<Bookmark> createInitBookmark(Account saveAccount) {
+        Bookmark initBookmarkArticle = Bookmark.builder()
+                .account(saveAccount)
+                .folderName(INIT_BOOKMARK_FOLDER_NAME)
+                .bookmarkType(BookmarkType.ARTICLE)
+                .build();
+        Bookmark initBookmarkBookStore = Bookmark.builder()
+                .account(saveAccount)
+                .folderName(INIT_BOOKMARK_FOLDER_NAME)
+                .bookmarkType(BookmarkType.BOOKSTORE)
+                .build();
+
+        bookmarkRepository.save(initBookmarkArticle);
+        bookmarkRepository.save(initBookmarkBookStore);
+        return Arrays.asList(initBookmarkArticle, initBookmarkBookStore);
     }
 
     public void checkSignUp(SigningAccount signKey) {
@@ -323,7 +349,10 @@ public class AuthService {
                 .providerEmail("providerEmail")
                 .build();
         Account account = middleAccount.toManager(passwordEncoder, createRequestDto.email(), createRequestDto.password(), createRequestDto.nickname());
-        accountRepository.save(account);
+        Account saveAccount = accountRepository.save(account);
+
+        List<Bookmark> initBookmark = createInitBookmark(saveAccount);
+        saveAccount.updateBookmarkList(initBookmark);
         return Message.of("생성 완료");
     }
 

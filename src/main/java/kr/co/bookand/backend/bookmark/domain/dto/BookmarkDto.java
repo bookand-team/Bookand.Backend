@@ -34,39 +34,45 @@ public class BookmarkDto {
             String bookmarkImage,
             PageResponse<BookmarkInfo> bookmarkInfo
     ) {
+        @Builder
+        public BookmarkResponse{
+        }
         public static BookmarkResponse of(Bookmark bookmark, Page<BookmarkInfo> bookmarkInfo) {
-            return new BookmarkResponse(
-                    bookmark.getId(),
-                    bookmark.getFolderName(),
-                    bookmark.getBookmarkType(),
-                    bookmark.getFolderImage(),
-                    PageResponse.of(bookmarkInfo)
-            );
+            return BookmarkResponse.builder()
+                    .bookmarkId(bookmark.getId())
+                    .folderName(bookmark.getFolderName())
+                    .bookmarkType(bookmark.getBookmarkType())
+                    .bookmarkImage(bookmark.getFolderImage())
+                    .bookmarkInfo(PageResponse.of(bookmarkInfo))
+                    .build();
         }
     }
 
     public record BookmarkInfo(
-            Long id,
+            Long bookmarkId,
             String title,
             String image,
             String location
     ) {
+        @Builder
+        public BookmarkInfo {
+        }
         public static BookmarkInfo ofBookStore(BookStore bookStore) {
-            return new BookmarkInfo(
-                    bookStore.getId(),
-                    bookStore.getName(),
-                    bookStore.getMainImage(),
-                    bookStore.getAddress()
-            );
+            return BookmarkInfo.builder()
+                    .bookmarkId(bookStore.getId())
+                    .title(bookStore.getName())
+                    .image(bookStore.getMainImage())
+                    .location(bookStore.getAddress())
+                    .build();
         }
 
         public static BookmarkInfo ofArticle(Article article) {
-            return new BookmarkInfo(
-                    article.getId(),
-                    article.getTitle(),
-                    "image",
-                    "location"
-            );
+            return BookmarkInfo.builder()
+                    .bookmarkId(article.getId())
+                    .title(article.getTitle())
+                    .image(article.getMainImage())
+                    .location("location")
+                    .build();
         }
 
     }
@@ -82,17 +88,20 @@ public class BookmarkDto {
             BookmarkType bookmarkType,
             String bookmarkImage
     ) {
+        @Builder
+        public BookmarkFolderResponse {
+        }
         public static BookmarkFolderResponse of(Bookmark bookmark) {
-            return new BookmarkFolderResponse(
-                    bookmark.getId(),
-                    bookmark.getFolderName(),
-                    bookmark.getBookmarkType(),
-                    bookmark.getFolderImage()
-            );
+            return BookmarkFolderResponse.builder()
+                    .bookmarkId(bookmark.getId())
+                    .folderName(bookmark.getFolderName())
+                    .bookmarkType(bookmark.getBookmarkType())
+                    .bookmarkImage(bookmark.getFolderImage())
+                    .build();
         }
     }
 
-    public record BookmarkAddContentRequest(
+    public record BookmarkContentListRequest(
             List<Long> contentIdList,
             BookmarkType bookmarkType
     ) {

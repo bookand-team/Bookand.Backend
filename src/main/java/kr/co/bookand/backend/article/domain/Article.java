@@ -26,6 +26,7 @@ public class Article extends BaseEntity {
 
     private String title;
     private String content;
+    private String mainImage;
 
     @Enumerated(EnumType.STRING)
     private ArticleCategory category;
@@ -75,5 +76,9 @@ public class Article extends BaseEntity {
     }
     public void removeArticleAndBookStore(ArticleBookStore articleBookStore) {
         this.articleBookStoreList.remove(articleBookStore);
+    }
+
+    public void removeBookmarkArticle(BookmarkArticle bookmarkArticle) {
+        this.markArticleList.remove(bookmarkArticle);
     }
 }

@@ -42,6 +42,9 @@ public class Article extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MemberIdFilter memberIdFilter;
 
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    private List<ArticleTag> articleTagList = new ArrayList<>();
+
     @JsonIgnore
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookmarkArticle> markArticleList = new ArrayList<>();
@@ -80,5 +83,12 @@ public class Article extends BaseEntity {
 
     public void removeBookmarkArticle(BookmarkArticle bookmarkArticle) {
         this.markArticleList.remove(bookmarkArticle);
+    }
+
+    public void updateArticleTagList(List<ArticleTag> articleTagList) {
+        if (articleTagList == null) {
+            articleTagList = new ArrayList<>();
+        }
+        this.articleTagList = articleTagList;
     }
 }

@@ -7,6 +7,7 @@ import kr.co.bookand.backend.common.domain.Message;
 import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class BookStoreController {
 
     @ApiOperation(value = "서점 전체 조회")
     @GetMapping("")
-    public ResponseEntity<BookStorePageResponse> getBookStoreList(@PageableDefault Pageable pageable) {
+    public ResponseEntity<BookStorePageResponse> getBookStoreList(@PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(bookStoreService.getBookStoreList(pageable));
     }
 

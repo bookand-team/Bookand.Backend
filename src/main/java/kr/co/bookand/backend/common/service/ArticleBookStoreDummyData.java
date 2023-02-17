@@ -4,8 +4,10 @@ package kr.co.bookand.backend.common.service;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleBookStore;
 import kr.co.bookand.backend.article.domain.ArticleCategory;
+import kr.co.bookand.backend.article.domain.ArticleTag;
 import kr.co.bookand.backend.article.repository.ArticleBookStoreRepository;
 import kr.co.bookand.backend.article.repository.ArticleRepository;
+import kr.co.bookand.backend.article.repository.ArticleTagRepository;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Component
@@ -28,6 +32,7 @@ public class ArticleBookStoreDummyData {
     private final ArticleBookStoreRepository articleBookStoreRepository;
     private final BookStoreRepository bookStoreRepository;
     private final ArticleRepository articleRepository;
+    private final ArticleTagRepository articleTagRepository;
 
     @PostConstruct
     @Transactional
@@ -64,17 +69,20 @@ public class ArticleBookStoreDummyData {
                     .title("title%d".formatted(i))
                     .content("content%d".formatted(i))
                     .writer("writer%d".formatted(i))
+                    .articleTagList(null)
                     .category(ArticleCategory.BOOK_REVIEW)
                     .memberIdFilter(MemberIdFilter.ALL)
                     .deviceOSFilter(DeviceOSFilter.ALL)
                     .status(Status.INVISIBLE)
                     .articleBookStoreList(null)
+                    .mainImage("mainImage%d".formatted(i))
                     .deviceOSFilter(DeviceOSFilter.ALL)
                     .memberIdFilter(MemberIdFilter.ALL)
                     .view(1)
                     .build();
 
-            articleRepository.save(article);
+            Article save = articleRepository.save(article);
+            save.updateArticleTagList(articleTagDummyData(article));
         }
     }
 
@@ -89,5 +97,18 @@ public class ArticleBookStoreDummyData {
                     .build());
             articleBookStoreRepository.save(articleBookStore);
         }
+    }
+
+    public List<ArticleTag> articleTagDummyData(Article article) {
+        List<ArticleTag> articleTagList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            ArticleTag articleTag = ArticleTag.builder()
+                    .tag("name%d".formatted(i))
+                    .article(article)
+                    .build();
+            articleTagRepository.save(articleTag);
+            articleTagList.add(articleTag);
+        }
+        return articleTagList;
     }
 }

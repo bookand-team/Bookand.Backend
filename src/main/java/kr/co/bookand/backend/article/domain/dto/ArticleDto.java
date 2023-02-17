@@ -3,6 +3,7 @@ package kr.co.bookand.backend.article.domain.dto;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleBookStore;
 import kr.co.bookand.backend.article.domain.ArticleCategory;
+import kr.co.bookand.backend.article.domain.ArticleTag;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.common.domain.DeviceOSFilter;
 import kr.co.bookand.backend.common.domain.MemberIdFilter;
@@ -23,19 +24,23 @@ public class ArticleDto {
 
     public record ArticleRequest(
             String title,
+            String mainImage,
             String content,
             String category,
             String writer,
             String status,
+            List<String> tags,
             List<Long> bookStoreList
     ) {
         public Article toEntity() {
             return Article.builder()
                     .title(title)
+                    .mainImage(mainImage)
                     .content(content)
                     .category(ArticleCategory.valueOf(category))
                     .writer(writer)
                     .status(Status.INVISIBLE)
+                    .articleTagList(null)
                     .articleBookStoreList(null)
                     .markArticleList(null)
                     .deviceOSFilter(DeviceOSFilter.ALL)
@@ -47,18 +52,20 @@ public class ArticleDto {
     public record ArticleResponse(
             Long id,
             String title,
+            String mainImage,
             String content,
             ArticleCategory category,
             String writer,
             Status status,
             int view,
             int bookmark,
-            String createdDate,
-            String modifiedDate,
             boolean visibility,
+            List<String> articleTagList,
             List<BookStoreResponse> bookStoreList,
-            ArticleFilter filter
-    ) {
+            ArticleFilter filter,
+            String createdDate,
+            String modifiedDate
+            ) {
         @Builder
         public ArticleResponse {
         }
@@ -73,17 +80,19 @@ public class ArticleDto {
             return ArticleResponse.builder()
                     .id(article.getId())
                     .title(article.getTitle())
+                    .mainImage(article.getMainImage())
                     .content(article.getContent())
                     .category(article.getCategory())
                     .writer(article.getWriter())
                     .status(article.getStatus())
                     .view(article.getView())
                     .bookmark(bookmark)
-                    .createdDate(article.getCreatedAt())
-                    .modifiedDate(article.getModifiedAt())
+                    .articleTagList(article.getArticleTagList().stream().map(ArticleTag::getTag).toList())
                     .bookStoreList(bookStoreList.stream().map(BookStoreResponse::of).toList())
                     .visibility(article.isVisibility())
                     .filter(ArticleFilter.of(article))
+                    .createdDate(article.getCreatedAt())
+                    .modifiedDate(article.getModifiedAt())
                     .build();
         }
     }
@@ -124,5 +133,73 @@ public class ArticleDto {
                     .build();
         }
 
+    }
+
+    public record ArticleSimpleResponse(
+            Long id,
+            String title,
+            String mainImage,
+            String content,
+            ArticleCategory category,
+            String writer,
+            Status status,
+            int view,
+            boolean isBookmark,
+            List<String> articleTagList,
+            boolean visibility,
+            String createdDate,
+            String modifiedDate
+    ) {
+        @Builder
+        public ArticleSimpleResponse {
+        }
+
+        public static ArticleSimpleResponse of(Article article, boolean isBookmark) {
+            return ArticleSimpleResponse.builder()
+                    .id(article.getId())
+                    .title(article.getTitle())
+                    .mainImage(article.getMainImage())
+                    .content(article.getContent())
+                    .category(article.getCategory())
+                    .writer(article.getWriter())
+                    .status(article.getStatus())
+                    .view(article.getView())
+                    .isBookmark(isBookmark)
+                    .articleTagList(article.getArticleTagList().stream().map(ArticleTag::getTag).toList())
+                    .createdDate(article.getCreatedAt())
+                    .modifiedDate(article.getModifiedAt())
+                    .visibility(article.isVisibility())
+                    .build();
+        }
+    }
+
+    public record ArticleSimplePageResponse(
+            PageResponse<ArticleSimpleResponse> article
+    )
+    {
+        @Builder
+        public ArticleSimplePageResponse {
+        }
+
+        public static ArticleSimplePageResponse of(Page<ArticleSimpleResponse> article) {
+            return ArticleSimplePageResponse.builder()
+                    .article(PageResponse.of(article))
+                    .build();
+        }
+    }
+
+    // Tag 관련 DTO
+    public record ArticleTagResponse(
+            String tag
+    ) {
+        @Builder
+        public ArticleTagResponse {
+        }
+
+        public static ArticleTagResponse of(ArticleTag articleTag) {
+            return ArticleTagResponse.builder()
+                    .tag(articleTag.getTag())
+                    .build();
+        }
     }
 }

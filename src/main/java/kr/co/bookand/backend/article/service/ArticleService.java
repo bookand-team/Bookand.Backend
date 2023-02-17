@@ -5,11 +5,14 @@ import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleBookStore;
 import kr.co.bookand.backend.article.domain.ArticleCategory;
+import kr.co.bookand.backend.article.domain.ArticleTag;
 import kr.co.bookand.backend.article.exception.ArticleException;
 import kr.co.bookand.backend.article.repository.ArticleBookStoreRepository;
 import kr.co.bookand.backend.article.repository.ArticleRepository;
 
+import kr.co.bookand.backend.article.repository.ArticleTagRepository;
 import kr.co.bookand.backend.bookmark.domain.BookmarkArticle;
+import kr.co.bookand.backend.bookmark.service.BookmarkService;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
 import kr.co.bookand.backend.common.domain.Status;
@@ -20,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +43,8 @@ public class ArticleService {
     private final AccountService accountService;
     private final BookStoreRepository bookStoreRepository;
     private final ArticleBookStoreRepository articleBookStoreRepository;
+    private final ArticleTagRepository articleTagRepository;
+    private final BookmarkService bookmarkService;
 
     @Transactional
     public ArticleResponse createArticle(ArticleRequest articleRequest) {
@@ -49,6 +55,18 @@ public class ArticleService {
         Article article = articleRequest.toEntity();
         Article saveArticle = articleRepository.save(article);
 
+        List<ArticleTag> tags = articleRequest.tags().stream()
+                .map((String id) -> {
+                    ArticleTag articleTag = ArticleTag.builder()
+                            .tag(id)
+                            .article(saveArticle)
+                            .build();
+                    articleTagRepository.save(articleTag);
+                    return articleTag;
+                })
+                .collect(Collectors.toList());
+
+        saveArticle.updateArticleTagList(tags);
         for (BookStore bookStore : bookStoreList) {
             ArticleBookStore articleBookStore = ArticleBookStore.of(saveArticle, bookStore);
             articleBookStoreRepository.save(articleBookStore);
@@ -72,6 +90,13 @@ public class ArticleService {
     public ArticlePageResponse getArticleList(Pageable pageable) {
         Page<ArticleResponse> articlePage = articleRepository.findAll(pageable).map(ArticleResponse::of);
         return ArticlePageResponse.of(articlePage);
+    }
+
+    public ArticleSimplePageResponse getSimpleArticleList(Pageable pageable) {
+        Page<ArticleSimpleResponse> articlePage = articleRepository.findAll(pageable).map(
+                (Article article) -> ArticleSimpleResponse.of(article, bookmarkService.isBookmark(article.getId(), "article"))
+        );
+        return ArticleSimplePageResponse.of(articlePage);
     }
 
     @Transactional

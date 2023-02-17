@@ -6,6 +6,7 @@ import kr.co.bookand.backend.article.service.ArticleService;
 import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,10 +36,17 @@ public class ArticleController {
         return ResponseEntity.ok(article);
     }
 
-    @ApiOperation(value = "아티클 전체 조회")
-    @GetMapping("")
-    public ResponseEntity<ArticlePageResponse> getArticleList(@PageableDefault Pageable pageable) {
+    @ApiOperation(value = "아티클 전체 조회 (WEB)")
+    @GetMapping("/detail")
+    public ResponseEntity<ArticlePageResponse> getArticleList(@PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         ArticlePageResponse articleList = articleService.getArticleList(pageable);
+        return ResponseEntity.ok(articleList);
+    }
+
+    @ApiOperation(value = "아티클 전체 조회 (APP)")
+    @GetMapping("")
+    public ResponseEntity<ArticleSimplePageResponse> getSimpleArticleList(@PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        ArticleSimplePageResponse articleList = articleService.getSimpleArticleList(pageable);
         return ResponseEntity.ok(articleList);
     }
 

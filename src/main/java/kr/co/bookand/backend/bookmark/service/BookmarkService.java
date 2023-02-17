@@ -340,4 +340,18 @@ public class BookmarkService {
             return BookmarkResponse.of(bookmark, bookmarkInfo);
         }
     }
+
+    // 특정 아티클 or 서점이 북마크에 있는지 확인
+    public boolean isBookmark(Long contentId, String bookmarkType) {
+        Account currentAccount = getCurrentAccount(accountRepository);
+        BookmarkType bookmarkTypeEnum = BookmarkType.valueOf(bookmarkType.toUpperCase());
+        Bookmark bookmark = bookmarkRepository
+                .findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkTypeEnum)
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkType));
+        if (bookmarkTypeEnum.equals(BookmarkType.BOOKSTORE)) {
+            return bookmarkBookStoreRepository.existsByBookStoreIdAndBookmark(contentId, bookmark);
+        } else {
+            return bookmarkArticleRepository.existsByArticleIdAndBookmark(contentId, bookmark);
+        }
+    }
 }

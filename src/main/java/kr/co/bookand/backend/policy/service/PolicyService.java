@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static kr.co.bookand.backend.policy.domain.dto.PolicyDto.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -22,33 +24,33 @@ public class PolicyService {
     private final AccountService accountService;
 
     @Transactional
-    public PolicyDto updatePolicy(Long id, PolicyDto policyDto) {
+    public PolicyResponse updatePolicy(Long id, PolicyRequest request) {
         Account currentAccount = accountService.getCurrentAccount();
         currentAccount.getRole().checkAdmin();
-        Policy policy = policyRepository.findById(id).orElseThrow(() -> new PolicyException(ErrorCode.NOT_FOUND_POLICY, policyDto));
-        policy.updateContent(policyDto.content());
-        return PolicyDto.of(policy);
+        Policy policy = policyRepository.findById(id).orElseThrow(() -> new PolicyException(ErrorCode.NOT_FOUND_POLICY, request));
+        policy.updateContent(request.content());
+        return PolicyResponse.of(policy);
     }
 
-    public PolicyDto getTitlePolicy(String title) {
-        return policyRepository.findByTitle(title).map(PolicyDto::of).orElseThrow(() -> new PolicyException(ErrorCode.NOT_FOUND_POLICY, title));
+    public PolicyResponse getTitlePolicy(String name) {
+        return policyRepository.findByName(name).map(PolicyResponse::of).orElseThrow(() -> new PolicyException(ErrorCode.NOT_FOUND_POLICY, name));
     }
 
-    public PolicyDto getPolicy(Long id) {
-        return policyRepository.findById(id).map(PolicyDto::of).orElseThrow(() -> new PolicyException(ErrorCode.NOT_FOUND_POLICY, id));
+    public PolicyResponse getPolicy(Long id) {
+        return policyRepository.findById(id).map(PolicyResponse::of).orElseThrow(() -> new PolicyException(ErrorCode.NOT_FOUND_POLICY, id));
     }
 
     @Transactional
-    public PolicyDto createPolicy(PolicyDto policyDto) {
+    public PolicyResponse createPolicy(PolicyRequest request) {
         Account currentAccount = accountService.getCurrentAccount();
         currentAccount.getRole().checkAdmin();
-        Optional<Policy> policy1 = policyRepository.findByTitle(policyDto.title());
-        if (policy1.isPresent()) {
-            throw new PolicyException(ErrorCode.ALREADY_EXIST_POLICY, policyDto);
+        Optional<Policy> policyResponse = policyRepository.findByName(request.name());
+        if (policyResponse.isPresent()) {
+            throw new PolicyException(ErrorCode.ALREADY_EXIST_POLICY, request);
         }
-        Policy policy = policyDto.toPolicy();
+        Policy policy = request.toPolicy();
         Policy save = policyRepository.save(policy);
-        return PolicyDto.of(save);
+        return PolicyResponse.of(save);
     }
 
     public void removePolicy(Long id) {

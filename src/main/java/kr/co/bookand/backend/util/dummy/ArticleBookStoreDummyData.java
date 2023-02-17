@@ -1,4 +1,4 @@
-package kr.co.bookand.backend.common.service;
+package kr.co.bookand.backend.util.dummy;
 
 
 import kr.co.bookand.backend.article.domain.Article;

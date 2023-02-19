@@ -34,14 +34,12 @@ public class AccountDto {
         }
     }
 
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class MemberUpdateRequest {
-        @ApiModelProperty(value = "닉네임", example = "bookand")
-        private String nickname;
-    }
+
+    public record MemberUpdateRequest (
+        String profileImage,
+        boolean changeNickname
+    ) {}
+
 
     @Getter
     @AllArgsConstructor
@@ -54,28 +52,29 @@ public class AccountDto {
         private String password;
 
         public UsernamePasswordAuthenticationToken toAuthentication() {
-            return new UsernamePasswordAuthenticationToken(email,password);
+            return new UsernamePasswordAuthenticationToken(email, password);
         }
     }
 
-    @Getter
-    @AllArgsConstructor
-    @Builder
-    public static class MemberInfo{
-        private Long id;
-        @ApiModelProperty(value = "이메일", example = "bookand@example.com")
-        private String email;
-        @ApiModelProperty(value = "소셜 이메일 정보", example = "bookand@example.com")
-        private String providerEmail;
-        @ApiModelProperty(value = "닉네임", example = "bookand")
-        private String nickname;
+
+    public record MemberInfo(
+            Long id,
+            String email,
+            String providerEmail,
+            String nickname,
+            String profileImage
+    ) {
+        @Builder
+        public MemberInfo {
+        }
 
         public static MemberInfo of(Account account) {
-           return MemberInfo.builder()
+            return MemberInfo.builder()
                     .id(account.getId())
                     .email(account.getEmail())
                     .providerEmail(account.getProviderEmail())
                     .nickname(account.getNickname())
+                    .profileImage(account.getProfileImage())
                     .build();
         }
     }
@@ -85,9 +84,11 @@ public class AccountDto {
             String email,
             String password,
             String nickname
-    ) {}
+    ) {
+    }
 
     public record IsAvailableNickname(
             boolean isAvailable
-    ) {}
+    ) {
+    }
 }

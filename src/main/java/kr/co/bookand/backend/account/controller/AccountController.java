@@ -50,7 +50,7 @@ public class AccountController {
     }
 
     @ApiOperation(value = "회원 프로필 변경")
-    @Operation(summary = "회원 프로필 변경", description = "닉네임 정보를 넣어서 회원 정보를 변경합니다")
+    @Operation(summary = "회원 프로필 변경", description = "프로필 정보를 넣어서 변경합니다")
     @PutMapping("/profile")
     public ResponseEntity<MemberInfo> updateNickname(@Valid @RequestBody MemberUpdateRequest memberRequestUpdateDto) {
         return ResponseEntity.ok(accountService.updateNickname(memberRequestUpdateDto));

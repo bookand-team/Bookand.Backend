@@ -29,6 +29,7 @@ public class Account extends BaseEntity {
     private String password;
     private String provider;
     private String providerEmail;
+    private String profileImage;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -62,5 +63,9 @@ public class Account extends BaseEntity {
             bookmarkList = new ArrayList<>();
         }
         bookmarkList.addAll(bookmark);
+    }
+
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }

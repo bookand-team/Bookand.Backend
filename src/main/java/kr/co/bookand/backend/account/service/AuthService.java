@@ -195,7 +195,7 @@ public class AuthService {
         }
     }
 
-    private String nicknameRandom() {
+    public String nicknameRandom() {
         String url = "https://nickname.hwanmoo.kr/?format=json&count=1&max_length=10";
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));

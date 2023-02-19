@@ -22,6 +22,7 @@ import static kr.co.bookand.backend.config.security.SecurityUtils.getCurrentAcco
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final AuthService authService;
 
     public Account getCurrentAccount() {
         return accountRepository.findByEmail(getCurrentAccountEmail()).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
@@ -62,23 +63,18 @@ public class AccountService {
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, nickname));
     }
 
-
     // 회원 수정
     @Transactional
-    public MemberInfo updateNickname(MemberUpdateRequest memberRequestUpdateDto) {
-        if (validNickname(memberRequestUpdateDto.getNickname()).isAvailable()) {
-            throw new AccountException(ErrorCode.NICKNAME_DUPLICATION, memberRequestUpdateDto.getNickname());
-        } else {
-            Account dbAccount = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
-                    .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
-            dbAccount.updateNickname(memberRequestUpdateDto.getNickname());
-            return MemberInfo.of(dbAccount);
+    public MemberInfo updateNickname(MemberUpdateRequest request) {
+        Account dbAccount = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
+                .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
+        dbAccount.updateProfileImage(request.profileImage());
+        if(request.changeNickname()) {
+            String nicknameRandom = authService.nicknameRandom();
+            checkNickname(nicknameRandom);
+            dbAccount.updateNickname(nicknameRandom);
         }
-    }
-
-    public IsAvailableNickname validNickname(String nickname) {
-        boolean exists = accountRepository.existsByNickname(nickname);
-        return new IsAvailableNickname(exists);
+        return MemberInfo.of(dbAccount);
     }
 
     public Message checkNickname(String nickname) {

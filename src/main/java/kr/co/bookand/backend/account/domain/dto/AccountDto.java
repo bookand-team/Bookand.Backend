@@ -37,7 +37,7 @@ public class AccountDto {
 
     public record MemberUpdateRequest (
         String profileImage,
-        boolean changeNickname
+        String nickname
     ) {}
 
 
@@ -87,8 +87,11 @@ public class AccountDto {
     ) {
     }
 
-    public record IsAvailableNickname(
-            boolean isAvailable
+    public record NicknameResponse(
+            String nickname
     ) {
+        public static NicknameResponse of(String nicknameRandom) {
+            return new NicknameResponse(nicknameRandom);
+        }
     }
 }

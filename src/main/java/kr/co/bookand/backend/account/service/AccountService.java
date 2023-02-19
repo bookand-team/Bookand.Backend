@@ -68,12 +68,12 @@ public class AccountService {
     public MemberInfo updateNickname(MemberUpdateRequest request) {
         Account dbAccount = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
-        dbAccount.updateProfileImage(request.profileImage());
-        if(request.changeNickname()) {
-            String nicknameRandom = authService.nicknameRandom();
-            checkNickname(nicknameRandom);
-            dbAccount.updateNickname(nicknameRandom);
+        boolean nicknameBoolean = checkNicknameBoolean(request.nickname());
+        if (nicknameBoolean){
+            throw new AccountException(ErrorCode.NICKNAME_DUPLICATION, request.nickname());
         }
+        dbAccount.updateProfileImage(request.profileImage());
+        dbAccount.updateNickname(request.nickname());
         return MemberInfo.of(dbAccount);
     }
 
@@ -82,9 +82,20 @@ public class AccountService {
         return exists ? Message.of("CONFLICT", 409) : Message.of("OK", 200);
     }
 
+    public boolean checkNicknameBoolean(String nickname) {
+        return accountRepository.existsByNickname(nickname);
+    }
+
     @Transactional
     public void removeAccount(Account account) {
         account.softDelete();
     }
 
+    public NicknameResponse getRandomNickname() {
+        String nicknameRandom = authService.nicknameRandom();
+        while(checkNicknameBoolean(nicknameRandom)) {
+            nicknameRandom = authService.nicknameRandom();
+        }
+        return NicknameResponse.of(nicknameRandom);
+    }
 }

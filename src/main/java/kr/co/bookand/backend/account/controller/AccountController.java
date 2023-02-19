@@ -72,4 +72,11 @@ public class AccountController {
         accountService.removeAccount(account);
         return ResponseEntity.ok(Message.of("유저 삭제 완료"));
     }
+
+    @ApiOperation(value = "닉네임 랜덤 생성")
+    @Operation(summary = "닉네임 랜덤 생성", description = "닉네임을 랜덤으로 생성합니다.")
+    @GetMapping("/nickname/random")
+    public ResponseEntity<NicknameResponse> randomNickname() {
+        return ResponseEntity.ok(accountService.getRandomNickname());
+    }
 }

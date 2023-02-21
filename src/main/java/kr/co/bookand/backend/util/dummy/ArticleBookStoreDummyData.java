@@ -73,7 +73,7 @@ public class ArticleBookStoreDummyData {
                     .category(ArticleCategory.BOOK_REVIEW)
                     .memberIdFilter(MemberIdFilter.ALL)
                     .deviceOSFilter(DeviceOSFilter.ALL)
-                    .status(Status.INVISIBLE)
+                    .status(Status.VISIBLE)
                     .articleBookStoreList(null)
                     .mainImage("mainImage%d".formatted(i))
                     .deviceOSFilter(DeviceOSFilter.ALL)

@@ -345,13 +345,17 @@ public class BookmarkService {
     public boolean isBookmark(Long contentId, String bookmarkType) {
         Account currentAccount = getCurrentAccount(accountRepository);
         BookmarkType bookmarkTypeEnum = BookmarkType.valueOf(bookmarkType.toUpperCase());
-        Bookmark bookmark = bookmarkRepository
-                .findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkTypeEnum)
+        Bookmark bookmark = currentAccount.getBookmarkList().stream()
+                .filter(b -> b.getFolderName().equals(INIT_BOOKMARK_FOLDER_NAME))
+                .filter(b -> b.getBookmarkType().equals(bookmarkTypeEnum))
+                .findFirst()
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkType));
         if (bookmarkTypeEnum.equals(BookmarkType.BOOKSTORE)) {
-            return bookmarkBookStoreRepository.existsByBookStoreIdAndBookmark(contentId, bookmark);
+            return bookmark.getBookmarkBookStoreList().stream()
+                    .anyMatch(bookmarkBookStore -> bookmarkBookStore.getBookStore().getId().equals(contentId));
         } else {
-            return bookmarkArticleRepository.existsByArticleIdAndBookmark(contentId, bookmark);
+            return bookmark.getBookmarkArticleList().stream()
+                    .anyMatch(bookmarkArticle -> bookmarkArticle.getArticle().getId().equals(contentId));
         }
     }
 }

@@ -1,21 +1,15 @@
 package kr.co.bookand.backend.article.domain.dto;
 
 import kr.co.bookand.backend.article.domain.Article;
-import kr.co.bookand.backend.article.domain.ArticleBookStore;
 import kr.co.bookand.backend.article.domain.ArticleCategory;
 import kr.co.bookand.backend.article.domain.ArticleTag;
-import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.common.domain.DeviceOSFilter;
 import kr.co.bookand.backend.common.domain.MemberIdFilter;
 import kr.co.bookand.backend.common.domain.Status;
 import kr.co.bookand.backend.common.domain.dto.PageResponse;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
@@ -49,7 +43,55 @@ public class ArticleDto {
         }
     }
 
+
+    // 아티클 상세 조회(APP)
     public record ArticleResponse(
+            Long id,
+            String title,
+            String mainImage,
+            String content,
+            ArticleCategory category,
+            String writer,
+            Status status,
+            int view,
+            int bookmarkCount,
+            boolean bookmark,
+            boolean visibility,
+            List<String> articleTagList,
+            List<BookStoreSimpleResponse> bookStoreList,
+            ArticleFilter filter,
+            String createdDate,
+            String modifiedDate
+    ) {
+        @Builder
+        public ArticleResponse {
+        }
+
+        public static ArticleResponse of(Article article, List<BookStoreSimpleResponse> bookStoreList, boolean bookmark) {
+            int bookmarkCount = article.getMarkArticleList() != null ? article.getMarkArticleList().size() : 0;
+            return ArticleResponse.builder()
+                    .id(article.getId())
+                    .title(article.getTitle())
+                    .mainImage(article.getMainImage())
+                    .content(article.getContent())
+                    .category(article.getCategory())
+                    .writer(article.getWriter())
+                    .status(article.getStatus())
+                    .view(article.getView())
+                    .bookmarkCount(bookmarkCount)
+                    .bookmark(bookmark)
+                    .articleTagList(article.getArticleTagList().stream().map(ArticleTag::getTag).toList())
+                    .bookStoreList(bookStoreList)
+                    .visibility(article.isVisibility())
+                    .filter(ArticleFilter.of(article))
+                    .createdDate(article.getCreatedAt())
+                    .modifiedDate(article.getModifiedAt())
+                    .build();
+        }
+    }
+
+    // 아티클 상세 조회 (WEB)
+    public record ArticleDetailResponse(
             Long id,
             String title,
             String mainImage,
@@ -61,23 +103,18 @@ public class ArticleDto {
             int bookmark,
             boolean visibility,
             List<String> articleTagList,
-            List<BookStoreResponse> bookStoreList,
+            List<BookStoreSimpleResponse> bookStoreList,
             ArticleFilter filter,
             String createdDate,
             String modifiedDate
-            ) {
+    ) {
         @Builder
-        public ArticleResponse {
+        public ArticleDetailResponse {
         }
 
-        public static ArticleResponse of(Article article) {
+        public static ArticleDetailResponse of(Article article, List<BookStoreSimpleResponse> bookStoreList) {
             int bookmark = article.getMarkArticleList() != null ? article.getMarkArticleList().size() : 0;
-            List<ArticleBookStore> articleBookStoreList = article.getArticleBookStoreList();
-            List<BookStore> bookStoreList = new ArrayList<>();
-            for (ArticleBookStore articleBookStore : articleBookStoreList) {
-                bookStoreList.add(articleBookStore.getBookStore());
-            }
-            return ArticleResponse.builder()
+            return ArticleDetailResponse.builder()
                     .id(article.getId())
                     .title(article.getTitle())
                     .mainImage(article.getMainImage())
@@ -88,7 +125,7 @@ public class ArticleDto {
                     .view(article.getView())
                     .bookmark(bookmark)
                     .articleTagList(article.getArticleTagList().stream().map(ArticleTag::getTag).toList())
-                    .bookStoreList(bookStoreList.stream().map(BookStoreResponse::of).toList())
+                    .bookStoreList(bookStoreList)
                     .visibility(article.isVisibility())
                     .filter(ArticleFilter.of(article))
                     .createdDate(article.getCreatedAt())
@@ -100,7 +137,7 @@ public class ArticleDto {
     public record ArticleFilter(
             DeviceOSFilter deviceOS,
             MemberIdFilter memberId
-    ){
+    ) {
         @Builder
         public ArticleFilter {
         }
@@ -119,22 +156,61 @@ public class ArticleDto {
     ) {
     }
 
-    public record ArticlePageResponse(
-            PageResponse<ArticleResponse> article
-    )
-    {
+    // 아티클 리스트 조회 (WEB)
+    public record ArticleWebResponse(
+            Long id,
+            String title,
+            String mainImage,
+            String content,
+            ArticleCategory category,
+            String writer,
+            Status status,
+            int view,
+            List<String> articleTagList,
+            boolean visibility,
+            String createdDate,
+            String modifiedDate
+    ) {
         @Builder
-        public ArticlePageResponse {
+        public ArticleWebResponse {
         }
 
-        public static ArticlePageResponse of(Page<ArticleResponse> article) {
-            return ArticlePageResponse.builder()
+        public static ArticleWebResponse of(Article article) {
+            return ArticleWebResponse.builder()
+                    .id(article.getId())
+                    .title(article.getTitle())
+                    .mainImage(article.getMainImage())
+                    .content(article.getContent())
+                    .category(article.getCategory())
+                    .writer(article.getWriter())
+                    .status(article.getStatus())
+                    .view(article.getView())
+                    .articleTagList(article.getArticleTagList().stream().map(ArticleTag::getTag).toList())
+                    .createdDate(article.getCreatedAt())
+                    .modifiedDate(article.getModifiedAt())
+                    .visibility(article.isVisibility())
+                    .build();
+        }
+    }
+
+
+    // 아티클 전체조회 (WEB)
+    public record ArticleWebPageResponse(
+            PageResponse<ArticleWebResponse> article
+    ) {
+        @Builder
+        public ArticleWebPageResponse {
+        }
+
+        public static ArticleWebPageResponse of(Page<ArticleWebResponse> article) {
+            return ArticleWebPageResponse.builder()
                     .article(PageResponse.of(article))
                     .build();
         }
 
     }
 
+    // 아티클 서점 조회용 (APP)
     public record ArticleSimpleResponse(
             Long id,
             String title,
@@ -173,10 +249,10 @@ public class ArticleDto {
         }
     }
 
+    // 아티클 전체 조회 (APP)
     public record ArticleSimplePageResponse(
             PageResponse<ArticleSimpleResponse> article
-    )
-    {
+    ) {
         @Builder
         public ArticleSimplePageResponse {
         }
@@ -199,6 +275,20 @@ public class ArticleDto {
         public static ArticleTagResponse of(ArticleTag articleTag) {
             return ArticleTagResponse.builder()
                     .tag(articleTag.getTag())
+                    .build();
+        }
+    }
+
+    public record ArticleIdResponse(
+            Long id
+    ) {
+        @Builder
+        public ArticleIdResponse {
+        }
+
+        public static ArticleIdResponse of(Article article) {
+            return ArticleIdResponse.builder()
+                    .id(article.getId())
                     .build();
         }
     }

@@ -2,10 +2,17 @@ package kr.co.bookand.backend.bookstore.service;
 
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.service.AccountService;
+import kr.co.bookand.backend.article.domain.Article;
+import kr.co.bookand.backend.article.domain.ArticleBookStore;
+import kr.co.bookand.backend.article.domain.dto.ArticleDto;
+import kr.co.bookand.backend.article.repository.ArticleBookStoreRepository;
+import kr.co.bookand.backend.bookmark.domain.BookmarkType;
+import kr.co.bookand.backend.bookmark.service.BookmarkService;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
 import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
 import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
+import kr.co.bookand.backend.bookstore.domain.dto.BookStoreImageDto;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreImageRepository;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
@@ -24,8 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.BookStoreResponse.of;
+import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreImageDto.*;
 import static kr.co.bookand.backend.common.domain.dto.PageStateDto.*;
 
 @Service
@@ -35,8 +44,10 @@ public class BookStoreService {
 
     private final BookStoreRepository bookStoreRepository;
     private final BookStoreImageRepository bookStoreImageRepository;
+    private final ArticleBookStoreRepository articleBookStoreRepository;
     private final ReportBookStoreRepository reportBookStoreRepository;
     private final AccountService accountService;
+    private final BookmarkService bookmarkService;
 
     @Transactional
     public BookStoreResponse createBookStore(BookStoreRequest bookStoreRequest) {
@@ -53,11 +64,24 @@ public class BookStoreService {
         BookStore bookStore = bookStoreRequest.toEntity(bookStoreImageList);
         bookStoreImageList.forEach(bookStoreImage -> bookStoreImage.updateBookStore(bookStore));
         BookStore saveBookStore = bookStoreRepository.save(bookStore);
-        return of(saveBookStore);
+        return of(saveBookStore, false, null);
     }
 
+    // 상세 조회 (APP)
     public BookStoreResponse getBookStore(Long id) {
-        return bookStoreRepository.findById(id).map(BookStoreResponse::of).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
+        boolean isBookmark = bookmarkService.isBookmark(id, BookmarkType.BOOKSTORE.name());
+        BookStore findBookStore = bookStoreRepository.findById(id).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
+
+
+        List<ArticleSimpleResponse> articleList = findBookStore.getArticleBookStoreList().stream()
+                    .map(ArticleBookStore::getArticle)
+                    .map((Article article) -> {
+                        boolean isBookmarkArticle = bookmarkService.isBookmark(article.getId(), BookmarkType.ARTICLE.name());
+                        return ArticleSimpleResponse.of(article, isBookmarkArticle);
+                    })
+                    .toList();
+
+        return of(findBookStore, isBookmark, articleList);
     }
 
     public void duplicateBookStoreName(String name) {
@@ -65,9 +89,20 @@ public class BookStoreService {
             throw new BookStoreException(ErrorCode.DUPLICATE_BOOKSTORE_NAME, name);
     }
 
+    // 전체 조회 (WEB)
     public BookStorePageResponse getBookStoreList(Pageable pageable) {
-        Page<BookStoreResponse> bookStorePage = bookStoreRepository.findAll(pageable).map(BookStoreResponse::of);
+        Page<BookStoreWebResponse> bookStorePage = bookStoreRepository.findAll(pageable).map(BookStoreWebResponse::of);
         return BookStorePageResponse.of(bookStorePage);
+    }
+
+    // 전체 조회 (APP)
+    public BookStorePageResponseApp getBookStoreListApp(Pageable pageable) {
+        Page<BookStoreSimpleResponse> bookStorePage = bookStoreRepository.findAllByStatus(Status.VISIBLE, pageable)
+                .map((BookStore bookStore) -> {
+                    boolean isBookmark = bookmarkService.isBookmark(bookStore.getId(), BookmarkType.BOOKSTORE.name());
+                    return BookStoreSimpleResponse.of(bookStore, isBookmark);
+                });
+        return BookStorePageResponseApp.of(bookStorePage);
     }
 
     @Transactional
@@ -78,30 +113,30 @@ public class BookStoreService {
         BookstoreTheme theme = BookstoreTheme.valueOf(bookstoreTheme);
         String bookstoreStatus = pageStateRequest.status();
         Status status = Status.valueOf(bookstoreStatus);
-        Page<BookStoreResponse> bookStorePage;
+        Page<BookStoreWebResponse> bookStorePage;
         if (search == null && theme == null && status == null) {
-            bookStorePage = bookStoreRepository.findAll(pageable).map(BookStoreResponse::of);
+            bookStorePage = bookStoreRepository.findAll(pageable).map(BookStoreWebResponse::of);
         } else if (search == null && status == null) {
-            bookStorePage = bookStoreRepository.findAllByTheme(theme, pageable).map(BookStoreResponse::of);
+            bookStorePage = bookStoreRepository.findAllByTheme(theme, pageable).map(BookStoreWebResponse::of);
         } else if (search == null && theme == null) {
-            bookStorePage = bookStoreRepository.findAllByStatus(status, pageable).map(BookStoreResponse::of);
+            bookStorePage = bookStoreRepository.findAllByStatus(status, pageable).map(BookStoreWebResponse::of);
         } else if (theme == null && status == null) {
-            bookStorePage = bookStoreRepository.findAllByNameContaining(search, pageable).map(BookStoreResponse::of);
+            bookStorePage = bookStoreRepository.findAllByNameContaining(search, pageable).map(BookStoreWebResponse::of);
         } else if (status == null) {
-            bookStorePage = bookStoreRepository.findAllByNameContainingAndTheme(search, theme, pageable).map(BookStoreResponse::of);
+            bookStorePage = bookStoreRepository.findAllByNameContainingAndTheme(search, theme, pageable).map(BookStoreWebResponse::of);
         } else if (theme == null) {
-            bookStorePage = bookStoreRepository.findAllByNameContainingAndStatus(search, status, pageable).map(BookStoreResponse::of);
+            bookStorePage = bookStoreRepository.findAllByNameContainingAndStatus(search, status, pageable).map(BookStoreWebResponse::of);
         } else if (search == null) {
-            bookStorePage = bookStoreRepository.findAllByThemeAndStatus(theme, status, pageable).map(BookStoreResponse::of);
+            bookStorePage = bookStoreRepository.findAllByThemeAndStatus(theme, status, pageable).map(BookStoreWebResponse::of);
         } else {
-            bookStorePage = bookStoreRepository.findAllByNameContainingAndThemeAndStatus(search, theme, status, pageable).map(BookStoreResponse::of);
+            bookStorePage = bookStoreRepository.findAllByNameContainingAndThemeAndStatus(search, theme, status, pageable).map(BookStoreWebResponse::of);
         }
 
         return BookStorePageResponse.of(bookStorePage);
     }
 
     @Transactional
-    public BookStoreResponse updateBookStore(Long bookStoreId, BookStoreRequest bookStoreRequest) {
+    public BookStoreWebResponse updateBookStore(Long bookStoreId, BookStoreRequest bookStoreRequest) {
         accountService.isAccountAdmin();
         BookStore bookStore = bookStoreRepository.findById(bookStoreId).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, bookStoreId));
         List<BookStoreImage> subImages = bookStore.getSubImages();
@@ -115,7 +150,7 @@ public class BookStoreService {
         }
         duplicateBookStoreName(bookStoreRequest.name());
         bookStore.updateBookStoreData(bookStoreRequest);
-        return BookStoreResponse.of(bookStore);
+        return BookStoreWebResponse.of(bookStore);
     }
 
     @Transactional
@@ -136,11 +171,11 @@ public class BookStoreService {
     }
 
     @Transactional
-    public BookStoreResponse updateBookStoreStatus(Long id) {
+    public BookStoreWebResponse updateBookStoreStatus(Long id) {
         accountService.isAccountAdmin();
         BookStore bookStore = bookStoreRepository.findById(id).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
         bookStore.updateBookStoreStatus(bookStore.getStatus() == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE);
-        return BookStoreResponse.of(bookStore);
+        return BookStoreWebResponse.of(bookStore);
     }
 
     @Transactional

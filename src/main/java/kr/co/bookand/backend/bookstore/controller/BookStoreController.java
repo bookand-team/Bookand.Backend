@@ -16,7 +16,7 @@ import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 import static kr.co.bookand.backend.common.domain.dto.PageStateDto.*;
 
 @RestController
-@RequestMapping("/api/v1/bookstore")
+@RequestMapping("/api/v1/bookstores")
 @RequiredArgsConstructor
 @Api(tags = "서점 API")
 public class BookStoreController {
@@ -41,11 +41,6 @@ public class BookStoreController {
         return ResponseEntity.ok(bookStoreService.getBookStoreListApp(pageable));
     }
 
-    @ApiOperation(value = "서점 조건 조회")
-    @PostMapping("/search")
-    public ResponseEntity<BookStorePageResponse> searchBookStoreList(@RequestBody PageStateRequest pageStateRequest) {
-        return ResponseEntity.ok(bookStoreService.searchBookStoreList(pageStateRequest));
-    }
 
     @ApiOperation(value = "서점 전체 조회 (WEB)")
     @GetMapping("/web")

@@ -2,6 +2,7 @@ package kr.co.bookand.backend.common.exception;
 
 import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.article.exception.ArticleException;
+import kr.co.bookand.backend.bookmark.exception.BookmarkException;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.config.jwt.exception.JwtException;
 import kr.co.bookand.backend.policy.exception.PolicyException;
@@ -39,6 +40,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ArticleException.class)
     public ResponseEntity<ApiErrorResponse> handle(ArticleException ex) {
+        log.error("handleException {} : {}", ex.errorCode.getErrorCode(), ex.getMessage());
+        ApiErrorResponse response = ApiErrorResponse.builder().code(ex.errorCode.getErrorCode()).message(ex.getMessage()).build();
+        return ResponseEntity.status(ex.errorCode.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(BookmarkException.class)
+    public ResponseEntity<ApiErrorResponse> handle(BookmarkException ex) {
         log.error("handleException {} : {}", ex.errorCode.getErrorCode(), ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder().code(ex.errorCode.getErrorCode()).message(ex.getMessage()).build();
         return ResponseEntity.status(ex.errorCode.getHttpStatus()).body(response);

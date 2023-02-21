@@ -98,7 +98,9 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, id));
         List<BookStoreSimpleResponse> bookStoreSimpleResponse = new ArrayList<>();
-        article.getArticleBookStoreList().forEach(articleBookStore -> {
+        article.getArticleBookStoreList()
+                .stream().filter(articleBookStore -> articleBookStore.getBookStore().getStatus().equals(Status.VISIBLE))
+                .forEach(articleBookStore -> {
             BookStore bookStore = articleBookStore.getBookStore();
             boolean isBookmark = bookmarkService.isBookmark(bookStore.getId(), BookmarkType.ARTICLE.toString());
             bookStoreSimpleResponse.add(BookStoreSimpleResponse.of(bookStore, isBookmark));

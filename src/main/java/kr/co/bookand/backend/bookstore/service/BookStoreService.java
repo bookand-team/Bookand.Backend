@@ -72,14 +72,14 @@ public class BookStoreService {
         boolean isBookmark = bookmarkService.isBookmark(id, BookmarkType.BOOKSTORE.name());
         BookStore findBookStore = bookStoreRepository.findById(id).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
 
-
         List<ArticleSimpleResponse> articleList = findBookStore.getArticleBookStoreList().stream()
-                    .map(ArticleBookStore::getArticle)
-                    .map((Article article) -> {
-                        boolean isBookmarkArticle = bookmarkService.isBookmark(article.getId(), BookmarkType.ARTICLE.name());
-                        return ArticleSimpleResponse.of(article, isBookmarkArticle);
-                    })
-                    .toList();
+                .filter(articleBookStore -> articleBookStore.getArticle().getStatus().equals(Status.VISIBLE))
+                .map(ArticleBookStore::getArticle)
+                .map((Article article) -> {
+                    boolean isBookmarkArticle = bookmarkService.isBookmark(article.getId(), BookmarkType.ARTICLE.name());
+                    return ArticleSimpleResponse.of(article, isBookmarkArticle);
+                })
+                .toList();
 
         return of(findBookStore, isBookmark, articleList);
     }

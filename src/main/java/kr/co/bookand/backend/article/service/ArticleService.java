@@ -151,32 +151,9 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleWebPageResponse searchArticleList(PageStateRequest pageStateRequest) {
-        Pageable pageable = PageRequest.of(pageStateRequest.page() - 1, pageStateRequest.row());
-        String search = pageStateRequest.search();
-        String articleCategory = pageStateRequest.category();
-        ArticleCategory category = ArticleCategory.valueOf(articleCategory);
-        String articleStatus = pageStateRequest.status();
-        Status status = Status.valueOf(articleStatus);
-        Page<ArticleWebResponse> articlePage;
-        if (search == null && category == null && status == null) {
-            articlePage = articleRepository.findAll(pageable).map(ArticleWebResponse::of);
-        } else if (search == null && category == null) {
-            articlePage = articleRepository.findAllByStatus(status, pageable).map(ArticleWebResponse::of);
-        } else if (search == null && status == null) {
-            articlePage = articleRepository.findAllByCategory(category, pageable).map(ArticleWebResponse::of);
-        } else if (category == null && status == null) {
-            articlePage = articleRepository.findAllByTitleContaining(search, pageable).map(ArticleWebResponse::of);
-        } else if (search == null) {
-            articlePage = articleRepository.findAllByCategoryAndStatus(category, status, pageable).map(ArticleWebResponse::of);
-        } else if (category == null) {
-            articlePage = articleRepository.findAllByTitleContainingAndStatus(search, status, pageable).map(ArticleWebResponse::of);
-        } else if (status == null) {
-            articlePage = articleRepository.findAllByTitleContainingAndCategory(search, category, pageable).map(ArticleWebResponse::of);
-        } else {
-            articlePage = articleRepository.findAllByTitleContainingAndCategoryAndStatus(search, category, status, pageable).map(ArticleWebResponse::of);
-        }
-
+    public ArticleWebPageResponse searchArticleList(String search, String category, String status, Pageable pageable) {
+        Page<ArticleWebResponse> articlePage = articleRepository.findAllBySearch(search, category, status, pageable)
+                .map(ArticleWebResponse::of);
         return ArticleWebPageResponse.of(articlePage);
     }
 

@@ -52,9 +52,13 @@ public class ArticleController {
     }
 
     @ApiOperation(value = "조건에 맞는 아티클 조회")
-    @PostMapping("/search")
-    public ResponseEntity<ArticleWebPageResponse> searchArticleList(@RequestBody PageStateRequest pageStateRequest) {
-        return ResponseEntity.ok(articleService.searchArticleList(pageStateRequest));
+    @GetMapping("/search")
+    public ResponseEntity<ArticleWebPageResponse> searchArticleList(
+            @RequestParam("search") String search1,
+            @RequestParam("category") String category,
+            @RequestParam("status") String status,
+            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(articleService.searchArticleList(search1, category, status, pageable));
     }
 
     @ApiOperation(value = "아티클 수정")

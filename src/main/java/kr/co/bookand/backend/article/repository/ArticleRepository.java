@@ -9,22 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface ArticleRepository extends JpaRepository<Article, Long> {
-    Optional<Article> findByTitle(String title);
-
+public interface ArticleRepository extends JpaRepository<Article, Long>, ArticleRepositoryCustom {
     boolean existsByTitle(String title);
 
     Page<Article> findAllByStatus(Status status, Pageable pageable);
-
-    Page<Article> findAllByCategory(ArticleCategory category, Pageable pageable);
-
-    Page<Article> findAllByTitleContaining(String search, Pageable pageable);
-
-    Page<Article>  findAllByCategoryAndStatus(ArticleCategory category, Status status, Pageable pageable);
-
-    Page<Article>  findAllByTitleContainingAndStatus(String search, Status status, Pageable pageable);
-
-    Page<Article>  findAllByTitleContainingAndCategory(String search, ArticleCategory category, Pageable pageable);
-
-    Page<Article>  findAllByTitleContainingAndCategoryAndStatus(String search, ArticleCategory category, Status status, Pageable pageable);
 }

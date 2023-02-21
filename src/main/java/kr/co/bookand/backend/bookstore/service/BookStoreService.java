@@ -4,7 +4,6 @@ import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleBookStore;
-import kr.co.bookand.backend.article.domain.dto.ArticleDto;
 import kr.co.bookand.backend.article.repository.ArticleBookStoreRepository;
 import kr.co.bookand.backend.bookmark.domain.BookmarkType;
 import kr.co.bookand.backend.bookmark.service.BookmarkService;
@@ -12,7 +11,6 @@ import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
 import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
 import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreImageDto;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreImageRepository;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
@@ -34,7 +32,6 @@ import java.util.List;
 import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.BookStoreResponse.of;
-import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreImageDto.*;
 import static kr.co.bookand.backend.common.domain.dto.PageStateDto.*;
 
 @Service
@@ -44,7 +41,6 @@ public class BookStoreService {
 
     private final BookStoreRepository bookStoreRepository;
     private final BookStoreImageRepository bookStoreImageRepository;
-    private final ArticleBookStoreRepository articleBookStoreRepository;
     private final ReportBookStoreRepository reportBookStoreRepository;
     private final AccountService accountService;
     private final BookmarkService bookmarkService;

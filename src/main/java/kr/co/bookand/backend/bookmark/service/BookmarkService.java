@@ -122,7 +122,7 @@ public class BookmarkService {
         log.info("type : {}", type);
         List<Bookmark> bookmarkList = bookmarkRepository.findAllByAccountAndBookmarkType(currentAccount, type);
         List<BookmarkFolderResponse> bookmarkFolderList = bookmarkList.stream().map(BookmarkFolderResponse::of)
-                .collect(Collectors.toList());
+                .toList();
         return new BookmarkFolderListResponse(bookmarkFolderList);
     }
 

@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
@@ -67,7 +66,7 @@ public class ArticleService {
                     articleTagRepository.save(articleTag);
                     return articleTag;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         saveArticle.updateArticleTagList(tags);
         return getArticleResponse(bookStoreList, saveArticle);
@@ -120,7 +119,7 @@ public class ArticleService {
     // 전체 조회 (WEB)
     public ArticleWebPageResponse getArticleList(Pageable pageable) {
         Page<ArticleWebResponse> articlePage = articleRepository.findAll(pageable)
-                .map((Article article) -> ArticleWebResponse.of(article));
+                .map(ArticleWebResponse::of);
         return ArticleWebPageResponse.of(articlePage);
     }
 

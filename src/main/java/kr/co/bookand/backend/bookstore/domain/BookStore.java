@@ -10,6 +10,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 
@@ -43,8 +44,8 @@ public class BookStore extends BaseEntity {
     private int view;
     private int bookmark;
 
-    @Enumerated(EnumType.STRING)
-    private BookstoreTheme theme;
+    @OneToMany(mappedBy = "bookStore", cascade = CascadeType.ALL)
+    private List<BookStoreTheme> themeList = new ArrayList<>();
 
     @OneToMany(mappedBy = "bookStore")
     private List<ArticleBookStore> articleBookStoreList = new ArrayList<>();
@@ -63,7 +64,6 @@ public class BookStore extends BaseEntity {
         this.introduction = bookStoreRequest.introduction();
         this.mainImage = bookStoreRequest.mainImage();
         this.status = Status.valueOf(bookStoreRequest.status());
-        this.theme = BookstoreTheme.valueOf(bookStoreRequest.theme());
     }
 
     public void updateBookStoreStatus(Status status) {
@@ -105,4 +105,17 @@ public class BookStore extends BaseEntity {
         this.bookmarkBookStoreList.remove(bookmarkBookStore);
     }
 
+    public void updateBookStoreSubImage(List<BookStoreImage> bookStoreImage) {
+        if (subImages == null) {
+            subImages = new ArrayList<>();
+        }
+        this.subImages = bookStoreImage;
+    }
+
+    public void updateBookStoreTheme(List<BookStoreTheme> bookStoreTheme) {
+        if (themeList == null) {
+            themeList = new ArrayList<>();
+        }
+        this.themeList = bookStoreTheme;
+    }
 }

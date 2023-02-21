@@ -9,8 +9,12 @@ import kr.co.bookand.backend.article.repository.ArticleBookStoreRepository;
 import kr.co.bookand.backend.article.repository.ArticleRepository;
 import kr.co.bookand.backend.article.repository.ArticleTagRepository;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
-import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
+import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
+import kr.co.bookand.backend.bookstore.domain.BookStoreTheme;
+import kr.co.bookand.backend.bookstore.domain.BookStoreType;
+import kr.co.bookand.backend.bookstore.repository.BookStoreImageRepository;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
+import kr.co.bookand.backend.bookstore.repository.BookStoreThemeRepository;
 import kr.co.bookand.backend.common.domain.DeviceOSFilter;
 import kr.co.bookand.backend.common.domain.MemberIdFilter;
 import kr.co.bookand.backend.common.domain.Status;
@@ -30,9 +34,11 @@ import java.util.List;
 public class ArticleBookStoreDummyData {
 
     private final ArticleBookStoreRepository articleBookStoreRepository;
-    private final BookStoreRepository bookStoreRepository;
     private final ArticleRepository articleRepository;
     private final ArticleTagRepository articleTagRepository;
+    private final BookStoreRepository bookStoreRepository;
+    private final BookStoreImageRepository bookStoreImageRepository;
+    private final BookStoreThemeRepository bookStoreThemeRepository;
 
     @PostConstruct
     @Transactional
@@ -52,13 +58,15 @@ public class ArticleBookStoreDummyData {
                     .contact("contact%d".formatted(i))
                     .facility("facility%d".formatted(i))
                     .sns("sns%d".formatted(i))
-                    .theme(BookstoreTheme.valueOf("TRAVEL"))
                     .mainImage("mainImage%d".formatted(i))
                     .introduction("introduction%d".formatted(i))
                     .status(Status.valueOf("VISIBLE"))
                     .view(1)
                     .build();
-            bookStoreRepository.save(store);
+            BookStore save = bookStoreRepository.save(store);
+            save.updateBookStoreSubImage(bookStoreImageDummyData(save));
+            save.updateBookStoreTheme(bookStoreThemeDummyData(save));
+
         }
 
     }
@@ -110,5 +118,32 @@ public class ArticleBookStoreDummyData {
             articleTagList.add(articleTag);
         }
         return articleTagList;
+    }
+
+    public List<BookStoreImage> bookStoreImageDummyData(BookStore bookStore) {
+        List<BookStoreImage> bookStoreImageList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            BookStoreImage bookStoreImage = BookStoreImage.builder()
+                    .url("image%d".formatted(i))
+                    .bookStore(bookStore)
+                    .build();
+            bookStoreImageRepository.save(bookStoreImage);
+            bookStoreImageList.add(bookStoreImage);
+        }
+        return bookStoreImageList;
+    }
+
+    public List<BookStoreTheme> bookStoreThemeDummyData(BookStore bookStore) {
+        List<BookStoreTheme> bookStoreThemeList = new ArrayList<>();
+        List<BookStoreType> bookStoreTypes = BookStoreType.randomEnum();
+        for (int i = 0; i < 3; i++) {
+            BookStoreTheme bookStoreTheme = BookStoreTheme.builder()
+                    .theme(bookStoreTypes.get(i))
+                    .bookStore(bookStore)
+                    .build();
+            bookStoreThemeRepository.save(bookStoreTheme);
+            bookStoreThemeList.add(bookStoreTheme);
+        }
+        return bookStoreThemeList;
     }
 }

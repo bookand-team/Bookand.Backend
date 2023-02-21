@@ -1,23 +1,13 @@
 package kr.co.bookand.backend.bookstore.domain.dto;
 
 import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.article.domain.Article;
-import kr.co.bookand.backend.article.domain.ArticleBookStore;
-import kr.co.bookand.backend.article.domain.dto.ArticleDto;
-import kr.co.bookand.backend.bookmark.domain.BookmarkType;
-import kr.co.bookand.backend.bookmark.service.BookmarkService;
-import kr.co.bookand.backend.bookstore.domain.BookStore;
-import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
-import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
-import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
+import kr.co.bookand.backend.bookstore.domain.*;
 import kr.co.bookand.backend.common.domain.Status;
 import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreImageDto.*;
@@ -32,8 +22,8 @@ public class BookStoreDto {
             String contact,
             String facility,
             String sns,
-            String theme,
             String mainImage,
+            List<String> themeList,
             List<String> subImage,
             String introduction,
             String status,
@@ -43,7 +33,7 @@ public class BookStoreDto {
         public BookStoreRequest {
         }
 
-        public BookStore toEntity(List<BookStoreImage> bookStoreImageList) {
+        public BookStore toEntity(List<BookStoreImage> bookStoreImageList, List<BookStoreTheme> bookStoreThemeList) {
             return BookStore.builder()
                     .name(name)
                     .address(address)
@@ -51,8 +41,8 @@ public class BookStoreDto {
                     .contact(contact)
                     .facility(facility)
                     .sns(sns)
-                    .theme(BookstoreTheme.valueOf(theme))
                     .mainImage(mainImage)
+                    .themeList(bookStoreThemeList)
                     .subImages(bookStoreImageList)
                     .introduction(introduction)
                     .status(Status.INVISIBLE)
@@ -67,6 +57,7 @@ public class BookStoreDto {
             String name,
             String introduction,
             String mainImage,
+            List<String> themeList,
             boolean isBookmark
     ) {
         public static BookStoreSimpleResponse of(BookStore bookStore, boolean isBookmark) {
@@ -75,6 +66,9 @@ public class BookStoreDto {
                     bookStore.getName(),
                     bookStore.getIntroduction(),
                     bookStore.getMainImage(),
+                    bookStore.getThemeList().stream()
+                            .map(bookStoreTheme -> bookStoreTheme.getTheme().name())
+                            .toList(),
                     isBookmark
             );
         }
@@ -85,9 +79,9 @@ public class BookStoreDto {
             Long id,
             String name,
             BookStoreInfo info,
-            BookstoreTheme theme,
             String introduction,
             String mainImage,
+            List<BookStoreType> themeList,
             List<BookStoreImageResponse> subImage,
             String status,
             int view,
@@ -114,17 +108,11 @@ public class BookStoreDto {
                     .map(BookStoreImageResponse::of)
                     .toList();
 
-//            List<ArticleSimpleResponse> articleList = bookStore.getArticleBookStoreList().stream()
-//                    .map(articleBookStore -> articleBookStore.getArticle())
-//                    .map((Article article) -> ArticleSimpleResponse.of(article, isBookmarkArticle))
-//                    .toList();
-
-
             return BookStoreResponse.builder()
                     .id(bookStore.getId())
                     .name(bookStore.getName())
                     .info(bookStoreInfo)
-                    .theme(bookStore.getTheme())
+                    .themeList(bookStore.getThemeList().stream().map(BookStoreTheme::getTheme).toList())
                     .mainImage(bookStore.getMainImage())
                     .subImage(subImages)
                     .introduction(bookStore.getIntroduction())
@@ -145,7 +133,7 @@ public class BookStoreDto {
             Long id,
             String name,
             BookStoreInfo info,
-            BookstoreTheme theme,
+            List<BookStoreType> theme,
             String introduction,
             String mainImage,
             String status,
@@ -171,7 +159,7 @@ public class BookStoreDto {
                     .id(bookStore.getId())
                     .name(bookStore.getName())
                     .info(bookStoreInfo)
-                    .theme(bookStore.getTheme())
+                    .theme(bookStore.getThemeList().stream().map(BookStoreTheme::getTheme).toList())
                     .mainImage(bookStore.getMainImage())
                     .introduction(bookStore.getIntroduction())
                     .status(bookStore.getStatus().toString())

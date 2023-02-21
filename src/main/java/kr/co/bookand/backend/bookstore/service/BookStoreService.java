@@ -4,16 +4,13 @@ import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleBookStore;
-import kr.co.bookand.backend.article.repository.ArticleBookStoreRepository;
 import kr.co.bookand.backend.bookmark.domain.BookmarkType;
 import kr.co.bookand.backend.bookmark.service.BookmarkService;
-import kr.co.bookand.backend.bookstore.domain.BookStore;
-import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
-import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
-import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
+import kr.co.bookand.backend.bookstore.domain.*;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreImageRepository;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
+import kr.co.bookand.backend.bookstore.repository.BookStoreThemeRepository;
 import kr.co.bookand.backend.bookstore.repository.ReportBookStoreRepository;
 import kr.co.bookand.backend.common.domain.Status;
 import kr.co.bookand.backend.common.domain.dto.PageResponse;
@@ -41,6 +38,7 @@ public class BookStoreService {
 
     private final BookStoreRepository bookStoreRepository;
     private final BookStoreImageRepository bookStoreImageRepository;
+    private final BookStoreThemeRepository bookStoreThemeRepository;
     private final ReportBookStoreRepository reportBookStoreRepository;
     private final AccountService accountService;
     private final BookmarkService bookmarkService;
@@ -49,18 +47,32 @@ public class BookStoreService {
     public BookStoreResponse createBookStore(BookStoreRequest bookStoreRequest) {
         accountService.isAccountAdmin();
         duplicateBookStoreName(bookStoreRequest.name());
+        List<String> theme = bookStoreRequest.themeList();
         List<String> subImageList = bookStoreRequest.subImage();
         List<BookStoreImage> bookStoreImageList = new ArrayList<>();
-
+        List<BookStoreTheme> bookStoreThemeList = new ArrayList<>();
+        checkCountBookStoreTheme(theme);
         subImageList.stream().map(image -> BookStoreImage.builder().url(image).build()).forEach(bookStoreImage -> {
             bookStoreImageRepository.save(bookStoreImage);
             bookStoreImageList.add(bookStoreImage);
         });
 
-        BookStore bookStore = bookStoreRequest.toEntity(bookStoreImageList);
+        theme.stream().map(it -> BookStoreTheme.builder().theme(BookStoreType.valueOf(it)).build()).forEach(bookStoreTheme -> {
+            bookStoreThemeRepository.save(bookStoreTheme);
+            bookStoreThemeList.add(bookStoreTheme);
+        });
+
+        BookStore bookStore = bookStoreRequest.toEntity(bookStoreImageList, bookStoreThemeList);
         bookStoreImageList.forEach(bookStoreImage -> bookStoreImage.updateBookStore(bookStore));
+        bookStoreThemeList.forEach(bookStoreTheme -> bookStoreTheme.updateBookStore(bookStore));
         BookStore saveBookStore = bookStoreRepository.save(bookStore);
         return of(saveBookStore, false, null);
+    }
+
+    public void checkCountBookStoreTheme(List<String> theme) {
+        if (theme.size() > 4) {
+            throw new BookStoreException(ErrorCode.TOO_MANY_BOOKSTORE_THEME, theme.size());
+        }
     }
 
     // 상세 조회 (APP)
@@ -69,8 +81,8 @@ public class BookStoreService {
         BookStore findBookStore = bookStoreRepository.findById(id).orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
 
         List<ArticleSimpleResponse> articleList = findBookStore.getArticleBookStoreList().stream()
-                .filter(articleBookStore -> articleBookStore.getArticle().getStatus().equals(Status.VISIBLE))
                 .map(ArticleBookStore::getArticle)
+                .filter(article -> article.getStatus().equals(Status.VISIBLE))
                 .map((Article article) -> {
                     boolean isBookmarkArticle = bookmarkService.isBookmark(article.getId(), BookmarkType.ARTICLE.name());
                     return ArticleSimpleResponse.of(article, isBookmarkArticle);
@@ -106,26 +118,26 @@ public class BookStoreService {
         Pageable pageable = PageRequest.of(pageStateRequest.page() - 1, pageStateRequest.row());
         String search = pageStateRequest.search();
         String bookstoreTheme = pageStateRequest.theme();
-        BookstoreTheme theme = BookstoreTheme.valueOf(bookstoreTheme);
+        BookStoreType theme = BookStoreType.valueOf(bookstoreTheme);
         String bookstoreStatus = pageStateRequest.status();
         Status status = Status.valueOf(bookstoreStatus);
         Page<BookStoreWebResponse> bookStorePage;
         if (search == null && theme == null && status == null) {
             bookStorePage = bookStoreRepository.findAll(pageable).map(BookStoreWebResponse::of);
         } else if (search == null && status == null) {
-            bookStorePage = bookStoreRepository.findAllByTheme(theme, pageable).map(BookStoreWebResponse::of);
+            bookStorePage = bookStoreRepository.findAllByThemeList(theme, pageable).map(BookStoreWebResponse::of);
         } else if (search == null && theme == null) {
             bookStorePage = bookStoreRepository.findAllByStatus(status, pageable).map(BookStoreWebResponse::of);
         } else if (theme == null && status == null) {
             bookStorePage = bookStoreRepository.findAllByNameContaining(search, pageable).map(BookStoreWebResponse::of);
         } else if (status == null) {
-            bookStorePage = bookStoreRepository.findAllByNameContainingAndTheme(search, theme, pageable).map(BookStoreWebResponse::of);
+            bookStorePage = bookStoreRepository.findAllByNameContainingAndThemeList(search, theme, pageable).map(BookStoreWebResponse::of);
         } else if (theme == null) {
             bookStorePage = bookStoreRepository.findAllByNameContainingAndStatus(search, status, pageable).map(BookStoreWebResponse::of);
         } else if (search == null) {
-            bookStorePage = bookStoreRepository.findAllByThemeAndStatus(theme, status, pageable).map(BookStoreWebResponse::of);
+            bookStorePage = bookStoreRepository.findAllByThemeListContainsAndStatus(theme, status, pageable).map(BookStoreWebResponse::of);
         } else {
-            bookStorePage = bookStoreRepository.findAllByNameContainingAndThemeAndStatus(search, theme, status, pageable).map(BookStoreWebResponse::of);
+            bookStorePage = bookStoreRepository.findAllByNameContainingAndThemeListContainingAndStatus(search, theme, status, pageable).map(BookStoreWebResponse::of);
         }
 
         return BookStorePageResponse.of(bookStorePage);
@@ -143,6 +155,16 @@ public class BookStoreService {
                     .bookStore(bookStore)
                     .build();
             bookStoreImageRepository.save(image);
+        }
+
+        List<BookStoreTheme> themes = bookStore.getThemeList();
+        bookStoreThemeRepository.deleteAll(themes);
+        for (String theme : bookStoreRequest.themeList()) {
+            BookStoreTheme bookStoreTheme = BookStoreTheme.builder()
+                    .theme(BookStoreType.valueOf(theme))
+                    .bookStore(bookStore)
+                    .build();
+            bookStoreThemeRepository.save(bookStoreTheme);
         }
         duplicateBookStoreName(bookStoreRequest.name());
         bookStore.updateBookStoreData(bookStoreRequest);

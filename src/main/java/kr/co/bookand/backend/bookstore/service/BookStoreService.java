@@ -17,6 +17,7 @@ import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,7 @@ import static kr.co.bookand.backend.common.domain.dto.PageStateDto.*;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class BookStoreService {
 
     private final BookStoreRepository bookStoreRepository;
@@ -114,32 +116,9 @@ public class BookStoreService {
     }
 
     @Transactional
-    public BookStorePageResponse searchBookStoreList(PageStateRequest pageStateRequest) {
-        Pageable pageable = PageRequest.of(pageStateRequest.page() - 1, pageStateRequest.row());
-        String search = pageStateRequest.search();
-        String bookstoreTheme = pageStateRequest.theme();
-        BookStoreType theme = BookStoreType.valueOf(bookstoreTheme);
-        String bookstoreStatus = pageStateRequest.status();
-        Status status = Status.valueOf(bookstoreStatus);
+    public BookStorePageResponse searchBookStoreList(String search, String theme, String status, Pageable pageable) {
         Page<BookStoreWebResponse> bookStorePage;
-        if (search == null && theme == null && status == null) {
-            bookStorePage = bookStoreRepository.findAll(pageable).map(BookStoreWebResponse::of);
-        } else if (search == null && status == null) {
-            bookStorePage = bookStoreRepository.findAllByThemeList(theme, pageable).map(BookStoreWebResponse::of);
-        } else if (search == null && theme == null) {
-            bookStorePage = bookStoreRepository.findAllByStatus(status, pageable).map(BookStoreWebResponse::of);
-        } else if (theme == null && status == null) {
-            bookStorePage = bookStoreRepository.findAllByNameContaining(search, pageable).map(BookStoreWebResponse::of);
-        } else if (status == null) {
-            bookStorePage = bookStoreRepository.findAllByNameContainingAndThemeList(search, theme, pageable).map(BookStoreWebResponse::of);
-        } else if (theme == null) {
-            bookStorePage = bookStoreRepository.findAllByNameContainingAndStatus(search, status, pageable).map(BookStoreWebResponse::of);
-        } else if (search == null) {
-            bookStorePage = bookStoreRepository.findAllByThemeListContainsAndStatus(theme, status, pageable).map(BookStoreWebResponse::of);
-        } else {
-            bookStorePage = bookStoreRepository.findAllByNameContainingAndThemeListContainingAndStatus(search, theme, status, pageable).map(BookStoreWebResponse::of);
-        }
-
+        bookStorePage = bookStoreRepository.findAllBySearch(search, theme, status, pageable).map(BookStoreWebResponse::of);
         return BookStorePageResponse.of(bookStorePage);
     }
 

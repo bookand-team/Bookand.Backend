@@ -41,6 +41,15 @@ public class BookStoreController {
         return ResponseEntity.ok(bookStoreService.getBookStoreListApp(pageable));
     }
 
+    @ApiOperation(value = "서점 조건 조회")
+    @GetMapping("/search")
+    public ResponseEntity<BookStorePageResponse> searchBookStoreList(
+            @RequestParam("search") String search,
+            @RequestParam("theme") String theme,
+            @RequestParam("status") String status,
+            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(bookStoreService.searchBookStoreList(search, theme, status, pageable));
+    }
 
     @ApiOperation(value = "서점 전체 조회 (WEB)")
     @GetMapping("/web")

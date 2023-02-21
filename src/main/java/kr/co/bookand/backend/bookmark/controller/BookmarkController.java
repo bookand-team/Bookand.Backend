@@ -53,9 +53,9 @@ public class BookmarkController {
     }
 
     @ApiOperation(value = "모아보기 북마크 삭제")
-    @DeleteMapping("/{bookmarkFolderId}")
-    public ResponseEntity<Message> deleteBookmark(@PathVariable Long bookmarkFolderId, @RequestBody BookmarkContentListRequest bookmarkRequest) {
-        return ResponseEntity.ok(bookmarkService.deleteBookmarkContent(bookmarkFolderId, bookmarkRequest));
+    @DeleteMapping("/{bookmarkId}")
+    public ResponseEntity<Message> deleteBookmark(@PathVariable Long bookmarkId, @RequestBody BookmarkContentListRequest bookmarkRequest) {
+        return ResponseEntity.ok(bookmarkService.deleteBookmarkContent(bookmarkId, bookmarkRequest));
     }
 
     @ApiOperation(value = "북마크 폴더 삭제")

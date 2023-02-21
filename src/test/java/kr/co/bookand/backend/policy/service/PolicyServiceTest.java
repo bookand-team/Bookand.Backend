@@ -5,7 +5,6 @@ import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.policy.domain.Policy;
-import kr.co.bookand.backend.policy.domain.dto.PolicyDto;
 import kr.co.bookand.backend.policy.repository.PolicyRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,15 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static kr.co.bookand.backend.policy.domain.dto.PolicyDto.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class PolicyServiceTest {
-
-    @Mock
-    AccountRepository accountRepository;
 
     @Mock
     AccountService accountService;
@@ -40,16 +37,16 @@ class PolicyServiceTest {
     @DisplayName("정책 조회")
     void getPolicy() {
         // given
-        PolicyDto policyRequest = PolicyMockUtils.createPolicyRequest();
+        PolicyRequest policyRequest = PolicyMockUtils.createPolicyRequest();
         Policy policy = policyRequest.toPolicy();
         given(policyRepository.findById(any())).willReturn(Optional.of(policy));
 
         //when
-        PolicyDto policyDto = policyService.getPolicy(1L);
+        PolicyResponse policyResponse = policyService.getPolicy(1L);
 
         //then
-        assertEquals(policyDto.title(), policyRequest.title());
-        assertEquals(policyDto.content(), policyRequest.content());
+        assertEquals(policyResponse.title(), policyRequest.title());
+        assertEquals(policyResponse.content(), policyRequest.content());
     }
 
     @Test
@@ -59,17 +56,17 @@ class PolicyServiceTest {
         Account account = AccountTemplate.makeAccount1();
         given(accountService.getCurrentAccount()).willReturn(account);
 
-        PolicyDto policyRequest = PolicyMockUtils.createPolicyRequest();
+        PolicyRequest policyRequest = PolicyMockUtils.createPolicyRequest();
         Policy mockPolicy = PolicyMockUtils.getMockPolicy();
 
         given(policyRepository.save(any())).willReturn(mockPolicy);
 
         //when
-        PolicyDto policyDto = policyService.createPolicy(policyRequest);
+        PolicyResponse policyResponse = policyService.createPolicy(policyRequest);
 
         //then
-        assertEquals(mockPolicy.getTitle(), policyDto.title());
-        assertEquals(mockPolicy.getContent(), policyDto.content());
+        assertEquals(mockPolicy.getTitle(), policyResponse.title());
+        assertEquals(mockPolicy.getContent(), policyResponse.content());
     }
 
     @Test
@@ -79,16 +76,16 @@ class PolicyServiceTest {
         Account account = AccountTemplate.makeAccount1();
         given(accountService.getCurrentAccount()).willReturn(account);
 
-        PolicyDto policyRequest = PolicyMockUtils.createPolicyRequest();
+        PolicyRequest policyRequest = PolicyMockUtils.createPolicyRequest();
         Policy policy = policyRequest.toPolicy();
         given(policyRepository.findById(any())).willReturn(Optional.of(policy));
 
         //when
-        PolicyDto policyDto = policyService.updatePolicy(policy.getId(), policyRequest);
+        PolicyResponse policyResponse = policyService.updatePolicy(policy.getId(), policyRequest);
 
         //then
-        assertEquals(policyDto.title(), policyRequest.title());
-        assertEquals(policyDto.content(), policyRequest.content());
+        assertEquals(policyResponse.title(), policyRequest.title());
+        assertEquals(policyResponse.content(), policyRequest.content());
     }
 
     @Test
@@ -97,8 +94,8 @@ class PolicyServiceTest {
         // given
         Account account = AccountTemplate.makeAccount1();
         given(accountService.getCurrentAccount()).willReturn(account);
-        
-        PolicyDto policyRequest = PolicyMockUtils.createPolicyRequest();
+
+        PolicyRequest policyRequest = PolicyMockUtils.createPolicyRequest();
         Policy policy = policyRequest.toPolicy();
         given(policyRepository.findById(any())).willReturn(Optional.of(policy));
 

@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static kr.co.bookand.backend.policy.domain.dto.PolicyDto.*;
+
 @RestController
 @RequestMapping("/api/v1/policys")
 @RequiredArgsConstructor
@@ -27,14 +29,14 @@ public class PolicyController {
             "운영정책 - /operation " +
             "이 있습니다.")
     @GetMapping("/{policyName}")
-    public ResponseEntity<PolicyDto> getPolicy(@PathVariable String policyName) {
+    public ResponseEntity<PolicyResponse> getPolicy(@PathVariable String policyName) {
         return ResponseEntity.ok(policyService.getTitlePolicy(policyName));
     }
 
     @ApiOperation(value = "정책 수정")
     @PutMapping("/{id}")
-    public ResponseEntity<PolicyDto> updatePolicy(@RequestBody PolicyDto policyDto, @PathVariable Long id) {
-        return ResponseEntity.ok(policyService.updatePolicy(id, policyDto));
+    public ResponseEntity<PolicyResponse> updatePolicy(@RequestBody PolicyRequest policyRequest, @PathVariable Long id) {
+        return ResponseEntity.ok(policyService.updatePolicy(id, policyRequest));
     }
 
     @ApiOperation(value = "정책 삭제")
@@ -46,8 +48,8 @@ public class PolicyController {
 
     @ApiOperation(value = "정책 생성")
     @PostMapping()
-    public ResponseEntity<PolicyDto> createPolicy(@RequestBody PolicyDto policyDto) {
-        return ResponseEntity.ok(policyService.createPolicy(policyDto));
+    public ResponseEntity<PolicyResponse> createPolicy(@RequestBody PolicyRequest policyRequest) {
+        return ResponseEntity.ok(policyService.createPolicy(policyRequest));
     }
 
 }

@@ -1,4 +1,4 @@
-package kr.co.bookand.backend.common.service;
+package kr.co.bookand.backend.util.dummy;
 
 import kr.co.bookand.backend.policy.domain.Policy;
 import kr.co.bookand.backend.policy.repository.PolicyRepository;
@@ -16,27 +16,32 @@ public class PolicyDummyData {
     @PostConstruct
     public void dummyData() {
         Policy terms = Policy.builder()
-                .title("terms")
+                .name("terms")
+                .title("이용약관")
                 .content(termsContent)
                 .build();
 
         Policy personalInfoAgree = Policy.builder()
-                .title("personal-info-agree")
+                .name("personal-info-agree")
+                .title("개인정보 수집 및 이용 동의")
                 .content(personalInfoPolicy)
                 .build();
 
         Policy locationBaseTerms = Policy.builder()
-                .title("location-base-terms")
+                .name("location-base-terms")
+                .title("위치기반 서비스 이용약관")
                 .content(personalInfoPolicy)
                 .build();
 
         Policy privacy = Policy.builder()
-                .title("privacy")
+                .name("privacy")
+                .title("개인정보처리방침")
                 .content(termsContent)
                 .build();
 
         Policy operation = Policy.builder()
-                .title("operation")
+                .name("operation")
+                .title("운영정책")
                 .content(termsContent)
                 .build();
 

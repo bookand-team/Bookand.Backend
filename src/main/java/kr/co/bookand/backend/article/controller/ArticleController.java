@@ -6,6 +6,8 @@ import kr.co.bookand.backend.article.service.ArticleService;
 import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,23 +30,30 @@ public class ArticleController {
         return ResponseEntity.ok(article);
     }
 
-    @ApiOperation(value = "아티클 상세 조회")
+    @ApiOperation(value = "아티클 상세 조회 (APP)")
     @GetMapping("/{id}")
     public ResponseEntity<ArticleResponse> getArticle(@PathVariable Long id) {
         ArticleResponse article = articleService.getArticle(id);
         return ResponseEntity.ok(article);
     }
 
-    @ApiOperation(value = "아티클 전체 조회")
+    @ApiOperation(value = "아티클 전체 조회 (APP)")
     @GetMapping("")
-    public ResponseEntity<ArticlePageResponse> getArticleList(@PageableDefault Pageable pageable) {
-        ArticlePageResponse articleList = articleService.getArticleList(pageable);
+    public ResponseEntity<ArticleSimplePageResponse> getSimpleArticleList(@PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        ArticleSimplePageResponse articleList = articleService.getSimpleArticleList(pageable);
+        return ResponseEntity.ok(articleList);
+    }
+
+    @ApiOperation(value = "아티클 전체 조회 (WEB)")
+    @GetMapping("/web")
+    public ResponseEntity<ArticleWebPageResponse> getArticleList(@PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        ArticleWebPageResponse articleList = articleService.getArticleList(pageable);
         return ResponseEntity.ok(articleList);
     }
 
     @ApiOperation(value = "조건에 맞는 아티클 조회")
     @PostMapping("/search")
-    public ResponseEntity<ArticlePageResponse> searchArticleList(@RequestBody PageStateRequest pageStateRequest) {
+    public ResponseEntity<ArticleWebPageResponse> searchArticleList(@RequestBody PageStateRequest pageStateRequest) {
         return ResponseEntity.ok(articleService.searchArticleList(pageStateRequest));
     }
 
@@ -70,8 +79,7 @@ public class ArticleController {
 
     @ApiOperation(value = "아티클 상태 변경")
     @PutMapping("/{id}/status")
-    public ResponseEntity<ArticleResponse> updateArticleStatus(@PathVariable Long id) {
-        ArticleResponse article = articleService.updateArticleStatus(id);
-        return ResponseEntity.ok(article);
+    public ResponseEntity<Message> updateArticleStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(articleService.updateArticleStatus(id));
     }
 }

@@ -7,6 +7,7 @@ import kr.co.bookand.backend.common.domain.Message;
 import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +29,16 @@ public class BookStoreController {
         return ResponseEntity.ok(bookStoreService.createBookStore(bookStoreDto));
     }
 
-    @ApiOperation(value = "서점 상세 조회")
+    @ApiOperation(value = "서점 상세 조회 (APP)")
     @GetMapping("/{id}")
     public ResponseEntity<BookStoreResponse> findBookStore(@PathVariable Long id) {
         return ResponseEntity.ok(bookStoreService.getBookStore(id));
+    }
+
+    @ApiOperation(value = "서점 전체 조회 (APP)")
+    @GetMapping("")
+    public ResponseEntity<BookStorePageResponseApp> getBookStoreListApp(@PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(bookStoreService.getBookStoreListApp(pageable));
     }
 
     @ApiOperation(value = "서점 조건 조회")
@@ -40,15 +47,15 @@ public class BookStoreController {
         return ResponseEntity.ok(bookStoreService.searchBookStoreList(pageStateRequest));
     }
 
-    @ApiOperation(value = "서점 전체 조회")
-    @GetMapping("")
-    public ResponseEntity<BookStorePageResponse> getBookStoreList(@PageableDefault Pageable pageable) {
+    @ApiOperation(value = "서점 전체 조회 (WEB)")
+    @GetMapping("/web")
+    public ResponseEntity<BookStorePageResponse> getBookStoreList(@PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(bookStoreService.getBookStoreList(pageable));
     }
 
     @ApiOperation(value = "서점 수정")
     @PutMapping("/{id}")
-    public ResponseEntity<BookStoreResponse> updateBookStore(@PathVariable Long id, @RequestBody BookStoreRequest bookStoreRequest) {
+    public ResponseEntity<BookStoreWebResponse> updateBookStore(@PathVariable Long id, @RequestBody BookStoreRequest bookStoreRequest) {
         return ResponseEntity.ok(bookStoreService.updateBookStore(id, bookStoreRequest));
     }
 
@@ -67,7 +74,7 @@ public class BookStoreController {
 
     @ApiOperation(value = "서점 보기 변경")
     @PutMapping("/{id}/status")
-    public ResponseEntity<BookStoreResponse> updateBookStoreStatus(@PathVariable Long id) {
+    public ResponseEntity<BookStoreWebResponse> updateBookStoreStatus(@PathVariable Long id) {
         return ResponseEntity.ok(bookStoreService.updateBookStoreStatus(id));
     }
 

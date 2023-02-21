@@ -7,9 +7,10 @@ public class PolicyMockUtils {
 
     private static Long id = 10000L;
 
-    public static PolicyDto createPolicyRequest() {
-        return PolicyDto.builder()
+    public static PolicyDto.PolicyRequest createPolicyRequest() {
+        return PolicyDto.PolicyRequest.builder()
                 .title("title")
+                .name("text")
                 .content("content")
                 .build();
 

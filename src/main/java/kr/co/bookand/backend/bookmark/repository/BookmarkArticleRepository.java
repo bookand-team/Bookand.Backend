@@ -16,4 +16,6 @@ public interface BookmarkArticleRepository extends JpaRepository<BookmarkArticle
     Optional<BookmarkArticle> findByBookmarkIdAndArticleId(Long bookmarkId, Long contentId);
 
     Optional<BookmarkArticle> findByArticleIdAndBookmark(Long contentId, Bookmark bookmark);
+
+    boolean existsByArticleIdAndBookmark(Long contentId, Bookmark bookmark);
 }

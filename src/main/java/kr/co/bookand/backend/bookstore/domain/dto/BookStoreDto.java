@@ -1,6 +1,11 @@
 package kr.co.bookand.backend.bookstore.domain.dto;
 
 import kr.co.bookand.backend.account.domain.Account;
+import kr.co.bookand.backend.article.domain.Article;
+import kr.co.bookand.backend.article.domain.ArticleBookStore;
+import kr.co.bookand.backend.article.domain.dto.ArticleDto;
+import kr.co.bookand.backend.bookmark.domain.BookmarkType;
+import kr.co.bookand.backend.bookmark.service.BookmarkService;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
 import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
 import kr.co.bookand.backend.bookstore.domain.BookstoreTheme;
@@ -10,12 +15,16 @@ import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreImageDto.*;
 
 public class BookStoreDto {
 
+    // 서점 생성 request
     public record BookStoreRequest(
             String name,
             String address,
@@ -26,12 +35,9 @@ public class BookStoreDto {
             String theme,
             String mainImage,
             List<String> subImage,
-
             String introduction,
             String status,
-
-            int view,
-            int bookmark
+            int view
     ) {
         @Builder
         public BookStoreRequest {
@@ -51,11 +57,30 @@ public class BookStoreDto {
                     .introduction(introduction)
                     .status(Status.INVISIBLE)
                     .view(view)
-                    .bookmark(bookmark)
                     .build();
         }
     }
 
+    // 서점 일부 정보 response (아티클 내부, 앱 전체 조회)
+    public record BookStoreSimpleResponse(
+            Long id,
+            String name,
+            String introduction,
+            String mainImage,
+            boolean isBookmark
+    ) {
+        public static BookStoreSimpleResponse of(BookStore bookStore, boolean isBookmark) {
+            return new BookStoreSimpleResponse(
+                    bookStore.getId(),
+                    bookStore.getName(),
+                    bookStore.getIntroduction(),
+                    bookStore.getMainImage(),
+                    isBookmark
+            );
+        }
+    }
+
+    // 서점 상세 조회 (APP)
     public record BookStoreResponse(
             Long id,
             String name,
@@ -66,16 +91,17 @@ public class BookStoreDto {
             List<BookStoreImageResponse> subImage,
             String status,
             int view,
-            int bookmark,
+            boolean isBookmark,
             String createdDate,
             String modifiedDate,
+            List<ArticleSimpleResponse> articleResponse,
             boolean visibility
     ) {
         @Builder
         public BookStoreResponse {
         }
 
-        public static BookStoreResponse of(BookStore bookStore) {
+        public static BookStoreResponse of(BookStore bookStore, boolean isBookmarkBookStore, List<ArticleSimpleResponse> articleList) {
             BookStoreInfo bookStoreInfo = BookStoreInfo.builder()
                     .address(bookStore.getAddress())
                     .businessHours(bookStore.getBusinessHours())
@@ -88,6 +114,12 @@ public class BookStoreDto {
                     .map(BookStoreImageResponse::of)
                     .toList();
 
+//            List<ArticleSimpleResponse> articleList = bookStore.getArticleBookStoreList().stream()
+//                    .map(articleBookStore -> articleBookStore.getArticle())
+//                    .map((Article article) -> ArticleSimpleResponse.of(article, isBookmarkArticle))
+//                    .toList();
+
+
             return BookStoreResponse.builder()
                     .id(bookStore.getId())
                     .name(bookStore.getName())
@@ -98,43 +130,68 @@ public class BookStoreDto {
                     .introduction(bookStore.getIntroduction())
                     .status(bookStore.getStatus().toString())
                     .view(bookStore.getView())
-                    .bookmark(bookStore.getBookmark())
+                    .isBookmark(isBookmarkBookStore)
+                    .articleResponse(articleList)
                     .createdDate(bookStore.getCreatedAt())
                     .modifiedDate(bookStore.getModifiedAt())
                     .visibility(bookStore.isVisibility())
                     .status(bookStore.getStatus().toString())
                     .build();
         }
+    }
 
-        public BookStore toEntity() {
-            return BookStore.builder()
-                    .id(id)
-                    .name(name)
-                    .address(info.address())
-                    .businessHours(info.businessHours())
-                    .contact(info.contact())
-                    .facility(info.facility())
-                    .sns(info.sns())
-                    .theme(theme)
-                    .mainImage(mainImage)
-                    .introduction(introduction)
-                    .status(Status.valueOf(status))
-                    .view(view)
-                    .bookmark(bookmark)
+    // 서점 상세 조회 (WEB)
+    public record BookStoreWebResponse(
+            Long id,
+            String name,
+            BookStoreInfo info,
+            BookstoreTheme theme,
+            String introduction,
+            String mainImage,
+            String status,
+            int view,
+            String createdDate,
+            String modifiedDate,
+            boolean visibility
+    ) {
+        @Builder
+        public BookStoreWebResponse {
+        }
+
+        public static BookStoreWebResponse of(BookStore bookStore) {
+            BookStoreInfo bookStoreInfo = BookStoreInfo.builder()
+                    .address(bookStore.getAddress())
+                    .businessHours(bookStore.getBusinessHours())
+                    .contact(bookStore.getContact())
+                    .facility(bookStore.getFacility())
+                    .sns(bookStore.getSns())
+                    .build();
+
+            return BookStoreWebResponse.builder()
+                    .id(bookStore.getId())
+                    .name(bookStore.getName())
+                    .info(bookStoreInfo)
+                    .theme(bookStore.getTheme())
+                    .mainImage(bookStore.getMainImage())
+                    .introduction(bookStore.getIntroduction())
+                    .status(bookStore.getStatus().toString())
+                    .view(bookStore.getView())
+                    .createdDate(bookStore.getCreatedAt())
+                    .modifiedDate(bookStore.getModifiedAt())
+                    .visibility(bookStore.isVisibility())
+                    .status(bookStore.getStatus().toString())
                     .build();
         }
     }
 
+    // 서점 id 리스트 Request
     public record BookStoreListRequest(
             List<Long> bookStoreDtoList
     ) {
     }
 
-    public record BookStoreSimpleDto(
-            Long bookStoreId
-    ) {
-    }
 
+    // 서점 Info
     public record BookStoreInfo(
             String address,
             String businessHours,
@@ -148,23 +205,32 @@ public class BookStoreDto {
         }
     }
 
-    public record BookStoreResponseList(
-            Page<BookStoreResponse> bookStoreResponseList
-    ) {
-        @Builder
-        public BookStoreResponseList {
-        }
-    }
-
+    // 서점 전체 리스트 조회(WEB 용)
     public record BookStorePageResponse(
-            PageResponse<BookStoreResponse> bookstore
+            PageResponse<BookStoreWebResponse> bookstore
     ) {
         @Builder
         public BookStorePageResponse {
         }
 
-        public static BookStorePageResponse of(Page<BookStoreResponse> bookStoreResponsePage) {
+        public static BookStorePageResponse of(Page<BookStoreWebResponse> bookStoreResponsePage) {
             return BookStorePageResponse.builder()
+                    .bookstore(PageResponse.of(bookStoreResponsePage))
+                    .build();
+        }
+    }
+
+
+    // 서점 전체 리스트 조회(APP 용)
+    public record BookStorePageResponseApp(
+            PageResponse<BookStoreSimpleResponse> bookstore
+    ) {
+        @Builder
+        public BookStorePageResponseApp {
+        }
+
+        public static BookStorePageResponseApp of(Page<BookStoreSimpleResponse> bookStoreResponsePage) {
+            return BookStorePageResponseApp.builder()
                     .bookstore(PageResponse.of(bookStoreResponsePage))
                     .build();
         }

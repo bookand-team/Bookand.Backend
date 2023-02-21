@@ -16,6 +16,7 @@ public class Policy extends BaseEntity {
     @Column(name = "policy_id")
     private Long id;
 
+    private String name;
     private String title;
 
     @Column(columnDefinition = "TEXT", length = 30000)

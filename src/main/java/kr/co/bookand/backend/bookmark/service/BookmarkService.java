@@ -122,7 +122,7 @@ public class BookmarkService {
         log.info("type : {}", type);
         List<Bookmark> bookmarkList = bookmarkRepository.findAllByAccountAndBookmarkType(currentAccount, type);
         List<BookmarkFolderResponse> bookmarkFolderList = bookmarkList.stream().map(BookmarkFolderResponse::of)
-                .collect(Collectors.toList());
+                .toList();
         return new BookmarkFolderListResponse(bookmarkFolderList);
     }
 
@@ -338,6 +338,24 @@ public class BookmarkService {
             }
             Page<BookmarkInfo> bookmarkInfo = new PageImpl<>(bookmarkInfoList);
             return BookmarkResponse.of(bookmark, bookmarkInfo);
+        }
+    }
+
+    // 특정 아티클 or 서점이 북마크에 있는지 확인
+    public boolean isBookmark(Long contentId, String bookmarkType) {
+        Account currentAccount = getCurrentAccount(accountRepository);
+        BookmarkType bookmarkTypeEnum = BookmarkType.valueOf(bookmarkType.toUpperCase());
+        Bookmark bookmark = currentAccount.getBookmarkList().stream()
+                .filter(b -> b.getFolderName().equals(INIT_BOOKMARK_FOLDER_NAME))
+                .filter(b -> b.getBookmarkType().equals(bookmarkTypeEnum))
+                .findFirst()
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkType));
+        if (bookmarkTypeEnum.equals(BookmarkType.BOOKSTORE)) {
+            return bookmark.getBookmarkBookStoreList().stream()
+                    .anyMatch(bookmarkBookStore -> bookmarkBookStore.getBookStore().getId().equals(contentId));
+        } else {
+            return bookmark.getBookmarkArticleList().stream()
+                    .anyMatch(bookmarkArticle -> bookmarkArticle.getArticle().getId().equals(contentId));
         }
     }
 }

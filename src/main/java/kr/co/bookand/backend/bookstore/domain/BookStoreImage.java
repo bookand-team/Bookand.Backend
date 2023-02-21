@@ -13,7 +13,7 @@ public class BookStoreImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column()
+    @Column(name = "bookstore_image_id")
     private Long id;
     private String url;
 

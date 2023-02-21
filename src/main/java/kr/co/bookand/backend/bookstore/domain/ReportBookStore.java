@@ -18,6 +18,7 @@ public class ReportBookStore extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "report_bookstore_id")
     private Long id;
 
     private String name;

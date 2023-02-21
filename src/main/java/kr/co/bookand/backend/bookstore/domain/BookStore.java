@@ -23,6 +23,7 @@ public class BookStore extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bookstore_id")
     private Long id;
 
     private String name;
@@ -47,11 +48,11 @@ public class BookStore extends BaseEntity {
     @OneToMany(mappedBy = "bookStore", cascade = CascadeType.ALL)
     private List<BookStoreTheme> themeList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "bookStore")
+    @OneToMany(mappedBy = "bookStore", cascade = CascadeType.ALL)
     private List<ArticleBookStore> articleBookStoreList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "bookStore")
+    @OneToMany(mappedBy = "bookStore", cascade = CascadeType.ALL)
     private List<BookmarkBookStore> bookmarkBookStoreList = new ArrayList<>();
 
     public void updateBookStoreData(BookStoreRequest bookStoreRequest) {

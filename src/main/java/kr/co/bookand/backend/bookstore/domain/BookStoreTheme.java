@@ -12,6 +12,7 @@ import javax.persistence.*;
 public class BookStoreTheme {
     @Id
     @GeneratedValue
+    @Column(name = "bookstore_theme_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)

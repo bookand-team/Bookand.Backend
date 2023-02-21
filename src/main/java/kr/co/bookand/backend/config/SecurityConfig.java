@@ -64,7 +64,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(Arrays.asList("https://dev.bookand.co.kr", "http://localhost:3000", "http://api.bookand.co.kr", "https://bookand-admin-page.vercel.app/", "https://bookand-admin-page/"));

@@ -275,10 +275,11 @@ public class BookmarkService {
 
     // 모아보기에서 북마크 삭제
     @Transactional
-    public Message deleteBookmarkContent(Long bookmarkId, BookmarkContentListRequest request) {
+    public Message deleteBookmarkContent(BookmarkContentListRequest request) {
+        Account currentAccount = getCurrentAccount(accountRepository);
         Bookmark bookmark = bookmarkRepository
-                .findByIdAndFolderNameAndBookmarkType(bookmarkId, INIT_BOOKMARK_FOLDER_NAME, request.bookmarkType())
-                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
+                .findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, request.bookmarkType())
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, currentAccount.getId()));
         if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
             for (Long contentId : request.contentIdList()) {
                 bookmarkBookStoreRepository.findByBookStoreIdAndBookmark(contentId, bookmark)
@@ -288,7 +289,7 @@ public class BookmarkService {
                                     bookmarkBookStore.getBookStore().removeBookmarkBookStore(bookmarkBookStore);
                                 }
                         );
-                bookmarkBookStoreRepository.deleteByBookStoreIdAndBookmarkId(contentId, bookmarkId);
+                bookmarkBookStoreRepository.deleteByBookStoreIdAndBookmarkId(contentId, currentAccount.getId());
                 bookmark.updateBookmarkBookStore(bookmarkBookStoreRepository.findAllByBookmark(bookmark));
             }
         } else {
@@ -300,7 +301,7 @@ public class BookmarkService {
                                     bookmarkArticle.getArticle().removeBookmarkArticle(bookmarkArticle);
                                 }
                         );
-                bookmarkArticleRepository.deleteByArticleIdAndBookmarkId(contentId, bookmarkId);
+                bookmarkArticleRepository.deleteByArticleIdAndBookmarkId(contentId, currentAccount.getId());
                 bookmark.updateBookmarkArticle(bookmarkArticleRepository.findAllByBookmark(bookmark));
             }
         }

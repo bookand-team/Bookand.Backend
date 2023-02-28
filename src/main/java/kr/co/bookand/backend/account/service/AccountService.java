@@ -6,9 +6,13 @@ import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
 import kr.co.bookand.backend.common.domain.Message;
+import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,12 +67,19 @@ public class AccountService {
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, nickname));
     }
 
+    // 전체 회원 조회
+    public MemberListResponse getAccountList(Pageable pageable) {
+        Page<MemberInfo> accounts = accountRepository.findAll(pageable)
+                .map(MemberInfo::of);
+        return MemberListResponse.of(accounts);
+    }
+
     // 회원 수정
     @Transactional
     public MemberInfo updateNickname(MemberUpdateRequest request) {
         Account dbAccount = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
-        boolean nicknameBoolean = checkNicknameBoolean(request.nickname());
+        boolean nicknameBoolean = checkNicknameBoolean(request.nickname(), dbAccount.getNickname());
         if (nicknameBoolean){
             throw new AccountException(ErrorCode.NICKNAME_DUPLICATION, request.nickname());
         }
@@ -80,6 +91,13 @@ public class AccountService {
     public Message checkNickname(String nickname) {
         boolean exists = accountRepository.existsByNickname(nickname);
         return exists ? Message.of("CONFLICT", 409) : Message.of("OK", 200);
+    }
+
+    public boolean checkNicknameBoolean(String nickname, String currentNickname) {
+        if(currentNickname.equals(nickname)) {
+            return false;
+        }
+        return accountRepository.existsByNickname(nickname);
     }
 
     public boolean checkNicknameBoolean(String nickname) {

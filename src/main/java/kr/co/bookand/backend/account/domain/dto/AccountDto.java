@@ -4,10 +4,12 @@ package kr.co.bookand.backend.account.domain.dto;
 import io.swagger.annotations.ApiModelProperty;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.Role;
+import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -92,6 +94,21 @@ public class AccountDto {
     ) {
         public static NicknameResponse of(String nicknameRandom) {
             return new NicknameResponse(nicknameRandom);
+        }
+    }
+
+    public record MemberListResponse(
+            PageResponse<MemberInfo> memberList
+
+    ) {
+        @Builder
+        public MemberListResponse {
+        }
+
+        public static MemberListResponse of(Page<MemberInfo> memberList) {
+            return MemberListResponse.builder()
+                    .memberList(PageResponse.of(memberList))
+                    .build();
         }
     }
 }

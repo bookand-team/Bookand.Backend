@@ -9,6 +9,8 @@ import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.account.util.AccountUtil;
 import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -78,5 +80,12 @@ public class AccountController {
     @GetMapping("/nickname/random")
     public ResponseEntity<NicknameResponse> randomNickname() {
         return ResponseEntity.ok(accountService.getRandomNickname());
+    }
+
+    @ApiOperation(value = "회원 전체 조회")
+    @Operation(summary = "회원 전체 조회", description = "회원 전체를 조회합니다.")
+    @GetMapping("/list")
+    public ResponseEntity<MemberListResponse> getAccountList(@PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(accountService.getAccountList(pageable));
     }
 }

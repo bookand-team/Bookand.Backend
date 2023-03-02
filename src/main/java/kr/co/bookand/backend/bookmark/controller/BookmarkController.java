@@ -36,13 +36,19 @@ public class BookmarkController {
 
     @ApiOperation(value = "북마크 폴더 이름 수정")
     @PutMapping("/folders/{bookmarkFolderId}")
-    public ResponseEntity<BookmarkResponse> updateBookmarkFolderName(@PathVariable Long bookmarkFolderId, @RequestBody BookmarkFolderNameRequest bookmarkRequest) {
+    public ResponseEntity<BookmarkResponse> updateBookmarkFolderName(
+            @PathVariable Long bookmarkFolderId,
+            @RequestBody BookmarkFolderNameRequest bookmarkRequest
+    ) {
         return ResponseEntity.ok(bookmarkService.updateBookmarkFolderName(bookmarkFolderId, bookmarkRequest));
     }
 
     @ApiOperation(value = "북마크 폴더에 내용 추가")
     @PostMapping("/folders/{bookmarkFolderId}")
-    public ResponseEntity<BookmarkResponse> addBookmark(@PathVariable Long bookmarkFolderId, @RequestBody BookmarkContentListRequest bookmarkRequest) {
+    public ResponseEntity<BookmarkResponse> addBookmark(
+            @PathVariable Long bookmarkFolderId,
+            @RequestBody BookmarkContentListRequest bookmarkRequest
+    ) {
         return ResponseEntity.ok(bookmarkService.updateBookmarkFolder(bookmarkFolderId, bookmarkRequest));
     }
 
@@ -60,7 +66,10 @@ public class BookmarkController {
 
     @ApiOperation(value = "북마크 폴더 삭제")
     @DeleteMapping("/folders/{bookmarkFolderId}")
-    public ResponseEntity<Message> deleteBookmarkFolder(@PathVariable Long bookmarkFolderId, @RequestBody BookmarkContentListRequest bookmarkRequest) {
+    public ResponseEntity<Message> deleteBookmarkFolder(
+            @PathVariable Long bookmarkFolderId,
+            @RequestBody BookmarkContentListRequest bookmarkRequest
+    ) {
         return ResponseEntity.ok(bookmarkService.deleteBookmarkFolderContent(bookmarkFolderId, bookmarkRequest));
     }
 

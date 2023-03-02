@@ -25,28 +25,36 @@ public class ArticleController {
 
     @ApiOperation(value = "아티클 생성")
     @PostMapping("")
-    public ResponseEntity<ArticleResponse> createArticle(@RequestBody ArticleRequest articleRequest) {
+    public ResponseEntity<ArticleResponse> createArticle(
+            @RequestBody ArticleRequest articleRequest
+    ) {
         ArticleResponse article = articleService.createArticle(articleRequest);
         return ResponseEntity.ok(article);
     }
 
     @ApiOperation(value = "아티클 상세 조회 (APP)")
     @GetMapping("/{id}")
-    public ResponseEntity<ArticleResponse> getArticle(@PathVariable Long id) {
+    public ResponseEntity<ArticleResponse> getArticle(
+            @PathVariable Long id
+    ) {
         ArticleResponse article = articleService.getArticle(id);
         return ResponseEntity.ok(article);
     }
 
     @ApiOperation(value = "아티클 전체 조회 (APP)")
     @GetMapping("")
-    public ResponseEntity<ArticleSimplePageResponse> getSimpleArticleList(@PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ArticleSimplePageResponse> getSimpleArticleList(
+            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
         ArticleSimplePageResponse articleList = articleService.getSimpleArticleList(pageable);
         return ResponseEntity.ok(articleList);
     }
 
     @ApiOperation(value = "아티클 전체 조회 (WEB)")
     @GetMapping("/web")
-    public ResponseEntity<ArticleWebPageResponse> getArticleList(@PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ArticleWebPageResponse> getArticleList(
+            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
         ArticleWebPageResponse articleList = articleService.getArticleList(pageable);
         return ResponseEntity.ok(articleList);
     }
@@ -57,33 +65,43 @@ public class ArticleController {
             @RequestParam("search") String search1,
             @RequestParam("category") String category,
             @RequestParam("status") String status,
-            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
         return ResponseEntity.ok(articleService.searchArticleList(search1, category, status, pageable));
     }
 
     @ApiOperation(value = "아티클 수정")
     @PutMapping("/{id}")
-    public ResponseEntity<ArticleResponse> updateArticle(@PathVariable Long id, @RequestBody ArticleRequest articleRequest) {
+    public ResponseEntity<ArticleResponse> updateArticle(
+            @PathVariable Long id,
+            @RequestBody ArticleRequest articleRequest
+    ) {
         ArticleResponse article = articleService.updateArticle(id, articleRequest);
         return ResponseEntity.ok(article);
     }
 
     @ApiOperation(value = "아티클 삭제")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Message> removeArticle(@PathVariable Long id) {
+    public ResponseEntity<Message> removeArticle(
+            @PathVariable Long id
+    ) {
         articleService.removeBookStore(id);
         return ResponseEntity.ok(Message.of("아티클 삭제 완료."));
     }
 
     @ApiOperation(value = "선택된 서점 삭제")
     @DeleteMapping("/list")
-    public ResponseEntity<Message> deleteArticleList(@RequestBody ArticleListRequest list) {
+    public ResponseEntity<Message> deleteArticleList(
+            @RequestBody ArticleListRequest list
+    ) {
         return ResponseEntity.ok(articleService.deleteArticleList(list));
     }
 
     @ApiOperation(value = "아티클 상태 변경")
     @PutMapping("/{id}/status")
-    public ResponseEntity<Message> updateArticleStatus(@PathVariable Long id) {
+    public ResponseEntity<Message> updateArticleStatus(
+            @PathVariable Long id
+    ) {
         return ResponseEntity.ok(articleService.updateArticleStatus(id));
     }
 }

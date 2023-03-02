@@ -64,7 +64,8 @@ public class AccountDto {
             String email,
             String providerEmail,
             String nickname,
-            String profileImage
+            String profileImage,
+            String providerType
     ) {
         @Builder
         public MemberInfo {
@@ -77,6 +78,7 @@ public class AccountDto {
                     .providerEmail(account.getProviderEmail())
                     .nickname(account.getNickname())
                     .profileImage(account.getProfileImage())
+                    .providerType(account.getProvider())
                     .build();
         }
     }

@@ -199,7 +199,7 @@ public class BookStoreService {
 
     public PageResponse<BookStoreReportList> getBookStoreReportList(Pageable pageable) {
         accountService.isAccountAdmin();
-        Page<BookStoreReportList> bookStoreReportLists = reportBookStoreRepository.findAll(pageable).map(BookStoreReportList::of);
-        return PageResponse.of(bookStoreReportLists);
+        Page<BookStoreReportList> bookStoreReportList = reportBookStoreRepository.findAll(pageable).map(BookStoreReportList::of);
+        return PageResponse.of(bookStoreReportList);
     }
 }

@@ -6,6 +6,7 @@ import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import kr.co.bookand.backend.common.domain.BaseEntity;
+import kr.co.bookand.backend.feedback.domain.Feedback;
 import kr.co.bookand.backend.notification.Notification;
 import lombok.*;
 
@@ -34,6 +35,10 @@ public class Account extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<Feedback> feedbackList = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)

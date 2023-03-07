@@ -19,7 +19,6 @@ import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +29,6 @@ import java.util.List;
 import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.BookStoreResponse.of;
-import static kr.co.bookand.backend.common.domain.dto.PageStateDto.*;
 
 @Service
 @RequiredArgsConstructor
@@ -201,8 +199,7 @@ public class BookStoreService {
 
     public PageResponse<BookStoreReportList> getBookStoreReportList(Pageable pageable) {
         accountService.isAccountAdmin();
-        List<BookStoreReportList> bookStoreReportLists = reportBookStoreRepository.findAll().stream()
-                .map(BookStoreReportList::of).toList();
-        return PageResponse.of(pageable, bookStoreReportLists);
+        Page<BookStoreReportList> bookStoreReportLists = reportBookStoreRepository.findAll(pageable).map(BookStoreReportList::of);
+        return PageResponse.of(bookStoreReportLists);
     }
 }

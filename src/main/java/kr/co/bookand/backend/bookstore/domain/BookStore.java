@@ -10,7 +10,6 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
 

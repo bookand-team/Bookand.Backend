@@ -3,8 +3,6 @@ package kr.co.bookand.backend.common.domain.dto;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -23,16 +21,5 @@ public class PageResponse<T> {
                 .last(page.isLast())
                 .content(page.getContent())
                 .build();
-    }
-
-    public static <T> PageResponse<T> of(Pageable pageable, List<T> list) {
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), list.size());
-        Page<T> recruitCardPage = new PageImpl<>(
-                list.subList(start, end),
-                pageable,
-                list.size()
-        );
-        return PageResponse.of(recruitCardPage);
     }
 }

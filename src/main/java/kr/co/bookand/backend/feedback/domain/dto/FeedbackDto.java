@@ -21,7 +21,7 @@ public class FeedbackDto {
         public Feedback toEntity(Account account) {
             return Feedback.builder()
                     .rating(rating)
-                    .feedbackType(FeedbackType.getFeedbackType(feedbackType))
+                    .feedbackType(FeedbackType.valueOf(feedbackType))
                     .feedbackTarget(feedbackTarget == null ? null : FeedbackTarget.valueOf(feedbackTarget))
                     .content(content)
                     .account(account)
@@ -51,7 +51,7 @@ public class FeedbackDto {
             return new FeedbackListResponse(
                     feedback.getId(),
                     feedback.getAccount().getEmail(),
-                    feedback.getFeedbackType().name(),
+                    feedback.getFeedbackType().toDetail(),
                     feedback.getContent(),
                     feedback.getRating(),
                     feedback.getCreatedAt()
@@ -70,7 +70,7 @@ public class FeedbackDto {
             return new FeedbackDetailResponse(
                     feedback.getId(),
                     feedback.getAccount().getEmail(),
-                    feedback.getFeedbackType().name(),
+                    feedback.getFeedbackType().toDetail(),
                     feedback.getFeedbackTarget() == null ? null : feedback.getFeedbackTarget().name(),
                     feedback.getContent()
             );

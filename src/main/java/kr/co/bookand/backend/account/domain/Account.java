@@ -7,7 +7,6 @@ import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import kr.co.bookand.backend.common.domain.BaseEntity;
 import kr.co.bookand.backend.feedback.domain.Feedback;
-import kr.co.bookand.backend.notification.Notification;
 import lombok.*;
 
 import javax.persistence.*;
@@ -43,10 +42,6 @@ public class Account extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Bookmark> bookmarkList = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<Notification> notificationList = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)

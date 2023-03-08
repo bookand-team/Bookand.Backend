@@ -20,13 +20,13 @@ public class FeedbackController {
     private final FeedbackService feedbackService;
 
     @ApiOperation(value = "피드백 생성")
-    @PostMapping("")
+    @PostMapping()
     public ResponseEntity<FeedbackResponse> createFeedback(@RequestBody FeedbackRequest feedbackRequest) {
         return ResponseEntity.ok(feedbackService.createFeedback(feedbackRequest));
     }
 
     @ApiOperation(value = "피드백 리스트 조회")
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<PageResponse<FeedbackListResponse>> getFeedbackList(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(feedbackService.getFeedbackList(pageable));
     }

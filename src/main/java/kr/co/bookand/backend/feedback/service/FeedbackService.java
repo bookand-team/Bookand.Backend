@@ -24,7 +24,7 @@ public class FeedbackService {
 
         @Transactional
         public FeedbackResponse createFeedback(FeedbackRequest feedbackRequest) {
-            Account account = accountService.checkAccountUser();
+            Account account = accountService.getCurrentAccount();
             Feedback feedback = feedbackRequest.toEntity(account);
             feedbackRepository.save(feedback);
             return FeedbackResponse.of(feedback);

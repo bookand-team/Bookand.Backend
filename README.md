@@ -1,6 +1,6 @@
 # 📚 BOOK&
 
-![bookand-logo](https://user-images.githubusercontent.com/95139402/223180785-c26258f7-653d-444a-a643-52ddee11862e.png)
+![북앤드_로고](https://user-images.githubusercontent.com/95139402/223629153-386099c7-0e38-4d34-986a-37aca5f7623d.png)
 
 ### 독립서점 서비스 
 BOOK&는 수도권에 있는 독립서점의 정보를 제공하며, 맞춤형 큐레이션 피드 제공을 통해, 독립서점을 소개합니다.
@@ -30,7 +30,7 @@ BOOK&는 수도권에 있는 독립서점의 정보를 제공하며, 맞춤형 �
 [ERDCloud](https://www.erdcloud.com/d/8s8xN7LFMBMhr5JmZ)
 
 ## ⚙️ System Architecture
-![System Architecture](https://user-images.githubusercontent.com/95139402/223204564-03fc071c-5cea-47e2-9b8a-7e1bf0c6921a.png)
+![System Architecture](https://user-images.githubusercontent.com/95139402/223629261-145ba2b5-d28b-40e3-b708-a638f861b12a.png)
 
 ## 🙋 Member
 

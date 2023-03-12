@@ -23,8 +23,9 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final AccountService accountService;
 
-    public PageResponse<NotificationListResponse> getNotificationList(Pageable pageable) {
-        Page<NotificationListResponse> notificationList = notificationRepository.findAllByVisibility(pageable, true);
+    public PageResponse<NotificationResponse> getNotificationList(Pageable pageable) {
+        Page<NotificationResponse> notificationList = notificationRepository.findAllByVisibility(pageable, true)
+                .map(NotificationResponse::of);
         return PageResponse.of(notificationList);
     }
 
@@ -37,7 +38,8 @@ public class NotificationService {
     }
 
     public NotificationResponse getNotification(Long notificationId) {
-        Notification notification = notificationRepository.findById(notificationId).orElseThrow(() -> new NotificationException(ErrorCode.NOT_FOUND_NOTIFICATION, notificationId));
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new NotificationException(ErrorCode.NOT_FOUND_NOTIFICATION, notificationId));
         return NotificationResponse.of(notification);
     }
 }

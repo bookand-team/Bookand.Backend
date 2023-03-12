@@ -5,18 +5,6 @@ import lombok.Builder;
 
 public class NotificationDto {
 
-    public record NotificationListResponse(
-            Long id,
-            String title
-    ) {
-        public static NotificationListResponse of(Notification notification) {
-            return new NotificationListResponse(
-                    notification.getId(),
-                    notification.getTitle()
-            );
-        }
-    }
-
     public record NotificationResponse(
             Long id,
             String title,

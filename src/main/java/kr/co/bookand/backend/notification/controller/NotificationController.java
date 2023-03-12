@@ -31,6 +31,7 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.getNotificationList(pageable));
     }
 
+    @Deprecated
     @ApiOperation(value = "공지사항 상세 조회")
     @GetMapping("/{notificationId}")
     public ResponseEntity<NotificationResponse> getNotification(@PathVariable Long notificationId) {

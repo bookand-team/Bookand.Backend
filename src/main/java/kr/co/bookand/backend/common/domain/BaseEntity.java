@@ -1,6 +1,5 @@
 package kr.co.bookand.backend.common.domain;
 
-import kr.co.bookand.backend.article.domain.ArticleBookStore;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -23,13 +22,13 @@ public abstract class BaseEntity {
 
     @PrePersist
     protected void onPrePersist(){
-        this.createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+        this.createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
         this.modifiedAt = this.createdAt;
     }
 
     @PreUpdate
     protected void onPreUpdate(){
-        this.modifiedAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+        this.modifiedAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
     }
 
     public void softDelete() {

@@ -25,7 +25,7 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.createNotification(createNotificationRequest));
     }
 
-    @ApiOperation(value = "공지사항 목록 조회")
+    @ApiOperation(value = "공지사항 목록 조회", notes = "param 중 page만 사용합니다.")
     @GetMapping()
     public ResponseEntity<PageResponse<NotificationListResponse>> getNotificationList(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(notificationService.getNotificationList(pageable));

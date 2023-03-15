@@ -25,13 +25,13 @@ public class FeedbackController {
         return ResponseEntity.ok(feedbackService.createFeedback(feedbackRequest));
     }
 
-    @ApiOperation(value = "피드백 리스트 조회")
+    @ApiOperation(value = "피드백 리스트 조회 (WEB)")
     @GetMapping()
     public ResponseEntity<PageResponse<FeedbackListResponse>> getFeedbackList(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(feedbackService.getFeedbackList(pageable));
     }
 
-    @ApiOperation(value = "피드백 상세 정보 조회")
+    @ApiOperation(value = "피드백 상세 정보 조회 (WEB)")
     @GetMapping("{feedbackId}")
     public ResponseEntity<FeedbackDetailResponse> getFeedbackDetail(@PathVariable Long feedbackId) {
         return ResponseEntity.ok(feedbackService.getFeedbackDetail(feedbackId));

@@ -1,22 +1,25 @@
 package kr.co.bookand.backend.account.service;
 
 import kr.co.bookand.backend.account.domain.Account;
+import kr.co.bookand.backend.account.domain.RevokeAccount;
+import kr.co.bookand.backend.account.domain.RevokeType;
 import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
+import kr.co.bookand.backend.account.repository.RevokeAccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
 import kr.co.bookand.backend.common.domain.Message;
-import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
+import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
+import static kr.co.bookand.backend.account.domain.dto.RevokeDto.*;
 import static kr.co.bookand.backend.config.security.SecurityUtils.getCurrentAccountEmail;
 
 @Slf4j
@@ -27,6 +30,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final AuthService authService;
+    private final RevokeAccountRepository revokeAccountRepository;
 
     public Account getCurrentAccount() {
         return accountRepository.findByEmail(getCurrentAccountEmail()).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
@@ -80,7 +84,7 @@ public class AccountService {
         Account dbAccount = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
         boolean nicknameBoolean = checkNicknameBoolean(request.nickname(), dbAccount.getNickname());
-        if (nicknameBoolean){
+        if (nicknameBoolean) {
             throw new AccountException(ErrorCode.NICKNAME_DUPLICATION, request.nickname());
         }
         dbAccount.updateProfileImage(request.profileImage());
@@ -94,7 +98,7 @@ public class AccountService {
     }
 
     public boolean checkNicknameBoolean(String nickname, String currentNickname) {
-        if(currentNickname.equals(nickname)) {
+        if (currentNickname.equals(nickname)) {
             return false;
         }
         return accountRepository.existsByNickname(nickname);
@@ -105,13 +109,43 @@ public class AccountService {
     }
 
     @Transactional
-    public void removeAccount(Account account) {
-        account.softDelete();
+    public boolean revokeAccount(Account account, RevokeReasonRequest request) {
+        if (!account.isVisibility()) {
+            throw new AccountException(ErrorCode.ALREADY_REVOKE_MEMBER, account.getEmail());
+        }
+
+        Account updateAccount = accountRepository.findByEmail(account.getEmail())
+                .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, account.getEmail()));
+        RevokeType revokeType = RevokeType.of(request.revokeType());
+        AuthRequest authRequest = AuthRequest.builder()
+                .socialType(account.getProvider())
+                .accessToken(request.socialAccessToken())
+                .build();
+
+        checkLoginMember(account, authRequest);
+
+        RevokeAccount revokeAccount = RevokeAccount.builder()
+                .reason(request.reason())
+                .revokeType(revokeType)
+                .accountId(account.getId())
+                .build();
+        revokeAccountRepository.save(revokeAccount);
+
+        updateAccount.setVisibility(false);
+        return updateAccount.isVisibility();
+    }
+
+    public void checkLoginMember(Account account, AuthRequest authRequest) {
+        ProviderIdAndEmail socialIdWithAccessToken = authService.getSocialIdWithAccessToken(authRequest);
+        String socialEmail = socialIdWithAccessToken.getUserId() + "@" + account.getProvider().toLowerCase() + ".com";
+        if (!account.getEmail().equals(socialEmail)) {
+            throw new AccountException(ErrorCode.NOT_MATCH_MEMBER, socialEmail);
+        }
     }
 
     public NicknameResponse getRandomNickname() {
         String nicknameRandom = authService.nicknameRandom();
-        while(checkNicknameBoolean(nicknameRandom)) {
+        while (checkNicknameBoolean(nicknameRandom)) {
             nicknameRandom = authService.nicknameRandom();
         }
         return NicknameResponse.of(nicknameRandom);

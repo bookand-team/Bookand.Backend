@@ -32,7 +32,7 @@ public abstract class BaseEntity {
     }
 
     public void softDelete() {
-        visibility = false;
+        this.visibility = false;
     }
 
     public void setVisible() {

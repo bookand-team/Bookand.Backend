@@ -79,8 +79,9 @@ public class AuthService {
 
     @Transactional
     public LoginResponse socialAccess(AuthRequest authRequestDto) {
-        String userId = getSocialIdWithAccessToken(authRequestDto).getUserId();
-        String providerEmail = getSocialIdWithAccessToken(authRequestDto).getEmail();
+        ProviderIdAndEmail socialIdWithAccessToken = getSocialIdWithAccessToken(authRequestDto);
+        String userId = socialIdWithAccessToken.getUserId();
+        String providerEmail = socialIdWithAccessToken.getEmail();
         authRequestDto.insertId(userId);
         String email = authRequestDto.extraEmail();
         Optional<Account> account = accountRepository.findByEmail(email);
@@ -223,7 +224,7 @@ public class AuthService {
     }
 
 
-    private ProviderIdAndEmail getSocialIdWithAccessToken(AuthRequest data) {
+    public ProviderIdAndEmail getSocialIdWithAccessToken(AuthRequest data) {
         SocialType socialType = data.getSocialType();
         if (socialType.equals(SocialType.GOOGLE)) {
             return getGoogleIdAndEmail(data);

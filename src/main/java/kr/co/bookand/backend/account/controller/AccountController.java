@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.account.util.AccountUtil;
 import kr.co.bookand.backend.common.domain.Message;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
+import static kr.co.bookand.backend.account.domain.dto.RevokeDto.*;
 
 @RestController
 @RequestMapping("/api/v1/members")
@@ -66,13 +65,13 @@ public class AccountController {
         return ResponseEntity.status(message.statusCode()).body(message);
     }
 
-    @ApiOperation(value = "회원 삭제")
-    @Operation(summary = "회원 삭제", description = "회원을 삭제합니다.")
-    @DeleteMapping("/remove")
-    public ResponseEntity<Message> removeAccount() {
+    @ApiOperation(value = "회원 탈퇴 사유 입력")
+    @Operation(summary = "회원 탈퇴 사유 입력", description = "회원 탈퇴 사유를 입력합니다.")
+    @DeleteMapping("/revoke")
+    public ResponseEntity<Message> revokeReason(@Valid @RequestBody RevokeReasonRequest revokeReasonRequest) {
         Account account = AccountUtil.getAccount();
-        accountService.removeAccount(account);
-        return ResponseEntity.ok(Message.of("유저 삭제 완료"));
+        boolean revokeAccount = accountService.revokeAccount(account, revokeReasonRequest);
+        return ResponseEntity.ok(Message.of(String.valueOf(revokeAccount)));
     }
 
     @ApiOperation(value = "닉네임 랜덤 생성")

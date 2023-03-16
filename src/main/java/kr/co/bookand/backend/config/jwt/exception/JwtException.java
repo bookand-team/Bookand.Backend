@@ -8,7 +8,7 @@ public class JwtException extends RuntimeException {
     public ErrorCode errorCode;
 
     public JwtException(ErrorCode errorCode, Object exception) {
-        super(exception != null ? errorCode.getMessage() : exception.toString());
+        super(exception != null ? errorCode.getErrorLog() : exception.toString());
         this.errorCode = errorCode;
     }
 

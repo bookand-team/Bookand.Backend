@@ -8,8 +8,10 @@ import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import kr.co.bookand.backend.common.domain.BaseEntity;
 import kr.co.bookand.backend.feedback.domain.Feedback;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,12 @@ public class Account extends BaseEntity {
     private String provider;
     private String providerEmail;
     private String profileImage;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime lastLoginDate;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime signUpDate;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -68,5 +76,13 @@ public class Account extends BaseEntity {
 
     public void updateProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public void updateLastLoginDate(LocalDateTime lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
+    }
+
+    public void updateSignUpDate(LocalDateTime signUpDate) {
+        this.signUpDate = signUpDate;
     }
 }

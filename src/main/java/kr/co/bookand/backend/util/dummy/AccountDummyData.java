@@ -4,6 +4,7 @@ import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.account.domain.SocialType;
 import kr.co.bookand.backend.account.domain.dto.AuthDto;
 import kr.co.bookand.backend.account.repository.AccountRepository;
+import kr.co.bookand.backend.account.service.AuthService;
 import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookmark.domain.BookmarkType;
 import kr.co.bookand.backend.bookmark.repository.BookmarkRepository;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountDummyData {
 
+    private final AuthService authService;
     private final AccountRepository accountRepository;
     private final BookmarkRepository bookmarkRepository;
     private final PasswordEncoder passwordEncoder;
@@ -45,19 +47,6 @@ public class AccountDummyData {
     }
 
     private List<Bookmark> createInitBookmark(Account saveAccount) {
-        Bookmark initBookmarkArticle = Bookmark.builder()
-                .account(saveAccount)
-                .folderName(INIT_BOOKMARK_FOLDER_NAME)
-                .bookmarkType(BookmarkType.ARTICLE)
-                .build();
-        Bookmark initBookmarkBookStore = Bookmark.builder()
-                .account(saveAccount)
-                .folderName(INIT_BOOKMARK_FOLDER_NAME)
-                .bookmarkType(BookmarkType.BOOKSTORE)
-                .build();
-
-        bookmarkRepository.save(initBookmarkArticle);
-        bookmarkRepository.save(initBookmarkBookStore);
-        return Arrays.asList(initBookmarkArticle, initBookmarkBookStore);
+        return authService.getBookmarks(saveAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkRepository);
     }
 }

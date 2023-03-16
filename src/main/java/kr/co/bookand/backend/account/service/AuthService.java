@@ -50,6 +50,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
@@ -106,7 +107,8 @@ public class AuthService {
 
     public TokenDto login(AccountDto.LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
-        accountRepository.findByEmail(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
+        Account account = accountRepository.findByEmail(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
+        account.updateLastLoginDate(LocalDateTime.now());
         return getTokenDto(loginRequest);
     }
 
@@ -118,7 +120,6 @@ public class AuthService {
             String authority = grantedAuthority.getAuthority();
             checkRole(Role.ADMIN.name(), authority);
         }
-
         return getTokenDto(loginRequest);
     }
 
@@ -142,11 +143,13 @@ public class AuthService {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
-
+        Account account = accountRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, loginRequest.getEmail()));
         // refresh token 저장
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(authentication.getName())
                 .value(tokenDto.getRefreshToken())
+                .account(account)
                 .build();
         refreshTokenRepository.save(refreshToken);
         return tokenDto;
@@ -164,6 +167,7 @@ public class AuthService {
         duplicateEmailAndNickName(email, nickname);
         Account account = signTokenDto.toAccount(email, socialType, providerEmail, passwordEncoder, suffix, nickname);
         Account saveAccount = accountRepository.save(account);
+        saveAccount.updateSignUpDate(LocalDateTime.now());
 
         List<Bookmark> initBookmark = createInitBookmark(saveAccount);
         saveAccount.updateBookmarkList(initBookmark);
@@ -173,14 +177,18 @@ public class AuthService {
     }
 
     private List<Bookmark> createInitBookmark(Account saveAccount) {
+        return getBookmarks(saveAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkRepository);
+    }
+
+    public List<Bookmark> getBookmarks(Account saveAccount, String initBookmarkFolderName, BookmarkRepository bookmarkRepository) {
         Bookmark initBookmarkArticle = Bookmark.builder()
                 .account(saveAccount)
-                .folderName(INIT_BOOKMARK_FOLDER_NAME)
+                .folderName(initBookmarkFolderName)
                 .bookmarkType(BookmarkType.ARTICLE)
                 .build();
         Bookmark initBookmarkBookStore = Bookmark.builder()
                 .account(saveAccount)
-                .folderName(INIT_BOOKMARK_FOLDER_NAME)
+                .folderName(initBookmarkFolderName)
                 .bookmarkType(BookmarkType.BOOKSTORE)
                 .build();
 
@@ -305,6 +313,10 @@ public class AuthService {
         Authentication authentication = tokenFactory.getAuthentication(tokenRequestDto.getRefreshToken());
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
                 .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getMessage()));
+
+        // 로그인 접근 시간 업데이트
+        refreshToken.getAccount().updateLastLoginDate(LocalDateTime.now());
+
         reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
 
@@ -312,6 +324,7 @@ public class AuthService {
         RefreshToken newRefreshToken = RefreshToken.builder()
                 .key(authentication.getName())
                 .value(tokenDto.getRefreshToken())
+                .account(refreshToken.getAccount())
                 .build();
         refreshTokenRepository.save(newRefreshToken);
 

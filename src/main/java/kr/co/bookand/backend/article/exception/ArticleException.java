@@ -8,7 +8,7 @@ public class ArticleException extends RuntimeException {
     public ErrorCode errorCode;
 
     public ArticleException(ErrorCode errorCode, Object exception) {
-        super(exception != null ? errorCode.getMessage() : exception.toString());
+        super(exception != null ? errorCode.getErrorLog() : exception.toString());
         this.errorCode = errorCode;
     }
 }

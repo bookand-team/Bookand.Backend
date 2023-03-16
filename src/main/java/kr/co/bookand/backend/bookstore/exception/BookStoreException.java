@@ -8,7 +8,7 @@ public class BookStoreException extends RuntimeException {
     public ErrorCode errorCode;
 
     public BookStoreException(ErrorCode errorCode, Object exception) {
-        super(exception != null ? errorCode.getMessage() : exception.toString());
+        super(exception != null ? errorCode.getErrorLog() : exception.toString());
         this.errorCode = errorCode;
     }
 }

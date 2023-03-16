@@ -9,7 +9,7 @@ public class AwsS3Exception extends RuntimeException{
     ErrorCode awsS3ErrorCode;
 
     public AwsS3Exception(ErrorCode awsS3ErrorCode) {
-        super(awsS3ErrorCode.getMessage());
+        super(awsS3ErrorCode.getErrorLog());
         this.awsS3ErrorCode = awsS3ErrorCode;
     }
 }

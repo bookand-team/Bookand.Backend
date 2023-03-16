@@ -4,7 +4,7 @@ import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 
 public enum Role {
-    USER, ADMIN, MANAGER, BAN;
+    USER, ADMIN, MANAGER, SUSPENDED;
 
     public void checkAdmin() {
         if (this != ADMIN) {

@@ -7,15 +7,14 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.account.domain.Role;
-import kr.co.bookand.backend.account.domain.SocialType;
+import kr.co.bookand.backend.account.domain.*;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.domain.dto.AppleDto;
 import kr.co.bookand.backend.account.domain.dto.AuthDto;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
 import kr.co.bookand.backend.account.exception.*;
 import kr.co.bookand.backend.account.repository.AccountRepository;
+import kr.co.bookand.backend.account.repository.SuspendedAccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
 import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookmark.domain.BookmarkType;
@@ -68,6 +67,7 @@ public class AuthService {
     private final BookmarkRepository bookmarkRepository;
     private final RestTemplateService<MultiValueMap<String, String>> apiService;
     private final PasswordEncoder passwordEncoder;
+    private final SuspendedAccountRepository suspendedAccountRepository;
 
     private static final String INIT_BOOKMARK_FOLDER_NAME = "모아보기";
 
@@ -79,12 +79,17 @@ public class AuthService {
 
     @Transactional
     public LoginResponse socialAccess(AuthRequest authRequestDto) {
-        String userId = getSocialIdWithAccessToken(authRequestDto).getUserId();
-        String providerEmail = getSocialIdWithAccessToken(authRequestDto).getEmail();
+        ProviderIdAndEmail socialIdWithAccessToken = getSocialIdWithAccessToken(authRequestDto);
+        String userId = socialIdWithAccessToken.getUserId();
+        String providerEmail = socialIdWithAccessToken.getEmail();
         authRequestDto.insertId(userId);
         String email = authRequestDto.extraEmail();
         Optional<Account> account = accountRepository.findByEmail(email);
+        account.ifPresent(this::checkSuspended);
         SocialType socialType = authRequestDto.getSocialType();
+
+        // TODO : 쿼리 2번 날리는거 개선
+        account = accountRepository.findByEmail(email);
 
         if (account.isPresent()) {
             // 로그인
@@ -104,16 +109,42 @@ public class AuthService {
         }
     }
 
+    @Transactional
+    public void checkSuspended(Account account) {
+        AccountStatus accountStatus = account.getAccountStatus();
+        Optional<SuspendedAccount> suspendedAccount = suspendedAccountRepository.findByAccount(account);
+        if (suspendedAccount.isEmpty()) return;
+        boolean isAccountExpired = LocalDateTime.now().isAfter(suspendedAccount.get().getEndedSuspendedDate());
+
+        switch (accountStatus) {
+            case SUSPENDED:
+                if (isAccountExpired) account.updateAccountStatus(AccountStatus.NORMAL);
+                else throw new AccountException(ErrorCode.SUSPENDED_ACCOUNT, account.getEmail());
+                break;
+            case DELETED:
+                if (isAccountExpired) {
+                    RefreshToken refreshToken = refreshTokenRepository.findByKey(account.getEmail())
+                            .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, account.getEmail()));
+
+                    refreshTokenRepository.delete(refreshToken);
+                    suspendedAccountRepository.deleteById(suspendedAccount.get().getId());
+                    accountRepository.deleteById(account.getId());
+                } else throw new AccountException(ErrorCode.DELETED_ACCOUNT, account.getEmail());
+                break;
+            default:
+                break;
+        }
+    }
 
     public TokenDto login(AccountDto.LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
         Account account = accountRepository.findByEmail(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
+        checkSuspended(account);
         account.updateLastLoginDate(LocalDateTime.now());
         return getTokenDto(loginRequest);
     }
 
     public TokenDto loginAdmin(AccountDto.LoginRequest loginRequest) {
-
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
@@ -223,7 +254,7 @@ public class AuthService {
     }
 
 
-    private ProviderIdAndEmail getSocialIdWithAccessToken(AuthRequest data) {
+    public ProviderIdAndEmail getSocialIdWithAccessToken(AuthRequest data) {
         SocialType socialType = data.getSocialType();
         if (socialType.equals(SocialType.GOOGLE)) {
             return getGoogleIdAndEmail(data);
@@ -277,7 +308,7 @@ public class AuthService {
             return ProviderIdAndEmail.toProviderDto(subject, email);
 
         } catch (JsonProcessingException | NoSuchAlgorithmException | InvalidKeySpecException | SignatureException |
-                MalformedJwtException | ExpiredJwtException | IllegalArgumentException e) {
+                 MalformedJwtException | ExpiredJwtException | IllegalArgumentException e) {
             throw new AccountException(ErrorCode.APPLE_LOGIN_ERROR, e);
         }
     }
@@ -312,7 +343,9 @@ public class AuthService {
         }
         Authentication authentication = tokenFactory.getAuthentication(tokenRequestDto.getRefreshToken());
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getMessage()));
+                .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getErrorLog()));
+
+        checkSuspended(refreshToken.getAccount());
 
         // 로그인 접근 시간 업데이트
         refreshToken.getAccount().updateLastLoginDate(LocalDateTime.now());
@@ -320,23 +353,18 @@ public class AuthService {
         reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
 
-        // refresh token 저장
-        RefreshToken newRefreshToken = RefreshToken.builder()
-                .key(authentication.getName())
-                .value(tokenDto.getRefreshToken())
-                .account(refreshToken.getAccount())
-                .build();
-        refreshTokenRepository.save(newRefreshToken);
+        // refresh token 업데이트
+        refreshToken.updateValue(tokenDto.getRefreshToken());
 
         return tokenDto.toTokenDto();
     }
 
     private void reissueRefreshExceptionCheck(String refreshToken, TokenRequest tokenRequestDto) {
         if (refreshToken == null) {
-            throw new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getMessage());
+            throw new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getErrorLog());
         }
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
-            throw new JwtException(ErrorCode.NOT_MATCH_REFRESH_TOKEN, ErrorCode.NOT_MATCH_REFRESH_TOKEN.getMessage());
+            throw new JwtException(ErrorCode.NOT_MATCH_REFRESH_TOKEN, ErrorCode.NOT_MATCH_REFRESH_TOKEN.getErrorLog());
         }
     }
 

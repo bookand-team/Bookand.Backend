@@ -5,4 +5,8 @@ import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReportBookStoreRepository extends JpaRepository<ReportBookStore, Long> {
+    Long countAllByVisibilityAndIsAnswered(boolean visibility, boolean isAnswered);
+
+    Long countAllByVisibilityAndCreatedAtBetween(boolean visibility, String startDatetime, String endDatetime);
 }
+

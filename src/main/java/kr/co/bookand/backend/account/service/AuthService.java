@@ -343,7 +343,7 @@ public class AuthService {
         }
         Authentication authentication = tokenFactory.getAuthentication(tokenRequestDto.getRefreshToken());
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getMessage()));
+                .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getErrorLog()));
 
         checkSuspended(refreshToken.getAccount());
 
@@ -361,10 +361,10 @@ public class AuthService {
 
     private void reissueRefreshExceptionCheck(String refreshToken, TokenRequest tokenRequestDto) {
         if (refreshToken == null) {
-            throw new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getMessage());
+            throw new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getErrorLog());
         }
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
-            throw new JwtException(ErrorCode.NOT_MATCH_REFRESH_TOKEN, ErrorCode.NOT_MATCH_REFRESH_TOKEN.getMessage());
+            throw new JwtException(ErrorCode.NOT_MATCH_REFRESH_TOKEN, ErrorCode.NOT_MATCH_REFRESH_TOKEN.getErrorLog());
         }
     }
 

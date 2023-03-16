@@ -32,9 +32,9 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         response.setStatus(status.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        JwtException errorResponse = new JwtException(ex, ex.getMessage());
+        JwtException errorResponse = new JwtException(ex, ex.getErrorLog());
         try {
-            String json = errorResponse.convertToJson(ex.getMessage());
+            String json = errorResponse.convertToJson(ex.getErrorLog());
             response.getWriter().write(json);
         } catch (IOException e) {
             e.printStackTrace();

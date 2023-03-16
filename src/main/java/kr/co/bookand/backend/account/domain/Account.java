@@ -85,4 +85,8 @@ public class Account extends BaseEntity {
     public void updateSignUpDate(LocalDateTime signUpDate) {
         this.signUpDate = signUpDate;
     }
+
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
+    }
 }

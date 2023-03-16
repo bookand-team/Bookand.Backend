@@ -6,8 +6,10 @@ import kr.co.bookand.backend.common.domain.BaseEntity;
 import kr.co.bookand.backend.bookmark.domain.BookmarkBookStore;
 import kr.co.bookand.backend.common.domain.Status;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,9 @@ public class BookStore extends BaseEntity {
 
     private int view;
     private int bookmark;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime displayDate;
 
     @OneToMany(mappedBy = "bookStore", cascade = CascadeType.ALL)
     private List<BookStoreTheme> themeList = new ArrayList<>();
@@ -117,5 +122,9 @@ public class BookStore extends BaseEntity {
             themeList = new ArrayList<>();
         }
         this.themeList = bookStoreTheme;
+    }
+
+    public void updateDisplayDate(LocalDateTime displayDate) {
+        this.displayDate = displayDate;
     }
 }

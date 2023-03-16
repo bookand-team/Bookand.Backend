@@ -23,6 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,6 +179,7 @@ public class BookStoreService {
         BookStore bookStore = bookStoreRepository.findById(id)
                 .orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
         bookStore.updateBookStoreStatus(bookStore.getStatus() == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE);
+        bookStore.updateDisplayDate(LocalDateTime.now());
         return BookStoreWebResponse.of(bookStore);
     }
 

@@ -61,7 +61,8 @@ public class ArticleDto {
             List<BookStoreSimpleResponse> bookStoreList,
             ArticleFilter filter,
             String createdDate,
-            String modifiedDate
+            String modifiedDate,
+            String displayDate
     ) {
         @Builder
         public ArticleResponse {
@@ -86,6 +87,7 @@ public class ArticleDto {
                     .filter(ArticleFilter.of(article))
                     .createdDate(article.getCreatedAt())
                     .modifiedDate(article.getModifiedAt())
+                    .displayDate(article.getDisplayDate().toString())
                     .build();
         }
     }
@@ -106,7 +108,8 @@ public class ArticleDto {
             List<BookStoreSimpleResponse> bookStoreList,
             ArticleFilter filter,
             String createdDate,
-            String modifiedDate
+            String modifiedDate,
+            String displayDate
     ) {
         @Builder
         public ArticleDetailResponse {
@@ -130,6 +133,7 @@ public class ArticleDto {
                     .filter(ArticleFilter.of(article))
                     .createdDate(article.getCreatedAt())
                     .modifiedDate(article.getModifiedAt())
+                    .displayDate(article.getDisplayDate().toString())
                     .build();
         }
     }
@@ -169,7 +173,8 @@ public class ArticleDto {
             List<String> articleTagList,
             boolean visibility,
             String createdDate,
-            String modifiedDate
+            String modifiedDate,
+            String displayDate
     ) {
         @Builder
         public ArticleWebResponse {
@@ -188,6 +193,7 @@ public class ArticleDto {
                     .articleTagList(article.getArticleTagList().stream().map(ArticleTag::getTag).toList())
                     .createdDate(article.getCreatedAt())
                     .modifiedDate(article.getModifiedAt())
+                    .displayDate(article.getDisplayDate().toString())
                     .visibility(article.isVisibility())
                     .build();
         }

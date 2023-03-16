@@ -8,8 +8,10 @@ import kr.co.bookand.backend.common.domain.DeviceOSFilter;
 import kr.co.bookand.backend.common.domain.MemberIdFilter;
 import kr.co.bookand.backend.common.domain.Status;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,9 @@ public class Article extends BaseEntity {
     private ArticleCategory category;
     private String writer;
     private int view;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime displayDate;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -91,5 +96,9 @@ public class Article extends BaseEntity {
             articleTagList = new ArrayList<>();
         }
         this.articleTagList = articleTagList;
+    }
+
+    public void updateDisplayDate(LocalDateTime displayDate) {
+        this.displayDate = displayDate;
     }
 }

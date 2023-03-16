@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -184,6 +185,7 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, id));
         article.updateArticleStatus(article.getStatus() == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE);
+        article.updateDisplayDate(LocalDateTime.now());
         return Message.of("상태 변경 완료");
     }
 }

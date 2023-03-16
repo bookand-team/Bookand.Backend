@@ -62,6 +62,7 @@ public class ArticleBookStoreDummyData {
                     .mainImage("mainImage%d".formatted(i))
                     .introduction("introduction%d".formatted(i))
                     .status(Status.valueOf("VISIBLE"))
+                    .displayDate(LocalDateTime.now())
                     .view(1)
                     .build();
             BookStore save = bookStoreRepository.save(store);
@@ -87,6 +88,7 @@ public class ArticleBookStoreDummyData {
                     .mainImage("mainImage%d".formatted(i))
                     .deviceOSFilter(DeviceOSFilter.ALL)
                     .memberIdFilter(MemberIdFilter.ALL)
+                    .displayDate(LocalDateTime.now())
                     .view(1)
                     .build();
 

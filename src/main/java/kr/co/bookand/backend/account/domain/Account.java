@@ -6,6 +6,7 @@ import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import kr.co.bookand.backend.common.domain.BaseEntity;
+import kr.co.bookand.backend.config.jwt.RefreshToken;
 import kr.co.bookand.backend.feedback.domain.Feedback;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;

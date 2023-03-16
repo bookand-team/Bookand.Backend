@@ -18,7 +18,7 @@ public class PrincipalDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return accountRepository.findByEmailAndVisibilityTrue(email)
+        return accountRepository.findByEmail(email)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
     }

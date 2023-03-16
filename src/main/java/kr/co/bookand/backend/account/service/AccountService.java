@@ -10,6 +10,7 @@ import kr.co.bookand.backend.account.repository.RevokeAccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
 import kr.co.bookand.backend.common.domain.Message;
 import kr.co.bookand.backend.common.exception.ErrorCode;
+import kr.co.bookand.backend.config.jwt.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,9 +32,10 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final AuthService authService;
     private final RevokeAccountRepository revokeAccountRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public Account getCurrentAccount() {
-        return accountRepository.findByEmailAndVisibilityTrue(getCurrentAccountEmail()).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
+        return accountRepository.findByEmail(getCurrentAccountEmail()).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
     }
 
     public void isAccountAdmin() {
@@ -52,7 +54,7 @@ public class AccountService {
 
     // 내 정보 조회
     public MemberInfo getAccount() {
-        return accountRepository.findByEmailAndVisibilityTrue(SecurityUtil.getCurrentAccountEmail())
+        return accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
                 .map(MemberInfo::of)
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
     }
@@ -81,7 +83,7 @@ public class AccountService {
     // 회원 수정
     @Transactional
     public MemberInfo updateNickname(MemberUpdateRequest request) {
-        Account dbAccount = accountRepository.findByEmailAndVisibilityTrue(SecurityUtil.getCurrentAccountEmail())
+        Account dbAccount = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
         boolean nicknameBoolean = checkNicknameBoolean(request.nickname(), dbAccount.getNickname());
         if (nicknameBoolean) {
@@ -111,7 +113,7 @@ public class AccountService {
     @Transactional
     public boolean revokeAccount(Account account, RevokeReasonRequest request) {
 
-        Account updateAccount = accountRepository.findByEmailAndVisibilityTrue(account.getEmail())
+        Account loginAccount = accountRepository.findByEmail(account.getEmail())
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, account.getEmail()));
         RevokeType revokeType = RevokeType.of(request.revokeType());
         AuthRequest authRequest = AuthRequest.builder()
@@ -128,8 +130,9 @@ public class AccountService {
                 .build();
         revokeAccountRepository.save(revokeAccount);
 
-        updateAccount.setVisibility(false);
-        return updateAccount.isVisibility();
+        refreshTokenRepository.deleteByAccountId(account.getId());
+        accountRepository.delete(loginAccount);
+        return loginAccount.isVisibility();
     }
 
     public void checkLoginMember(Account account, AuthRequest authRequest) {

@@ -22,7 +22,7 @@ public class SecurityUtils {
 
     public static Account getCurrentAccount(AccountRepository accountRepository) {
         String currentAccountEmail = getCurrentAccountEmail();
-        return accountRepository.findByEmailAndVisibilityTrue(currentAccountEmail).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
+        return accountRepository.findByEmail(currentAccountEmail).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
     }
 
 }

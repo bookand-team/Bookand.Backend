@@ -84,7 +84,7 @@ public class AuthService {
         String providerEmail = socialIdWithAccessToken.getEmail();
         authRequestDto.insertId(userId);
         String email = authRequestDto.extraEmail();
-        Optional<Account> account = accountRepository.findByEmail(email);
+        Optional<Account> account = accountRepository.findByEmailAndVisibilityTrue(email);
         SocialType socialType = authRequestDto.getSocialType();
 
         if (account.isPresent()) {
@@ -108,7 +108,7 @@ public class AuthService {
 
     public TokenDto login(AccountDto.LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
-        Account account = accountRepository.findByEmail(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
+        Account account = accountRepository.findByEmailAndVisibilityTrue(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
         account.updateLastLoginDate(LocalDateTime.now());
         return getTokenDto(loginRequest);
     }
@@ -144,7 +144,7 @@ public class AuthService {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
-        Account account = accountRepository.findByEmail(loginRequest.getEmail())
+        Account account = accountRepository.findByEmailAndVisibilityTrue(loginRequest.getEmail())
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, loginRequest.getEmail()));
         // refresh token 저장
         RefreshToken refreshToken = RefreshToken.builder()
@@ -295,7 +295,7 @@ public class AuthService {
     public Message logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loginAccount = authentication.getName();
-        if (accountRepository.findByEmail(loginAccount).isPresent() ||
+        if (accountRepository.findByEmailAndVisibilityTrue(loginAccount).isPresent() ||
                 refreshTokenRepository.findByKey(authentication.getName()).isPresent()) {
             // 리프레시 토큰 삭제
             RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName()).get();
@@ -352,7 +352,7 @@ public class AuthService {
     }
 
     public Message createManager(AccountDto.ManagerInfo createRequestDto) {
-        Account admin = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
+        Account admin = accountRepository.findByEmailAndVisibilityTrue(SecurityUtil.getCurrentAccountEmail())
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
         admin.getRole().checkAdmin();
         duplicateEmailAndNickName(createRequestDto.email(), createRequestDto.nickname());

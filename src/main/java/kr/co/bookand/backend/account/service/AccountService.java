@@ -33,7 +33,7 @@ public class AccountService {
     private final RevokeAccountRepository revokeAccountRepository;
 
     public Account getCurrentAccount() {
-        return accountRepository.findByEmail(getCurrentAccountEmail()).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
+        return accountRepository.findByEmailAndVisibilityTrue(getCurrentAccountEmail()).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
     }
 
     public void isAccountAdmin() {
@@ -52,7 +52,7 @@ public class AccountService {
 
     // 내 정보 조회
     public MemberInfo getAccount() {
-        return accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
+        return accountRepository.findByEmailAndVisibilityTrue(SecurityUtil.getCurrentAccountEmail())
                 .map(MemberInfo::of)
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
     }
@@ -81,7 +81,7 @@ public class AccountService {
     // 회원 수정
     @Transactional
     public MemberInfo updateNickname(MemberUpdateRequest request) {
-        Account dbAccount = accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
+        Account dbAccount = accountRepository.findByEmailAndVisibilityTrue(SecurityUtil.getCurrentAccountEmail())
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, SecurityUtil.getCurrentAccountEmail()));
         boolean nicknameBoolean = checkNicknameBoolean(request.nickname(), dbAccount.getNickname());
         if (nicknameBoolean) {
@@ -110,11 +110,8 @@ public class AccountService {
 
     @Transactional
     public boolean revokeAccount(Account account, RevokeReasonRequest request) {
-        if (!account.isVisibility()) {
-            throw new AccountException(ErrorCode.ALREADY_REVOKE_MEMBER, account.getEmail());
-        }
 
-        Account updateAccount = accountRepository.findByEmail(account.getEmail())
+        Account updateAccount = accountRepository.findByEmailAndVisibilityTrue(account.getEmail())
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, account.getEmail()));
         RevokeType revokeType = RevokeType.of(request.revokeType());
         AuthRequest authRequest = AuthRequest.builder()

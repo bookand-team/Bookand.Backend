@@ -84,10 +84,12 @@ public class AuthService {
         String providerEmail = socialIdWithAccessToken.getEmail();
         authRequestDto.insertId(userId);
         String email = authRequestDto.extraEmail();
-        Optional<Account> checkAccount = accountRepository.findByEmail(email);
-        checkAccount.ifPresent(checkSuspendedAccount -> checkSuspended(checkSuspendedAccount));
-        SocialType socialType = authRequestDto.getSocialType();
         Optional<Account> account = accountRepository.findByEmail(email);
+        account.ifPresent(this::checkSuspended);
+        SocialType socialType = authRequestDto.getSocialType();
+
+        // TODO : 쿼리 2번 날리는거 개선
+        account = accountRepository.findByEmail(email);
 
         if (account.isPresent()) {
             // 로그인
@@ -127,8 +129,6 @@ public class AuthService {
                     refreshTokenRepository.delete(refreshToken);
                     suspendedAccountRepository.deleteById(suspendedAccount.get().getId());
                     accountRepository.deleteById(account.getId());
-
-                    System.out.println("삭제된 계정 삭제 완료");
                 } else throw new AccountException(ErrorCode.DELETED_ACCOUNT, account.getEmail());
                 break;
             default:

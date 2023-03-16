@@ -21,7 +21,7 @@ public class SuspendedAccount {
     private LocalDateTime startedSuspendedDate;
     private LocalDateTime endedSuspendedDate;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
 

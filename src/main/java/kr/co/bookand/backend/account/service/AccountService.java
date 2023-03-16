@@ -160,17 +160,17 @@ public class AccountService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, accountId));
 
-        Optional<SuspendedAccount> response = suspendedAccountRepository.findById(accountId);
+        Optional<SuspendedAccount> response = suspendedAccountRepository.findByAccount(account);
+        SuspendedAccount suspend;
         if (response.isPresent()) {
-            SuspendedAccount suspend = response.get();
-            return setSuspendedAccount(account, suspend);
+            suspend = response.get();
         } else {
-            SuspendedAccount suspend = SuspendedAccount.builder()
+            suspend = SuspendedAccount.builder()
                     .account(account)
                     .build();
             suspendedAccountRepository.save(suspend);
-            return setSuspendedAccount(account, suspend);
         }
+        return setSuspendedAccount(account, suspend);
     }
 
     private AccountStatus setSuspendedAccount(Account account, SuspendedAccount suspend) {
@@ -188,8 +188,8 @@ public class AccountService {
         suspend.addSuspendedCount();
         account.updateAccountStatus(newStatus);
 
-        //TODO : 스케줄러에 등록하기
-
+        if(newStatus.equals(AccountStatus.DELETED))
+            account.deletedBanAccount();
         return newStatus;
     }
 }

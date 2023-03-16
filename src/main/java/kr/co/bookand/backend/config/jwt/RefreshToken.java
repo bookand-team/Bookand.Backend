@@ -20,7 +20,11 @@ public class RefreshToken {
     @Column(name = "rt_value")
     private String value;
 
-    @OneToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
+
+    public void updateValue(String value) {
+        this.value = value;
+    }
 }

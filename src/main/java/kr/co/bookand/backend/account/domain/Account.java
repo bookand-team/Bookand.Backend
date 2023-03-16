@@ -56,12 +56,6 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<ReportBookStore> tipList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
-    private RefreshToken refreshToken;
-
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
-    private SuspendedAccount suspendedAccount;
-
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
 
@@ -98,5 +92,14 @@ public class Account extends BaseEntity {
 
     public void updateAccountStatus(AccountStatus accountStatus) {
         this.accountStatus = accountStatus;
+    }
+
+    public void deletedBanAccount() {
+        this.nickname = null;
+        this.password = null;
+        this.provider = null;
+        this.providerEmail = null;
+        this.profileImage = null;
+        this.role = Role.SUSPENDED;
     }
 }

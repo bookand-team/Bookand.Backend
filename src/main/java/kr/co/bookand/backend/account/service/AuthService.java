@@ -14,6 +14,7 @@ import kr.co.bookand.backend.account.domain.dto.AuthDto;
 import kr.co.bookand.backend.account.domain.dto.TokenDto;
 import kr.co.bookand.backend.account.exception.*;
 import kr.co.bookand.backend.account.repository.AccountRepository;
+import kr.co.bookand.backend.account.repository.SuspendedAccountRepository;
 import kr.co.bookand.backend.account.util.SecurityUtil;
 import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookmark.domain.BookmarkType;
@@ -66,6 +67,7 @@ public class AuthService {
     private final BookmarkRepository bookmarkRepository;
     private final RestTemplateService<MultiValueMap<String, String>> apiService;
     private final PasswordEncoder passwordEncoder;
+    private final SuspendedAccountRepository suspendedAccountRepository;
 
     private static final String INIT_BOOKMARK_FOLDER_NAME = "모아보기";
 
@@ -82,12 +84,13 @@ public class AuthService {
         String providerEmail = socialIdWithAccessToken.getEmail();
         authRequestDto.insertId(userId);
         String email = authRequestDto.extraEmail();
-        Optional<Account> account = accountRepository.findByEmail(email);
+        Optional<Account> checkAccount = accountRepository.findByEmail(email);
+        checkAccount.ifPresent(checkSuspendedAccount -> checkSuspended(checkSuspendedAccount));
         SocialType socialType = authRequestDto.getSocialType();
+        Optional<Account> account = accountRepository.findByEmail(email);
 
         if (account.isPresent()) {
             // 로그인
-            checkSuspended(account.get());
             TokenDto tokenDto = login(account.get().toAccountRequestDto(suffix).toLoginRequest());
             TokenResponse tokenResponse = tokenDto.toTokenDto();
             return LoginResponse.builder().tokenResponse(tokenResponse).httpStatus(HttpStatus.OK).build();
@@ -104,16 +107,32 @@ public class AuthService {
         }
     }
 
-    private void checkSuspended(Account account) {
+    @Transactional
+    public void checkSuspended(Account account) {
         AccountStatus accountStatus = account.getAccountStatus();
-        if (accountStatus == AccountStatus.SUSPENDED || accountStatus == AccountStatus.DELETED) {
-            SuspendedAccount suspendedAccount = account.getSuspendedAccount();
-            if (LocalDateTime.now().isAfter(suspendedAccount.getEndedSuspendedDate())) {
-                account.updateAccountStatus(AccountStatus.NORMAL);
-            }
-            throw new AccountException(
-                    accountStatus == AccountStatus.SUSPENDED ? ErrorCode.SUSPENDED_ACCOUNT : ErrorCode.DELETED_ACCOUNT,
-                    account.getEmail());
+        Optional<SuspendedAccount> suspendedAccount = suspendedAccountRepository.findByAccount(account);
+        if (suspendedAccount.isEmpty()) return;
+        boolean isAccountExpired = LocalDateTime.now().isAfter(suspendedAccount.get().getEndedSuspendedDate());
+
+        switch (accountStatus) {
+            case SUSPENDED:
+                if (isAccountExpired) account.updateAccountStatus(AccountStatus.NORMAL);
+                else throw new AccountException(ErrorCode.SUSPENDED_ACCOUNT, account.getEmail());
+                break;
+            case DELETED:
+                if (isAccountExpired) {
+                    RefreshToken refreshToken = refreshTokenRepository.findByKey(account.getEmail())
+                            .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, account.getEmail()));
+
+                    refreshTokenRepository.delete(refreshToken);
+                    suspendedAccountRepository.deleteById(suspendedAccount.get().getId());
+                    accountRepository.deleteById(account.getId());
+
+                    System.out.println("삭제된 계정 삭제 완료");
+                } else throw new AccountException(ErrorCode.DELETED_ACCOUNT, account.getEmail());
+                break;
+            default:
+                break;
         }
     }
 
@@ -126,7 +145,6 @@ public class AuthService {
     }
 
     public TokenDto loginAdmin(AccountDto.LoginRequest loginRequest) {
-
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
@@ -335,13 +353,8 @@ public class AuthService {
         reissueRefreshExceptionCheck(refreshToken.getValue(), tokenRequestDto);
         TokenDto tokenDto = tokenFactory.generateTokenDto(authentication);
 
-        // refresh token 저장
-        RefreshToken newRefreshToken = RefreshToken.builder()
-                .key(authentication.getName())
-                .value(tokenDto.getRefreshToken())
-                .account(refreshToken.getAccount())
-                .build();
-        refreshTokenRepository.save(newRefreshToken);
+        // refresh token 업데이트
+        refreshToken.updateValue(tokenDto.getRefreshToken());
 
         return tokenDto.toTokenDto();
     }

@@ -6,6 +6,7 @@ import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookstore.domain.ReportBookStore;
 import kr.co.bookand.backend.common.domain.BaseEntity;
+import kr.co.bookand.backend.config.jwt.RefreshToken;
 import kr.co.bookand.backend.feedback.domain.Feedback;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -55,6 +56,9 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<ReportBookStore> tipList = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus;
+
     public AccountDto.MemberRequest toAccountRequestDto(String suffix) {
         return new AccountDto.MemberRequest(email, email + suffix, nickname, provider);
     }
@@ -84,5 +88,18 @@ public class Account extends BaseEntity {
 
     public void updateSignUpDate(LocalDateTime signUpDate) {
         this.signUpDate = signUpDate;
+    }
+
+    public void updateAccountStatus(AccountStatus accountStatus) {
+        this.accountStatus = accountStatus;
+    }
+
+    public void deletedBanAccount() {
+        this.nickname = null;
+        this.password = null;
+        this.provider = null;
+        this.providerEmail = null;
+        this.profileImage = null;
+        this.role = Role.SUSPENDED;
     }
 }

@@ -23,4 +23,8 @@ public class RefreshToken {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
+
+    public void updateValue(String value) {
+        this.value = value;
+    }
 }

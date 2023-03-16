@@ -1,12 +1,11 @@
 package kr.co.bookand.backend.account.service;
 
-import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.account.domain.RevokeAccount;
-import kr.co.bookand.backend.account.domain.RevokeType;
-import kr.co.bookand.backend.account.domain.Role;
+import kr.co.bookand.backend.account.domain.*;
 import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.account.repository.AccountRepository;
 import kr.co.bookand.backend.account.repository.RevokeAccountRepository;
+import kr.co.bookand.backend.account.repository.SuspendedAccountRepository;
+import kr.co.bookand.backend.account.util.AccountUtil;
 import kr.co.bookand.backend.account.util.SecurityUtil;
 import kr.co.bookand.backend.common.domain.Message;
 import kr.co.bookand.backend.common.exception.ErrorCode;
@@ -17,6 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
 import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
@@ -32,7 +34,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final AuthService authService;
     private final RevokeAccountRepository revokeAccountRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final SuspendedAccountRepository suspendedAccountRepository;
 
     public Account getCurrentAccount() {
         return accountRepository.findByEmail(getCurrentAccountEmail()).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
@@ -129,8 +131,6 @@ public class AccountService {
                 .accountId(account.getId())
                 .build();
         revokeAccountRepository.save(revokeAccount);
-
-        refreshTokenRepository.deleteByAccountId(account.getId());
         accountRepository.delete(loginAccount);
         return loginAccount.isVisibility();
     }
@@ -149,5 +149,47 @@ public class AccountService {
             nicknameRandom = authService.nicknameRandom();
         }
         return NicknameResponse.of(nicknameRandom);
+    }
+
+    @Transactional
+    public AccountStatus suspendAccount(Long accountId) {
+        Account loginAccount = AccountUtil.getAccount();
+        if (!loginAccount.getRole().equals(Role.ADMIN)) {
+            throw new AccountException(ErrorCode.ROLE_ACCESS_ERROR, loginAccount.getRole());
+        }
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, accountId));
+
+        Optional<SuspendedAccount> response = suspendedAccountRepository.findById(accountId);
+        if (response.isPresent()) {
+            SuspendedAccount suspend = response.get();
+            return setSuspendedAccount(account, suspend);
+        } else {
+            SuspendedAccount suspend = SuspendedAccount.builder()
+                    .account(account)
+                    .build();
+            suspendedAccountRepository.save(suspend);
+            return setSuspendedAccount(account, suspend);
+        }
+    }
+
+    private AccountStatus setSuspendedAccount(Account account, SuspendedAccount suspend) {
+        int suspendedCount = suspend.getSuspendedCount();
+
+        LocalDateTime suspendedDate = suspendedCount == 0
+                ? LocalDateTime.now().plusDays(7)
+                : LocalDateTime.now().plusMonths(6);
+
+        AccountStatus newStatus = suspendedCount == 0
+                ? AccountStatus.SUSPENDED
+                : AccountStatus.DELETED;
+
+        suspend.setSuspendedDate(suspendedDate);
+        suspend.addSuspendedCount();
+        account.updateAccountStatus(newStatus);
+
+        //TODO : 스케줄러에 등록하기
+
+        return newStatus;
     }
 }

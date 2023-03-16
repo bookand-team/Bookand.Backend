@@ -7,9 +7,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.account.domain.Role;
-import kr.co.bookand.backend.account.domain.SocialType;
+import kr.co.bookand.backend.account.domain.*;
 import kr.co.bookand.backend.account.domain.dto.AccountDto;
 import kr.co.bookand.backend.account.domain.dto.AppleDto;
 import kr.co.bookand.backend.account.domain.dto.AuthDto;
@@ -89,6 +87,7 @@ public class AuthService {
 
         if (account.isPresent()) {
             // 로그인
+            checkSuspended(account.get());
             TokenDto tokenDto = login(account.get().toAccountRequestDto(suffix).toLoginRequest());
             TokenResponse tokenResponse = tokenDto.toTokenDto();
             return LoginResponse.builder().tokenResponse(tokenResponse).httpStatus(HttpStatus.OK).build();
@@ -105,10 +104,23 @@ public class AuthService {
         }
     }
 
+    private void checkSuspended(Account account) {
+        AccountStatus accountStatus = account.getAccountStatus();
+        if (accountStatus == AccountStatus.SUSPENDED || accountStatus == AccountStatus.DELETED) {
+            SuspendedAccount suspendedAccount = account.getSuspendedAccount();
+            if (LocalDateTime.now().isAfter(suspendedAccount.getEndedSuspendedDate())) {
+                account.updateAccountStatus(AccountStatus.NORMAL);
+            }
+            throw new AccountException(
+                    accountStatus == AccountStatus.SUSPENDED ? ErrorCode.SUSPENDED_ACCOUNT : ErrorCode.DELETED_ACCOUNT,
+                    account.getEmail());
+        }
+    }
 
     public TokenDto login(AccountDto.LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
         Account account = accountRepository.findByEmail(email).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
+        checkSuspended(account);
         account.updateLastLoginDate(LocalDateTime.now());
         return getTokenDto(loginRequest);
     }
@@ -278,7 +290,7 @@ public class AuthService {
             return ProviderIdAndEmail.toProviderDto(subject, email);
 
         } catch (JsonProcessingException | NoSuchAlgorithmException | InvalidKeySpecException | SignatureException |
-                MalformedJwtException | ExpiredJwtException | IllegalArgumentException e) {
+                 MalformedJwtException | ExpiredJwtException | IllegalArgumentException e) {
             throw new AccountException(ErrorCode.APPLE_LOGIN_ERROR, e);
         }
     }
@@ -314,6 +326,8 @@ public class AuthService {
         Authentication authentication = tokenFactory.getAuthentication(tokenRequestDto.getRefreshToken());
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
                 .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getMessage()));
+
+        checkSuspended(refreshToken.getAccount());
 
         // 로그인 접근 시간 업데이트
         refreshToken.getAccount().updateLastLoginDate(LocalDateTime.now());

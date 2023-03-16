@@ -6,7 +6,7 @@ import kr.co.bookand.backend.common.exception.ErrorCode;
 import javax.security.auth.message.AuthException;
 
 public enum Role {
-    USER, ADMIN, MANAGER, BAN;
+    USER, ADMIN, MANAGER, SUSPENDED;
 
     public void checkAdmin() {
         if (this != ADMIN) {

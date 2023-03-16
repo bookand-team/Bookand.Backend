@@ -2,6 +2,7 @@ package kr.co.bookand.backend.account.domain.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import kr.co.bookand.backend.account.domain.Account;
+import kr.co.bookand.backend.account.domain.AccountStatus;
 import kr.co.bookand.backend.account.domain.Role;
 import kr.co.bookand.backend.account.domain.SocialType;
 import kr.co.bookand.backend.common.domain.Message;
@@ -111,6 +112,7 @@ public class AuthDto {
                     .providerEmail(providerEmail)
                     .password(passwordEncoder.encode(email + suffix))
                     .role(Role.USER)
+                    .accountStatus(AccountStatus.NORMAL)
                     .nickname(nickname)
                     .build();
         }

@@ -56,6 +56,15 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<ReportBookStore> tipList = new ArrayList<>();
 
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    private RefreshToken refreshToken;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    private SuspendedAccount suspendedAccount;
+
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus;
+
     public AccountDto.MemberRequest toAccountRequestDto(String suffix) {
         return new AccountDto.MemberRequest(email, email + suffix, nickname, provider);
     }
@@ -87,7 +96,7 @@ public class Account extends BaseEntity {
         this.signUpDate = signUpDate;
     }
 
-    public void setVisibility(boolean visibility) {
-        this.visibility = visibility;
+    public void updateAccountStatus(AccountStatus accountStatus) {
+        this.accountStatus = accountStatus;
     }
 }

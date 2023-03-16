@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import kr.co.bookand.backend.account.domain.Account;
+import kr.co.bookand.backend.account.domain.AccountStatus;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.account.util.AccountUtil;
 import kr.co.bookand.backend.common.domain.Message;
@@ -81,10 +82,19 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getRandomNickname());
     }
 
-    @ApiOperation(value = "회원 전체 조회")
+    @ApiOperation(value = "회원 전체 조회 (관리자)")
     @Operation(summary = "회원 전체 조회", description = "회원 전체를 조회합니다.")
     @GetMapping("/list")
     public ResponseEntity<MemberListResponse> getAccountList(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(accountService.getAccountList(pageable));
+    }
+
+    @ApiOperation(value = "회원 정지 (관리자)")
+    @Operation(summary = "회원 정지 (관리자)", description = "회원을 정지합니다." +
+            "1회 정지는 SUSPENDED 상태에 7일 정지, 2회 정지는 DELETED 상태에 6개월 정지")
+    @PutMapping("/suspend/{id}")
+    public ResponseEntity<Message> suspendAccount(@PathVariable Long id) {
+        AccountStatus suspendAccount = accountService.suspendAccount(id);
+        return ResponseEntity.ok(Message.of(String.valueOf(suspendAccount)));
     }
 }

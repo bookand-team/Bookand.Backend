@@ -29,7 +29,11 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         response.setCharacterEncoding("utf-8");
         response.setStatus(HttpStatus.FORBIDDEN.value());
         String body = objectMapper.writeValueAsString(
-                ApiErrorResponse.builder().code(ErrorCode.NOT_ROLE_MEMBER.getErrorCode()).message(ErrorCode.NOT_ROLE_MEMBER.getErrorLog()).build());
+                ApiErrorResponse.builder()
+                        .code(ErrorCode.NOT_ROLE_MEMBER.getErrorCode())
+                        .message(ErrorCode.NOT_ROLE_MEMBER.getErrorMessage())
+                        .log(ErrorCode.NOT_ROLE_MEMBER.getErrorLog())
+                        .build());
         response.getWriter().write(body);
 
     }

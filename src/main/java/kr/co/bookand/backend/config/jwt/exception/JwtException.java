@@ -14,6 +14,6 @@ public class JwtException extends RuntimeException {
 
     public String convertToJson(String ex)
     {
-        return "{\"code\":\"" + errorCode.getErrorCode() + "\",\"message\":\"" + ex + "\"}";
+        return "{\"code\":\"" + errorCode.getErrorCode() + "\",\"log\":\"" + ex + "message\":\"" + errorCode.getErrorMessage() + "\"}";
     }
 }

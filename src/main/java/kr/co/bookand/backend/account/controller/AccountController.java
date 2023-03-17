@@ -67,7 +67,14 @@ public class AccountController {
     }
 
     @ApiOperation(value = "회원 탈퇴 사유 입력")
-    @Operation(summary = "회원 탈퇴 사유 입력", description = "회원 탈퇴 사유를 입력합니다.")
+    @Operation(summary = "회원 탈퇴 사유 입력", description = "회원 탈퇴 사유를 입력합니다." +
+            "탈퇴 사유 종류는 " +
+            "    NOT_ENOUGH_CONTENT(\"콘텐츠가 만족스럽지 않아요\"),\n" +
+            "    UNCOMFORTABLE(\"이용 방법이 불편해요\"),\n" +
+            "    PRIVACY(\"개인정보 보안이 걱정돼요\"),\n" +
+            "    ETC(\"기타\") 입니다." +
+            "탈퇴 reasone 은 필수는 아니고" +
+            "socialAccessToken 에 accessToken 값을 입력해야 됩니다")
     @DeleteMapping("/revoke")
     public ResponseEntity<Message> revokeReason(@Valid @RequestBody RevokeReasonRequest revokeReasonRequest) {
         Account account = AccountUtil.getAccount();

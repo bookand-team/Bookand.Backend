@@ -86,8 +86,5 @@ public class SwaggerConfig {
     static class MyPagable {
         @ApiModelProperty(value = "페이지 번호(0..N)")
         private Integer page;
-
-        @ApiModelProperty(value = "정렬(사용법: 컬럼명,ASC|DESC)")
-        private List<String> sort;
     }
 }

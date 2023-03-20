@@ -36,6 +36,8 @@ public class AccountService {
     private final RevokeAccountRepository revokeAccountRepository;
     private final SuspendedAccountRepository suspendedAccountRepository;
 
+    private final RefreshTokenRepository refreshTokenRepository;
+
     public Account getCurrentAccount() {
         return accountRepository.findByEmail(getCurrentAccountEmail()).orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, null));
     }
@@ -131,6 +133,7 @@ public class AccountService {
                 .accountId(account.getId())
                 .build();
         revokeAccountRepository.save(revokeAccount);
+        refreshTokenRepository.deleteByAccountId(account.getId());
         accountRepository.delete(loginAccount);
         return loginAccount.isVisibility();
     }

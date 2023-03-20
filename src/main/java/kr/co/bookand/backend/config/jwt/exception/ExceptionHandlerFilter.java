@@ -24,7 +24,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             setErrorResponse(HttpStatus.UNAUTHORIZED, response, ex.getErrorCode());
         } catch (RuntimeException ex) {
             log.error("runtime exception exception handler filter");
-            setErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, response, ErrorCode.INTER_SERVER_ERROR);
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, ErrorCode.INTER_SERVER_ERROR);
         }
     }
 

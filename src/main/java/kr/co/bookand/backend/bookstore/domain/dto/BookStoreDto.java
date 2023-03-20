@@ -216,7 +216,7 @@ public class BookStoreDto {
 
     // 서점 전체 리스트 조회(APP 용)
     public record BookStorePageResponseApp(
-            PageResponse<BookStoreSimpleResponse> bookstore
+            PageResponse<BookStoreSimpleResponse> data
     ) {
         @Builder
         public BookStorePageResponseApp {
@@ -224,7 +224,7 @@ public class BookStoreDto {
 
         public static BookStorePageResponseApp of(Page<BookStoreSimpleResponse> bookStoreResponsePage) {
             return BookStorePageResponseApp.builder()
-                    .bookstore(PageResponse.of(bookStoreResponsePage))
+                    .data(PageResponse.of(bookStoreResponsePage))
                     .build();
         }
     }

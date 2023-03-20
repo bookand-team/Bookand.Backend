@@ -257,7 +257,7 @@ public class ArticleDto {
 
     // 아티클 전체 조회 (APP)
     public record ArticleSimplePageResponse(
-            PageResponse<ArticleSimpleResponse> article
+            PageResponse<ArticleSimpleResponse> data
     ) {
         @Builder
         public ArticleSimplePageResponse {
@@ -265,7 +265,7 @@ public class ArticleDto {
 
         public static ArticleSimplePageResponse of(Page<ArticleSimpleResponse> article) {
             return ArticleSimplePageResponse.builder()
-                    .article(PageResponse.of(article))
+                    .data(PageResponse.of(article))
                     .build();
         }
     }

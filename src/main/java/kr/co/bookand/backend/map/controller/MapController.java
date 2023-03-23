@@ -18,7 +18,7 @@ public class MapController {
 
     @ApiOperation(value = "키워드로 검색")
     @GetMapping("/search")
-    public String searchByKeyword(@RequestParam("query") String query, Pageable pageable) {
+    public Object searchByKeyword(@RequestParam("query") String query, Pageable pageable) {
         return mapService.searchByKeyword(query, pageable);
     }
 }

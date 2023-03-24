@@ -7,7 +7,6 @@ import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
@@ -281,6 +280,14 @@ public class BookStoreDto {
                     .createdAt(reportBookStore.getCreatedAt())
                     .answeredAt(reportBookStore.getAnsweredAt())
                     .build();
+        }
+    }
+
+    public record Search(
+            String data
+    ){
+        @Builder
+        public Search {
         }
     }
 }

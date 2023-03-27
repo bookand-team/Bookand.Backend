@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.feedback.domain.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.feedback.domain.Feedback;
 import kr.co.bookand.backend.feedback.domain.FeedbackTarget;
@@ -10,7 +11,17 @@ public class FeedbackDto {
 
     public record FeedbackRequest(
             Double rating,
+
+            @ApiModelProperty(
+                    value = "피드백 타입 (HOME, MAP, BOOKMARK, MY_PAGE, ETC)",
+                    example = "HOME/MAP/BOOKMARK/MY_PAGE/ETC"
+            )
             String feedbackType,
+
+            @ApiModelProperty(
+                    value = "피드백 대상 (LOGIN, PUSH, UPDATE, INFORMATION_ERROR, CONTENTS, BOOKSTORE_INFO, UNKNOWN_BOOKSTORE, UXUI, ERROR, ETC)",
+                    example = "LOGIN/PUSH/UPDATE/INFORMATION_ERROR/CONTENTS/BOOKSTORE_INFO/UNKNOWN_BOOKSTORE/UXUI/RROR/ETC"
+            )
             String feedbackTarget,
             String content
     ) {

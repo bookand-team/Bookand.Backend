@@ -1,5 +1,7 @@
 package kr.co.bookand.backend.article.domain.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Operation;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleCategory;
 import kr.co.bookand.backend.article.domain.ArticleTag;
@@ -18,17 +20,19 @@ public class ArticleDto {
 
     public record ArticleRequest(
             String title,
+            String subTitle,
             String mainImage,
             String content,
+            @ApiModelProperty(value = "아티클 카테고리(INTERVIEW, BOOK_REVIEW, BOOKSTORE_REVIEW)", example = "INTERVIEW/BOOK_REVIEW/BOOKSTORE_REVIEW")
             String category,
             String writer,
-            String status,
             List<String> tags,
             List<Long> bookStoreList
     ) {
         public Article toEntity() {
             return Article.builder()
                     .title(title)
+                    .subTitle(subTitle)
                     .mainImage(mainImage)
                     .content(content)
                     .category(ArticleCategory.valueOf(category))
@@ -48,6 +52,7 @@ public class ArticleDto {
     public record ArticleResponse(
             Long id,
             String title,
+            String subTitle,
             String mainImage,
             String content,
             ArticleCategory category,
@@ -73,6 +78,7 @@ public class ArticleDto {
             return ArticleResponse.builder()
                     .id(article.getId())
                     .title(article.getTitle())
+                    .subTitle(article.getSubTitle())
                     .mainImage(article.getMainImage())
                     .content(article.getContent())
                     .category(article.getCategory())
@@ -164,6 +170,7 @@ public class ArticleDto {
     public record ArticleWebResponse(
             Long id,
             String title,
+            String subTitle,
             String mainImage,
             String content,
             ArticleCategory category,
@@ -184,6 +191,7 @@ public class ArticleDto {
             return ArticleWebResponse.builder()
                     .id(article.getId())
                     .title(article.getTitle())
+                    .subTitle(article.getSubTitle())
                     .mainImage(article.getMainImage())
                     .content(article.getContent())
                     .category(article.getCategory())
@@ -220,6 +228,7 @@ public class ArticleDto {
     public record ArticleSimpleResponse(
             Long id,
             String title,
+            String subTitle,
             String mainImage,
             String content,
             ArticleCategory category,
@@ -240,6 +249,7 @@ public class ArticleDto {
             return ArticleSimpleResponse.builder()
                     .id(article.getId())
                     .title(article.getTitle())
+                    .subTitle(article.getSubTitle())
                     .mainImage(article.getMainImage())
                     .content(article.getContent())
                     .category(article.getCategory())

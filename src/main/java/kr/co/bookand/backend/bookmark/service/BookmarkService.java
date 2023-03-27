@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static kr.co.bookand.backend.bookmark.domain.dto.BookmarkDto.*;
@@ -58,18 +59,29 @@ public class BookmarkService {
     public Message createArticleBookmark(Long articleId) {
         Bookmark myBookmark = getMyBookmark(getCurrentAccount(accountRepository), BookmarkType.ARTICLE);
         // 아티클이 있는지 먼저 체크
-        Article bookStore = articleRepository.findById(articleId)
+        Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, articleId));
-        // 북마크-아티클에 추가
-        BookmarkArticle bookmarkArticle = BookmarkArticle.builder()
-                .bookmark(myBookmark)
-                .article(bookStore)
-                .build();
-        bookmarkArticleRepository.save(bookmarkArticle);
-        // 북마크에 추가
-        myBookmark.addBookmarkArticle(bookmarkArticle);
 
-        return Message.of("Article 추가");
+        // 이미 북마크에 있는지 확인
+        Optional<BookmarkArticle> checkBookmark = bookmarkArticleRepository
+                .findByBookmarkIdAndArticleId(myBookmark.getId(), article.getId());
+
+        if (checkBookmark.isEmpty()) {
+            // 북마크-아티클에 추가
+            BookmarkArticle bookmarkArticle = BookmarkArticle.builder()
+                    .bookmark(myBookmark)
+                    .article(article)
+                    .build();
+            bookmarkArticleRepository.save(bookmarkArticle);
+            // 북마크에 추가
+            myBookmark.addBookmarkArticle(bookmarkArticle);
+
+            return Message.of("북마크 추가");
+        } else {
+            // 북마크 취소
+            bookmarkArticleRepository.deleteByArticleIdAndBookmarkId(articleId, myBookmark.getId());
+            return Message.of("북마크 삭제");
+        }
     }
 
     // 서점 북마크 추가
@@ -79,16 +91,27 @@ public class BookmarkService {
         // 서점이 있는지 먼저 체크
         BookStore bookStore = bookStoreRepository.findById(bookmarkId)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKSTORE, bookmarkId));
-        // 북마크-서점에 추가
-        BookmarkBookStore bookmarkBookStore = BookmarkBookStore.builder()
-                .bookmark(myBookmark)
-                .bookStore(bookStore)
-                .build();
-        bookmarkBookStoreRepository.save(bookmarkBookStore);
-        // 북마크에 추가
-        myBookmark.addBookmarkBookStore(bookmarkBookStore);
 
-        return Message.of("BookStore 추가");
+        // 이미 북마크에 있는지 확인
+        Optional<BookmarkBookStore> checkBookmark = bookmarkBookStoreRepository
+                .findByBookmarkIdAndBookStoreId(myBookmark.getId(), bookStore.getId());
+
+        if (checkBookmark.isEmpty()) {
+            // 북마크-서점에 추가
+            BookmarkBookStore bookmarkBookStore = BookmarkBookStore.builder()
+                    .bookmark(myBookmark)
+                    .bookStore(bookStore)
+                    .build();
+            bookmarkBookStoreRepository.save(bookmarkBookStore);
+            // 북마크에 추가
+            myBookmark.addBookmarkBookStore(bookmarkBookStore);
+
+            return Message.of("북마크 추가");
+        } else {
+            // 북마크 취소
+            bookmarkBookStoreRepository.deleteByBookStoreIdAndBookmarkId(bookmarkId, myBookmark.getId());
+            return Message.of("북마크 삭제");
+        }
     }
 
     // 북마크 폴더 생성
@@ -289,7 +312,7 @@ public class BookmarkService {
                                     bookmarkBookStore.getBookStore().removeBookmarkBookStore(bookmarkBookStore);
                                 }
                         );
-                bookmarkBookStoreRepository.deleteByBookStoreIdAndBookmarkId(contentId, currentAccount.getId());
+                bookmarkBookStoreRepository.deleteByBookStoreIdAndBookmarkId(contentId, bookmark.getId());
                 bookmark.updateBookmarkBookStore(bookmarkBookStoreRepository.findAllByBookmark(bookmark));
             }
         } else {
@@ -301,7 +324,7 @@ public class BookmarkService {
                                     bookmarkArticle.getArticle().removeBookmarkArticle(bookmarkArticle);
                                 }
                         );
-                bookmarkArticleRepository.deleteByArticleIdAndBookmarkId(contentId, currentAccount.getId());
+                bookmarkArticleRepository.deleteByArticleIdAndBookmarkId(contentId, bookmark.getId());
                 bookmark.updateBookmarkArticle(bookmarkArticleRepository.findAllByBookmark(bookmark));
             }
         }

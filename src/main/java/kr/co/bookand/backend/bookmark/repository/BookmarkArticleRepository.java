@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.bookmark.repository;
 
+import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookmark.domain.BookmarkArticle;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,4 @@ public interface BookmarkArticleRepository extends JpaRepository<BookmarkArticle
 
     Optional<BookmarkArticle> findByArticleIdAndBookmark(Long contentId, Bookmark bookmark);
 
-    boolean existsByArticleIdAndBookmark(Long contentId, Bookmark bookmark);
 }

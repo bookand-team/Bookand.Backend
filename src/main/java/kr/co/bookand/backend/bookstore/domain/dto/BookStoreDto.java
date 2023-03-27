@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.bookstore.domain.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.bookstore.domain.*;
 import kr.co.bookand.backend.common.domain.Status;
@@ -23,6 +24,10 @@ public class BookStoreDto {
             String facility,
             String sns,
             String mainImage,
+            @ApiModelProperty(
+                    value = "서점 테마 리스트 (TRAVEL, MUSIC, PICTURE, PET, MOVIE, DETECTIVE, HISTORY, NONE)",
+                    example = "TRAVEL/MUSIC/PICTURE/PET/MOVIE/DETECTIVE/HISTORY/NONE"
+            )
             List<String> themeList,
             List<String> subImage,
             String introduction,

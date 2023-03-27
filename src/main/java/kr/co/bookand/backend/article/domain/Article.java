@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -64,11 +66,11 @@ public class Article extends BaseEntity {
         this.view = view + 1;
     }
 
-    public void updateArticle(ArticleDto.ArticleRequest articleRequest) {
+    public void updateArticle(ArticleRequest articleRequest) {
         this.title = articleRequest.title();
         this.content = articleRequest.content();
         this.category = ArticleCategory.valueOf(articleRequest.category());
-        this.status = Status.valueOf(articleRequest.status());
+        this.status = Status.INVISIBLE;
     }
 
     public void updateArticleStatus(Status status) {

@@ -1,7 +1,6 @@
 package kr.co.bookand.backend.article.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import kr.co.bookand.backend.article.service.ArticleService;
 import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
@@ -61,13 +60,18 @@ public class ArticleController {
 
     @ApiOperation(value = "조건에 맞는 아티클 조회")
     @GetMapping("/search")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "search", value = "검색어", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "category", value = "카테고리, INTERVIEW, BOOK_REVIEW, BOOKSTORE_REVIEW", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "상태, INVISIBLE, VISIBLE, REMOVE;", required = false, dataType = "string", paramType = "query")
+    })
     public ResponseEntity<ArticleWebPageResponse> searchArticleList(
-            @RequestParam("search") String search1,
+            @RequestParam("search") String search,
             @RequestParam("category") String category,
             @RequestParam("status") String status,
             @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ResponseEntity.ok(articleService.searchArticleList(search1, category, status, pageable));
+        return ResponseEntity.ok(articleService.searchArticleList(search, category, status, pageable));
     }
 
     @ApiOperation(value = "아티클 수정")

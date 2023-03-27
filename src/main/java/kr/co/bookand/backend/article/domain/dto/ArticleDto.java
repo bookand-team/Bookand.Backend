@@ -1,5 +1,7 @@
 package kr.co.bookand.backend.article.domain.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Operation;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleCategory;
 import kr.co.bookand.backend.article.domain.ArticleTag;
@@ -18,13 +20,12 @@ public class ArticleDto {
 
     public record ArticleRequest(
             String title,
-
             String subTitle,
             String mainImage,
             String content,
+            @ApiModelProperty(value = "아티클 카테고리(INTERVIEW, BOOK_REVIEW, BOOKSTORE_REVIEW)", example = "INTERVIEW/BOOK_REVIEW/BOOKSTORE_REVIEW")
             String category,
             String writer,
-            String status,
             List<String> tags,
             List<Long> bookStoreList
     ) {

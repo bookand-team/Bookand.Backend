@@ -21,7 +21,7 @@ public class PolicyController {
     private final PolicyService policyService;
 
     @ApiOperation(value = "정책 조회")
-    @Operation(summary =
+    @Operation(summary = "정책 조회", description =
             "정책 조회 입니다. 조회 목록으로는 " +
                     "이용약관 - /terms\n" +
                     "개인정보 수집 및 이용 동의 - /personal-info-agree\n" +

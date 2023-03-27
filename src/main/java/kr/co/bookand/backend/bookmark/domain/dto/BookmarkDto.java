@@ -1,5 +1,7 @@
 package kr.co.bookand.backend.bookmark.domain.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Operation;
 import kr.co.bookand.backend.account.domain.Account;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.bookmark.domain.Bookmark;
@@ -15,6 +17,7 @@ public class BookmarkDto {
 
     public record BookmarkRequest(
             String folderName,
+            @ApiModelProperty(value = "북마크 타입 (BOOKSTORE, ARTICLE)", example = "BOOKSTORE/ARTICLE")
             String bookmarkType
     ) {
 
@@ -103,6 +106,8 @@ public class BookmarkDto {
 
     public record BookmarkContentListRequest(
             List<Long> contentIdList,
+
+            @ApiModelProperty(value = "북마크 타입 (BOOKSTORE, ARTICLE)", example = "BOOKSTORE/ARTICLE")
             BookmarkType bookmarkType
     ) {
     }

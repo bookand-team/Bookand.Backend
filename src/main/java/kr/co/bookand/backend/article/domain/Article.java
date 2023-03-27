@@ -28,6 +28,8 @@ public class Article extends BaseEntity {
     private Long id;
 
     private String title;
+
+    private String subTitle;
     private String content;
     private String mainImage;
 

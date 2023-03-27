@@ -59,7 +59,7 @@ public class ArticleBookStoreDummyData {
                     .contact("contact%d".formatted(i))
                     .facility("facility%d".formatted(i))
                     .sns("sns%d".formatted(i))
-                    .mainImage("mainImage%d".formatted(i))
+                    .mainImage("https://http.cat/" + i*10)
                     .introduction("introduction%d".formatted(i))
                     .status(Status.valueOf("VISIBLE"))
                     .displayDate(LocalDateTime.now())
@@ -77,6 +77,7 @@ public class ArticleBookStoreDummyData {
         for (int i = 0; i < 15; i++) {
             Article article = Article.builder()
                     .title("title%d".formatted(i))
+                    .subTitle("subTitle%d".formatted(i))
                     .content("content%d".formatted(i))
                     .writer("writer%d".formatted(i))
                     .articleTagList(null)
@@ -85,7 +86,7 @@ public class ArticleBookStoreDummyData {
                     .deviceOSFilter(DeviceOSFilter.ALL)
                     .status(Status.VISIBLE)
                     .articleBookStoreList(null)
-                    .mainImage("mainImage%d".formatted(i))
+                    .mainImage("https://http.cat/" + i)
                     .deviceOSFilter(DeviceOSFilter.ALL)
                     .memberIdFilter(MemberIdFilter.ALL)
                     .displayDate(LocalDateTime.now())
@@ -127,7 +128,7 @@ public class ArticleBookStoreDummyData {
         List<BookStoreImage> bookStoreImageList = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             BookStoreImage bookStoreImage = BookStoreImage.builder()
-                    .url("image%d".formatted(i))
+                    .url("https://http.cat/" + i*80)
                     .bookStore(bookStore)
                     .build();
             bookStoreImageRepository.save(bookStoreImage);

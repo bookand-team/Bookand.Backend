@@ -37,3 +37,7 @@ out/
 .vscode/
 
 tomcat/
+
+apple_sign_key.p8
+application-secret.properties
+MANIFEST.MF

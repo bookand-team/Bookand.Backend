@@ -18,6 +18,8 @@ public class ArticleDto {
 
     public record ArticleRequest(
             String title,
+
+            String subTitle,
             String mainImage,
             String content,
             String category,
@@ -29,6 +31,7 @@ public class ArticleDto {
         public Article toEntity() {
             return Article.builder()
                     .title(title)
+                    .subTitle(subTitle)
                     .mainImage(mainImage)
                     .content(content)
                     .category(ArticleCategory.valueOf(category))
@@ -48,6 +51,7 @@ public class ArticleDto {
     public record ArticleResponse(
             Long id,
             String title,
+            String subTitle,
             String mainImage,
             String content,
             ArticleCategory category,
@@ -73,6 +77,7 @@ public class ArticleDto {
             return ArticleResponse.builder()
                     .id(article.getId())
                     .title(article.getTitle())
+                    .subTitle(article.getSubTitle())
                     .mainImage(article.getMainImage())
                     .content(article.getContent())
                     .category(article.getCategory())
@@ -164,6 +169,7 @@ public class ArticleDto {
     public record ArticleWebResponse(
             Long id,
             String title,
+            String subTitle,
             String mainImage,
             String content,
             ArticleCategory category,
@@ -184,6 +190,7 @@ public class ArticleDto {
             return ArticleWebResponse.builder()
                     .id(article.getId())
                     .title(article.getTitle())
+                    .subTitle(article.getSubTitle())
                     .mainImage(article.getMainImage())
                     .content(article.getContent())
                     .category(article.getCategory())
@@ -220,6 +227,7 @@ public class ArticleDto {
     public record ArticleSimpleResponse(
             Long id,
             String title,
+            String subTitle,
             String mainImage,
             String content,
             ArticleCategory category,
@@ -240,6 +248,7 @@ public class ArticleDto {
             return ArticleSimpleResponse.builder()
                     .id(article.getId())
                     .title(article.getTitle())
+                    .subTitle(article.getSubTitle())
                     .mainImage(article.getMainImage())
                     .content(article.getContent())
                     .category(article.getCategory())

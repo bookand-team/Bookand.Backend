@@ -16,6 +16,10 @@ public interface BookmarkArticleRepository extends JpaRepository<BookmarkArticle
 
     Optional<BookmarkArticle> findByBookmarkIdAndArticleId(Long bookmarkId, Long contentId);
 
+    void deleteByBookmarkIdAndArticleId(Long bookmarkId, Long contentId);
+
     Optional<BookmarkArticle> findByArticleIdAndBookmark(Long contentId, Bookmark bookmark);
+
+    Optional<BookmarkArticle> findFirstByBookmark(Bookmark bookmark);
 
 }

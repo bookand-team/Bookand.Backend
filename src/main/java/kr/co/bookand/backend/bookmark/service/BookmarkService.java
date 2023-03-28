@@ -120,19 +120,6 @@ public class BookmarkService {
         Account currentAccount = getCurrentAccount(accountRepository);
         Bookmark bookmark = bookmarkRequest.toEntity(currentAccount);
         bookmarkRepository.save(bookmark);
-        if (bookmark.getBookmarkType().equals(BookmarkType.BOOKSTORE)) {
-            BookmarkBookStore bookStore = BookmarkBookStore.builder()
-                    .bookmark(bookmark)
-                    .bookStore(null)
-                    .build();
-            bookmarkBookStoreRepository.save(bookStore);
-        } else {
-            BookmarkArticle bookmarkArticle = BookmarkArticle.builder()
-                    .bookmark(bookmark)
-                    .article(null)
-                    .build();
-            bookmarkArticleRepository.save(bookmarkArticle);
-        }
         Page<BookmarkInfo> bookmarkInfo = new PageImpl<>(List.of());
         return BookmarkResponse.of(bookmark, bookmarkInfo);
     }
@@ -249,49 +236,31 @@ public class BookmarkService {
         Account currentAccount = getCurrentAccount(accountRepository);
         Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
-        BookmarkType bookmarkType = bookmark.getBookmarkType();
-
-        Bookmark bookmarkCollect = bookmarkRepository
-                .findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkType)
-                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, INIT_BOOKMARK_FOLDER_NAME));
 
         for (Long contentId : request.contentIdList()) {
             if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
-                BookmarkBookStore bookmarkBookStore = bookmarkBookStoreRepository
-                        .findByBookmarkIdAndBookStoreId(bookmarkId, contentId)
-                        .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK_CONTENT, contentId));
-
-                // 모아보기에 해당 정보가 없을 시 추가
-                for (BookmarkBookStore bookmarkBookStore1 : bookmarkCollect.getBookmarkBookStoreList()) {
-                    if (!bookmarkBookStore1.getBookStore().getId().equals(bookmarkBookStore.getBookStore().getId())) {
-                        bookmarkBookStore.updateBookmark(bookmarkCollect);
-                    }
-                }
+                bookmarkBookStoreRepository.deleteByBookmarkIdAndBookStoreId(bookmarkId, contentId);
             } else {
-                BookmarkArticle bookmarkArticle = bookmarkArticleRepository
-                        .findByBookmarkIdAndArticleId(bookmarkId, contentId)
-                        .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK_CONTENT, contentId));
-
-                // 모아보기에 해당 정보가 없을 시 추가
-                for (BookmarkArticle bookmarkArticle1 : bookmarkCollect.getBookmarkArticleList()) {
-                    if (!bookmarkArticle1.getArticle().getId().equals(bookmarkArticle.getArticle().getId())) {
-                        bookmarkArticle.updateBookmark(bookmarkCollect);
-                    }
-                }
+                bookmarkArticleRepository.deleteByBookmarkIdAndArticleId(bookmarkId, contentId);
             }
         }
         bookmarkRepository.flush();
+
         // 최근 이미지 설정
         if (request.bookmarkType().equals(BookmarkType.BOOKSTORE)) {
-            int size = bookmark.getBookmarkBookStoreList().size();
-            log.info("size : {}", size);
-            BookmarkBookStore bookStore = bookmark.getBookmarkBookStoreList().get(size - 1);
-            log.info("bookStore : {}", bookStore.getBookStore().getMainImage());
-            bookmark.updateFolderImage(bookStore.getBookStore().getMainImage());
+            Optional<BookmarkBookStore> firstByBookmark = bookmarkBookStoreRepository.findFirstByBookmark(bookmark);
+            if (firstByBookmark.isEmpty()) {
+                bookmark.updateFolderImage(null);
+            }else {
+                bookmark.updateFolderImage(firstByBookmark.get().getBookStore().getMainImage());
+            }
         } else {
-            int size = bookmark.getBookmarkArticleList().size();
-            BookmarkArticle article = bookmark.getBookmarkArticleList().get(size - 1);
-            bookmark.updateFolderImage(article.getArticle().getMainImage());
+            Optional<BookmarkArticle> firstByBookmark = bookmarkArticleRepository.findFirstByBookmark(bookmark);
+            if (firstByBookmark.isEmpty()) {
+                bookmark.updateFolderImage(null);
+            }else {
+                bookmark.updateFolderImage(firstByBookmark.get().getArticle().getMainImage());
+            }
         }
         return Message.of("북마크 폴더 내용 삭제 성공");
     }

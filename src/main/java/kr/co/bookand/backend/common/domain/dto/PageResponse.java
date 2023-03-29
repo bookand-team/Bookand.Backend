@@ -23,7 +23,7 @@ public class PageResponse<T> {
                 .build();
     }
 
-    public static <T> PageResponse<T> ofCursor(Page<T> page, long totalElements) {
+    public static <T> PageResponse<T> ofCursor(Page<T> page, Long totalElements) {
         return PageResponse.<T>builder()
                 .totalPages(page.getTotalPages())
                 .totalElements(totalElements)

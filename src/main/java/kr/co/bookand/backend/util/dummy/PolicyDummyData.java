@@ -3,10 +3,12 @@ package kr.co.bookand.backend.util.dummy;
 import kr.co.bookand.backend.policy.domain.Policy;
 import kr.co.bookand.backend.policy.repository.PolicyRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PolicyDummyData {
@@ -15,6 +17,12 @@ public class PolicyDummyData {
 
     @PostConstruct
     public void dummyData() {
+
+        if (policyRepository.count() > 0) {
+            log.info("[00] 약관이 이미 존재하여 더미를 생성하지 않았습니다.");
+            return;
+        }
+
         Policy terms = Policy.builder()
                 .name("terms")
                 .title("이용약관")

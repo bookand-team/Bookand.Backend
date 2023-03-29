@@ -9,6 +9,7 @@ import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookmark.domain.BookmarkType;
 import kr.co.bookand.backend.bookmark.repository.BookmarkRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AccountDummyData {
@@ -34,6 +36,11 @@ public class AccountDummyData {
     @Transactional
     @PostConstruct
     public void dummyData() {
+        if (accountRepository.count() > 0) {
+            log.info("[0] 어드민, 유저가 이미 존재하여 더미를 생성하지 않았습니다.");
+            return;
+        }
+
         AuthDto.MiddleAccount middleAccount = AuthDto.MiddleAccount.builder()
                 .email("email")
                 .socialType(SocialType.GOOGLE)

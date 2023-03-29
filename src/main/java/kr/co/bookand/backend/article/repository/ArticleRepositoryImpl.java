@@ -34,6 +34,21 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 query::fetchCount);
     }
 
+    @Override
+    public Page<Article> findAllByStatus(Status status, Pageable pageable, Long cursorId, String date) {
+        JPQLQuery<Article> query = queryFactory.selectFrom(article)
+                .where(article.status.eq(status),
+                        getCursorId(date, cursorId))
+                .orderBy(article.createdAt.desc(), article.id.desc());
+
+        return PageableExecutionUtils.getPage(
+                query.offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch(),
+                pageable,
+                query::fetchCount);
+    }
+
     private BooleanExpression containSearch(String search) {
         if(search == null || search.isEmpty()) {
             return null;
@@ -55,5 +70,11 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         }
         Status statusType = Status.valueOf(status);
         return article.status.eq(statusType);
+    }
+
+    private BooleanExpression getCursorId(String date, Long cursorId) {
+        return cursorId == null || cursorId == 0 ? null : article.createdAt.lt(date)
+                .and(article.id.gt(cursorId))
+                .or(article.createdAt.lt(date));
     }
 }

@@ -43,9 +43,10 @@ public class ArticleController {
     @ApiOperation(value = "아티클 전체 조회 (APP)")
     @GetMapping("")
     public ResponseEntity<ArticleSimplePageResponse> getSimpleArticleList(
-            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false) Long cursorId
     ) {
-        ArticleSimplePageResponse articleList = articleService.getSimpleArticleList(pageable);
+        ArticleSimplePageResponse articleList = articleService.getSimpleArticleList(pageable, cursorId);
         return ResponseEntity.ok(articleList);
     }
 

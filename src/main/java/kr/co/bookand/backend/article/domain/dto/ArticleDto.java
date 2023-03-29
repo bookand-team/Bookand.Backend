@@ -275,9 +275,9 @@ public class ArticleDto {
         public ArticleSimplePageResponse {
         }
 
-        public static ArticleSimplePageResponse of(Page<ArticleSimpleResponse> article) {
+        public static ArticleSimplePageResponse of(Page<ArticleSimpleResponse> article, Long totalElements) {
             return ArticleSimplePageResponse.builder()
-                    .data(PageResponse.of(article))
+                    .data(PageResponse.ofCursor(article, totalElements))
                     .build();
         }
     }

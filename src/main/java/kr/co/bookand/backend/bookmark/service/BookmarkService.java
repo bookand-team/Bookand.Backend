@@ -73,30 +73,32 @@ public class BookmarkService {
     @Transactional
     public Message createArticleBookmark(Long articleId) {
         Bookmark myBookmark = getMyBookmark(getCurrentAccount(accountRepository), BookmarkType.ARTICLE);
-        // 아티클이 있는지 먼저 체크
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, articleId));
 
-        // 이미 북마크에 있는지 확인
-        Optional<BookmarkArticle> checkBookmark = bookmarkArticleRepository
-                .findByBookmarkIdAndArticleId(myBookmark.getId(), article.getId());
+        boolean isBookmarked = bookmarkArticleRepository
+                .findByBookmarkIdAndArticleId(myBookmark.getId(), article.getId())
+                .isPresent();
 
-        if (checkBookmark.isEmpty()) {
-            // 북마크-아티클에 추가
-            BookmarkArticle bookmarkArticle = BookmarkArticle.builder()
-                    .bookmark(myBookmark)
-                    .article(article)
-                    .build();
-            bookmarkArticleRepository.save(bookmarkArticle);
-            // 북마크에 추가
-            myBookmark.addBookmarkArticle(bookmarkArticle);
-
-            return Message.of("북마크 추가");
-        } else {
-            // 북마크 취소
-            bookmarkArticleRepository.deleteByArticleIdAndBookmarkId(articleId, myBookmark.getId());
+        if (isBookmarked) {
+            deleteBookmarkArticle(myBookmark, article);
             return Message.of("북마크 삭제");
+        } else {
+            createBookmarkArticle(myBookmark, article);
+            return Message.of("북마크 추가");
         }
+    }
+
+    private void createBookmarkArticle(Bookmark myBookmark, Article article) {
+        BookmarkArticle bookmarkArticle = BookmarkArticle.builder()
+                .bookmark(myBookmark)
+                .article(article)
+                .build();
+        myBookmark.addBookmarkArticle(bookmarkArticle);
+    }
+
+    private void deleteBookmarkArticle(Bookmark myBookmark, Article article) {
+        bookmarkArticleRepository.deleteByArticleIdAndBookmarkId(article.getId(), myBookmark.getId());
     }
 
     // 서점 북마크 추가

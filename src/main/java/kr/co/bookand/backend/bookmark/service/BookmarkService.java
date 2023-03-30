@@ -15,14 +15,18 @@ import kr.co.bookand.backend.bookmark.repository.BookmarkArticleRepository;
 import kr.co.bookand.backend.bookmark.repository.BookmarkBookStoreRepository;
 import kr.co.bookand.backend.bookmark.repository.BookmarkRepository;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
+import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
 import kr.co.bookand.backend.common.domain.Message;
+import kr.co.bookand.backend.common.domain.Status;
+import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +57,16 @@ public class BookmarkService {
     public Bookmark getMyBookmark(Account account, BookmarkType bookmarkType) {
         return bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(account, INIT_BOOKMARK_FOLDER_NAME, bookmarkType)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_INIT_BOOKMARK, bookmarkType));
+    }
+
+    public BookmarkBookStore getBookmarkBookStore(Long bookmarkBookStoreId) {
+        return bookmarkBookStoreRepository.findByBookStoreId(bookmarkBookStoreId)
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK_BOOKSTORE, bookmarkBookStoreId));
+    }
+
+    public BookmarkArticle getBookmarkArticle(Long bookmarkArticleId) {
+        return bookmarkArticleRepository.findByArticleId(bookmarkArticleId)
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK_ARTICLE, bookmarkArticleId));
     }
 
     // 아티클 북마크 추가
@@ -117,20 +131,17 @@ public class BookmarkService {
 
     // 북마크 폴더 생성
     @Transactional
-    public BookmarkResponse createBookmarkFolder(BookmarkRequest bookmarkRequest) {
+    public BookmarkResponseId createBookmarkFolder(BookmarkRequest bookmarkRequest) {
         Account currentAccount = getCurrentAccount(accountRepository);
         Bookmark bookmark = bookmarkRequest.toEntity(currentAccount);
         bookmarkRepository.save(bookmark);
-        Page<BookmarkInfo> bookmarkInfo = new PageImpl<>(List.of());
-        return BookmarkResponse.of(bookmark, bookmarkInfo);
+        return BookmarkResponseId.of(bookmark);
     }
 
     // 모든 북마크 폴더 리스트 확인
     public BookmarkFolderListResponse getBookmarkFolderList(String bookmarkType) {
-        log.info("getBookmarkFolderList {} ", bookmarkType);
         Account currentAccount = getCurrentAccount(accountRepository);
         BookmarkType type = BookmarkType.valueOf(bookmarkType.toUpperCase());
-        log.info("type : {}", type);
         List<Bookmark> bookmarkList = bookmarkRepository.findAllByAccountAndBookmarkType(currentAccount, type);
         List<BookmarkFolderResponse> bookmarkFolderList = bookmarkList.stream().map(BookmarkFolderResponse::of)
                 .toList();
@@ -138,17 +149,16 @@ public class BookmarkService {
     }
 
     // 북마크 폴더 내용 조회
-    public BookmarkResponse getBookmarkFolder(Long bookmarkId) {
+    public BookmarkResponse getBookmarkFolder(Long bookmarkId, Pageable pageable, Long cursorId) {
         Account currentAccount = getCurrentAccount(accountRepository);
         Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
-
-        return getBookmarkResponse(bookmark);
+        return getBookmarkResponse(bookmark, pageable, cursorId);
     }
 
     // 북마크 폴더 내용 추가
     @Transactional
-    public BookmarkResponse updateBookmarkFolder(Long bookmarkId, BookmarkContentListRequest request) {
+    public BookmarkResponseId updateBookmarkFolder(Long bookmarkId, BookmarkContentListRequest request) {
         Account currentAccount = getCurrentAccount(accountRepository);
 
         Bookmark myBookmark = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, request.bookmarkType())
@@ -215,12 +225,12 @@ public class BookmarkService {
             bookmark.updateBookmarkArticle(bookmarkArticleList);
         }
 
-        return getBookmarkFolder(bookmarkId);
+        return BookmarkResponseId.of(bookmark);
     }
 
     // 북마크 이름 변경
     @Transactional
-    public BookmarkResponse updateBookmarkFolderName(Long bookmarkId, BookmarkFolderNameRequest title) {
+    public BookmarkResponseId updateBookmarkFolderName(Long bookmarkId, BookmarkFolderNameRequest title) {
         Account currentAccount = getCurrentAccount(accountRepository);
         Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
@@ -228,7 +238,7 @@ public class BookmarkService {
             throw new BookmarkException(ErrorCode.NOT_CHANGE_INIT_BOOKMARK, bookmarkId);
         }
         bookmark.updateFolderName(title.folderName());
-        return getBookmarkFolder(bookmarkId);
+        return BookmarkResponseId.of(bookmark);
     }
 
     // 북마크 폴더 내용 삭제 -> 모아보기로 이동
@@ -373,35 +383,40 @@ public class BookmarkService {
     }
 
     // 모아보기 북마크 폴더 내용 조회
-    public BookmarkResponse getBookmarkCollect(String bookmarkType) {
+    public BookmarkResponse getBookmarkCollect(String bookmarkType, Pageable pageable, Long cursorId) {
         Account currentAccount = getCurrentAccount(accountRepository);
         BookmarkType bookmarkTypeEnum = BookmarkType.valueOf(bookmarkType.toUpperCase());
         Bookmark bookmark = bookmarkRepository
                 .findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, bookmarkTypeEnum)
                 .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkType));
 
-        return getBookmarkResponse(bookmark);
+        return getBookmarkResponse(bookmark, pageable, cursorId);
     }
 
-    private BookmarkResponse getBookmarkResponse(Bookmark bookmark) {
+    private BookmarkResponse getBookmarkResponse(Bookmark bookmark, Pageable pageable, Long cursorId) {
         if (bookmark.getBookmarkType().equals(BookmarkType.BOOKSTORE)) {
-            List<BookmarkBookStore> bookmarkBookStoreList = bookmarkBookStoreRepository.findAllByBookmark(bookmark);
-            List<BookmarkInfo> bookmarkInfoList = new ArrayList<>();
-            for (BookmarkBookStore bookmarkBookStore : bookmarkBookStoreList) {
-                if (bookmarkBookStore.getBookStore() != null)
-                    bookmarkInfoList.add(BookmarkInfo.ofBookStore(bookmarkBookStore.getBookStore()));
-            }
-            Page<BookmarkInfo> bookmarkInfo = new PageImpl<>(bookmarkInfoList);
-            return BookmarkResponse.of(bookmark, bookmarkInfo);
-        } else {
-            List<BookmarkArticle> bookmarkArticleList = bookmarkArticleRepository.findAllByBookmark(bookmark);
-            List<BookmarkInfo> bookmarkInfoList = new ArrayList<>();
-            for (BookmarkArticle bookmarkArticle : bookmarkArticleList) {
-                if (bookmarkArticle.getArticle() != null)
-                    bookmarkInfoList.add(BookmarkInfo.ofArticle(bookmarkArticle.getArticle()));
-            }
-            Page<BookmarkInfo> bookmarkInfo = new PageImpl<>(bookmarkInfoList);
-            return BookmarkResponse.of(bookmark, bookmarkInfo);
+            Optional<BookmarkBookStore> firstByBookmarkId = bookmarkBookStoreRepository.findFirstByBookmarkId(bookmark.getId());
+            Long nextCursorId = cursorId != null && cursorId == 0 && firstByBookmarkId.isPresent()
+                    ? firstByBookmarkId.get().getBookStore().getId() : cursorId;
+            String createdAt = cursorId != null && cursorId == 0 && firstByBookmarkId.isPresent()
+                    ? firstByBookmarkId.get().getBookStore().getCreatedAt() : cursorId == null ? null : getBookmarkBookStore(nextCursorId).getCreatedAt();
+            Page<BookmarkInfo> page = bookmarkBookStoreRepository.findAllByBookmarkAndAndVisibilityTrue(bookmark, pageable, cursorId, createdAt)
+                    .map(bookmarkBookStore -> BookmarkInfo.ofBookStore(bookmarkBookStore.getBookStore()));
+            Long totalElements = bookmarkBookStoreRepository.countAllByBookmark(bookmark);
+            PageResponse<BookmarkInfo> bookmarkInfoPageResponse = PageResponse.ofCursor(page, totalElements);
+            return BookmarkResponse.of(bookmark, bookmarkInfoPageResponse);
+
+        }else {
+            Optional<BookmarkArticle> firstByBookmarkId = bookmarkArticleRepository.findFirstByBookmarkId(bookmark.getId());
+            Long nextCursorId = cursorId != null && cursorId == 0 && firstByBookmarkId.isPresent()
+                    ? firstByBookmarkId.get().getArticle().getId() : cursorId;
+            String createdAt = cursorId != null && cursorId == 0 && firstByBookmarkId.isPresent()
+                    ? firstByBookmarkId.get().getArticle().getCreatedAt() : cursorId == null ? null : getBookmarkArticle(nextCursorId).getCreatedAt();
+            Page<BookmarkInfo> page = bookmarkArticleRepository.findAllByBookmarkAndAndVisibilityTrue(bookmark, pageable, cursorId, createdAt)
+                    .map(bookmarkArticle -> BookmarkInfo.ofArticle(bookmarkArticle.getArticle()));
+            Long totalElements = bookmarkArticleRepository.countAllByBookmark(bookmark);
+            PageResponse<BookmarkInfo> bookmarkInfoPageResponse = PageResponse.ofCursor(page, totalElements);
+            return BookmarkResponse.of(bookmark, bookmarkInfoPageResponse);
         }
     }
 

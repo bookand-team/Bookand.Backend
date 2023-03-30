@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookmarkArticleRepository extends JpaRepository<BookmarkArticle, Long> {
+public interface BookmarkArticleRepository extends JpaRepository<BookmarkArticle, Long>, BookmarkArticleRepositoryCustom {
 
     List<BookmarkArticle> findAllByBookmark(Bookmark bookmark);
 
@@ -21,5 +21,11 @@ public interface BookmarkArticleRepository extends JpaRepository<BookmarkArticle
     Optional<BookmarkArticle> findByArticleIdAndBookmark(Long contentId, Bookmark bookmark);
 
     Optional<BookmarkArticle> findFirstByBookmark(Bookmark bookmark);
+
+    Optional<BookmarkArticle> findFirstByBookmarkId(Long bookmarkId);
+
+    Long countAllByBookmark(Bookmark bookmark);
+
+    Optional<BookmarkArticle> findByArticleId(Long articleId);
 
 }

@@ -2,12 +2,13 @@ package kr.co.bookand.backend.bookmark.repository;
 
 import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookmark.domain.BookmarkBookStore;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface BookmarkBookStoreRepository extends JpaRepository<BookmarkBookStore, Long> {
+public interface BookmarkBookStoreRepository extends JpaRepository<BookmarkBookStore, Long>, BookmarkBookStoreRepositoryCustom{
 
     List<BookmarkBookStore> findAllByBookmark(Bookmark bookmark);
 
@@ -21,4 +22,9 @@ public interface BookmarkBookStoreRepository extends JpaRepository<BookmarkBookS
 
     Optional<BookmarkBookStore> findFirstByBookmark(Bookmark bookmark);
 
+    Optional<BookmarkBookStore> findFirstByBookmarkId(Long bookmarkId);
+
+    Long countAllByBookmark(Bookmark bookmark);
+
+    Optional<BookmarkBookStore> findByBookStoreId(Long bookStoreId);
 }

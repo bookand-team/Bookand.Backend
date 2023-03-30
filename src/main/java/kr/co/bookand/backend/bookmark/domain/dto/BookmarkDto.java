@@ -40,13 +40,26 @@ public class BookmarkDto {
         @Builder
         public BookmarkResponse{
         }
-        public static BookmarkResponse of(Bookmark bookmark, Page<BookmarkInfo> bookmarkInfo) {
+        public static BookmarkResponse of(Bookmark bookmark, PageResponse<BookmarkInfo> bookmarkInfo) {
             return BookmarkResponse.builder()
                     .bookmarkId(bookmark.getId())
                     .folderName(bookmark.getFolderName())
                     .bookmarkType(bookmark.getBookmarkType())
                     .bookmarkImage(bookmark.getFolderImage())
-                    .bookmarkInfo(PageResponse.of(bookmarkInfo))
+                    .bookmarkInfo(bookmarkInfo)
+                    .build();
+        }
+    }
+
+    public record BookmarkResponseId(
+            Long bookmarkId
+    ) {
+        @Builder
+        public BookmarkResponseId{
+        }
+        public static BookmarkResponseId of(Bookmark bookmark) {
+            return BookmarkResponseId.builder()
+                    .bookmarkId(bookmark.getId())
                     .build();
         }
     }

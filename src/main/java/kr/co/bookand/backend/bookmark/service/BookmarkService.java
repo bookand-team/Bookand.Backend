@@ -15,6 +15,7 @@ import kr.co.bookand.backend.bookmark.repository.BookmarkArticleRepository;
 import kr.co.bookand.backend.bookmark.repository.BookmarkBookStoreRepository;
 import kr.co.bookand.backend.bookmark.repository.BookmarkRepository;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
+import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
 import kr.co.bookand.backend.common.domain.Message;
 import kr.co.bookand.backend.common.exception.ErrorCode;
@@ -251,14 +252,14 @@ public class BookmarkService {
             Optional<BookmarkBookStore> firstByBookmark = bookmarkBookStoreRepository.findFirstByBookmark(bookmark);
             if (firstByBookmark.isEmpty()) {
                 bookmark.updateFolderImage(null);
-            }else {
+            } else {
                 bookmark.updateFolderImage(firstByBookmark.get().getBookStore().getMainImage());
             }
         } else {
             Optional<BookmarkArticle> firstByBookmark = bookmarkArticleRepository.findFirstByBookmark(bookmark);
             if (firstByBookmark.isEmpty()) {
                 bookmark.updateFolderImage(null);
-            }else {
+            } else {
                 bookmark.updateFolderImage(firstByBookmark.get().getArticle().getMainImage());
             }
         }
@@ -299,6 +300,76 @@ public class BookmarkService {
         }
 
         return Message.of("북마크 삭제 완료");
+    }
+
+    // 북마크 폴더 삭제
+    @Transactional
+    public Message deleteBookmarkFolder(Long bookmarkId) {
+        Account currentAccount = getCurrentAccount(accountRepository);
+        Bookmark bookmark = bookmarkRepository.findByIdAndAccount(bookmarkId, currentAccount)
+                .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, bookmarkId));
+        if (bookmark.getFolderName().equals(INIT_BOOKMARK_FOLDER_NAME)) {
+            throw new BookmarkException(ErrorCode.NOT_DELETE_INIT_BOOKMARK, bookmarkId);
+        }
+
+        // 폴더 내용은 북마크 모아보기로 이동
+        if (bookmark.getBookmarkType().equals(BookmarkType.BOOKSTORE)) {
+            Bookmark bookmarkCollect = bookmarkRepository
+                    .findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, BookmarkType.BOOKSTORE)
+                    .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, currentAccount.getId()));
+
+            List<Long> collectBookmarkBookStoreList = bookmarkCollect.getBookmarkBookStoreList().stream()
+                    .map(bookmarkBookStore -> bookmarkBookStore.getBookStore().getId())
+                    .toList();
+
+            log.info(collectBookmarkBookStoreList.toString());
+
+            List<Long> currentBookmarkBookStoreList = bookmarkBookStoreRepository.findAllByBookmark(bookmark).stream()
+                    .map(bookmarkBookStore -> bookmarkBookStore.getBookStore().getId())
+                    .toList();
+
+            log.info(currentBookmarkBookStoreList.toString());
+
+
+            // 모아보기에 없을 시 추가
+            for (Long bookmarkBookStoreId : currentBookmarkBookStoreList) {
+                if (!collectBookmarkBookStoreList.contains(bookmarkBookStoreId)) {
+                    BookmarkBookStore bookStore = BookmarkBookStore.builder()
+                            .bookmark(bookmarkCollect)
+                            .bookStore(bookStoreRepository.findById(bookmarkBookStoreId).orElseThrow(
+                                    () -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, bookmarkBookStoreId)))
+                            .build();
+                    bookmarkBookStoreRepository.save(bookStore);
+                }
+            }
+
+        } else {
+            Bookmark bookmarkCollect = bookmarkRepository
+                    .findByAccountAndFolderNameAndBookmarkType(currentAccount, INIT_BOOKMARK_FOLDER_NAME, BookmarkType.ARTICLE)
+                    .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKMARK, currentAccount.getId()));
+
+            List<Long> collectBookmarkArticleList = bookmarkCollect.getBookmarkArticleList().stream()
+                    .map(bookmarkArticle -> bookmarkArticle.getArticle().getId())
+                    .toList();
+
+            List<Long> currentBookmarkArticleList = bookmarkArticleRepository.findAllByBookmark(bookmark).stream()
+                    .map(bookmarkArticle -> bookmarkArticle.getArticle().getId())
+                    .toList();
+
+            for (Long bookmarkArticleId : currentBookmarkArticleList) {
+                if (!collectBookmarkArticleList.contains(bookmarkArticleId)) {
+                    BookmarkArticle article = BookmarkArticle.builder()
+                            .bookmark(bookmarkCollect)
+                            .article(articleRepository.findById(bookmarkArticleId).orElseThrow(
+                                    () -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, bookmarkArticleId)))
+                            .build();
+                    bookmarkArticleRepository.save(article);
+                }
+            }
+        }
+
+        bookmarkRepository.delete(bookmark);
+        return Message.of("북마크 폴더 삭제 완료");
     }
 
     // 모아보기 북마크 폴더 내용 조회

@@ -76,14 +76,30 @@ public class BookmarkController {
         return ResponseEntity.ok(bookmarkService.deleteBookmarkContent(bookmarkRequest));
     }
 
-    @ApiOperation(value = "북마크 폴더 삭제")
-    @DeleteMapping("/folders/{bookmarkFolderId}")
+    @ApiOperation(value = "북마크 폴더 내용 삭제")
+    @Operation(description = "북마크 폴더 내용 삭제" +
+            "종류는 BOOKSTORE/ARTICLE" +
+            "\n 삭제할 북마크들은 리스트로 넘겨주시면 됩니다."
+    )
+    @DeleteMapping("/folders/{bookmarkFolderId}/contents")
     public ResponseEntity<Message> deleteBookmarkFolder(
             @PathVariable Long bookmarkFolderId,
             @RequestBody BookmarkContentListRequest bookmarkRequest
     ) {
         return ResponseEntity.ok(bookmarkService.deleteBookmarkFolderContent(bookmarkFolderId, bookmarkRequest));
     }
+
+    @ApiOperation(value = "북마크 폴더 삭제")
+    @Operation(description = "북마크 폴더 삭제" +
+            "폴더 id 만 입력하면 됩니다. (타입 구분 X)"
+    )
+    @DeleteMapping("/folders/{bookmarkFolderId}")
+    public ResponseEntity<Message> deleteBookmarkFolder(
+            @PathVariable Long bookmarkFolderId
+    ) {
+        return ResponseEntity.ok(bookmarkService.deleteBookmarkFolder(bookmarkFolderId));
+    }
+
 
     @ApiOperation(value = "아티클 북마크 추가")
     @PostMapping("/articles/{articleId}")

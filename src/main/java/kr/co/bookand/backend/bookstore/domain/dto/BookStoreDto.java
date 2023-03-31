@@ -8,6 +8,7 @@ import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
@@ -51,6 +52,7 @@ public class BookStoreDto {
                     .subImages(bookStoreImageList)
                     .introduction(introduction)
                     .status(Status.INVISIBLE)
+                    .displayDate(null)
                     .view(view)
                     .build();
         }
@@ -93,7 +95,7 @@ public class BookStoreDto {
             boolean isBookmark,
             String createdDate,
             String modifiedDate,
-            String displayDate,
+            LocalDateTime displayDate,
             List<ArticleSimpleResponse> articleResponse,
             boolean visibility
     ) {
@@ -128,7 +130,7 @@ public class BookStoreDto {
                     .articleResponse(articleList)
                     .createdDate(bookStore.getCreatedAt())
                     .modifiedDate(bookStore.getModifiedAt())
-                    .displayDate(bookStore.getDisplayDate().toString())
+                    .displayDate(bookStore.getDisplayDate())
                     .visibility(bookStore.isVisibility())
                     .status(bookStore.getStatus().toString())
                     .build();
@@ -147,7 +149,7 @@ public class BookStoreDto {
             int view,
             String createdDate,
             String modifiedDate,
-            String displayDate,
+            LocalDateTime displayDate,
             boolean visibility
     ) {
         @Builder
@@ -174,7 +176,7 @@ public class BookStoreDto {
                     .view(bookStore.getView())
                     .createdDate(bookStore.getCreatedAt())
                     .modifiedDate(bookStore.getModifiedAt())
-                    .displayDate(bookStore.getDisplayDate().toString())
+                    .displayDate(bookStore.getDisplayDate())
                     .visibility(bookStore.isVisibility())
                     .status(bookStore.getStatus().toString())
                     .build();

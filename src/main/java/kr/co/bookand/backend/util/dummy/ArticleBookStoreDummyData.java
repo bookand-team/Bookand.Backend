@@ -19,6 +19,7 @@ import kr.co.bookand.backend.common.domain.DeviceOSFilter;
 import kr.co.bookand.backend.common.domain.MemberIdFilter;
 import kr.co.bookand.backend.common.domain.Status;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,9 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+@Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Component
 @RequiredArgsConstructor
@@ -43,13 +46,17 @@ public class ArticleBookStoreDummyData {
 
     @PostConstruct
     @Transactional
-    public void dummyDates() {
+    public void dummyData() {
         dummyData1();
         dummyData2();
         dummyData3();
     }
 
     public void dummyData1() {
+        if (bookStoreRepository.count() > 0) {
+            log.info("[1] 서점이 이미 존재하여 더미를 생성하지 않았습니다.");
+            return;
+        }
 
         for (int i = 0; i < 15; i++) {
             BookStore store = BookStore.builder()
@@ -59,7 +66,7 @@ public class ArticleBookStoreDummyData {
                     .contact("contact%d".formatted(i))
                     .facility("facility%d".formatted(i))
                     .sns("sns%d".formatted(i))
-                    .mainImage("https://http.cat/" + i*10)
+                    .mainImage("https://http.cat/" + i * 10)
                     .introduction("introduction%d".formatted(i))
                     .status(Status.valueOf("VISIBLE"))
                     .displayDate(LocalDateTime.now())
@@ -68,12 +75,15 @@ public class ArticleBookStoreDummyData {
             BookStore save = bookStoreRepository.save(store);
             save.updateBookStoreSubImage(bookStoreImageDummyData(save));
             save.updateBookStoreTheme(bookStoreThemeDummyData(save));
-
         }
-
     }
 
     public void dummyData2() {
+        if (articleRepository.count() > 0) {
+            log.info("[2] 아티클이 이미 존재하여 더미를 생성하지 않았습니다.");
+            return;
+        }
+
         for (int i = 0; i < 15; i++) {
             Article article = Article.builder()
                     .title("title%d".formatted(i))
@@ -99,14 +109,20 @@ public class ArticleBookStoreDummyData {
     }
 
     public void dummyData3() {
+        if (articleBookStoreRepository.count() > 0) {
+            log.info("[3] 서점-아티클이 이미 존재하여 더미를 생성하지 않았습니다.");
+            return;
+        }
+
         for (int i = 0; i < 15; i++) {
             Article article = articleRepository.findById((long) i + 1).orElseThrow();
-            BookStore bookStore = bookStoreRepository.findById((long) i+1).orElseThrow();
+            BookStore bookStore = bookStoreRepository.findById((long) i + 1).orElseThrow();
 
-            ArticleBookStore articleBookStore = articleBookStoreRepository.save(ArticleBookStore.builder()
-                    .article(article)
-                    .bookStore(bookStore)
-                    .build());
+            ArticleBookStore articleBookStore = articleBookStoreRepository.save(
+                    ArticleBookStore.builder()
+                            .article(article)
+                            .bookStore(bookStore)
+                            .build());
             articleBookStoreRepository.save(articleBookStore);
         }
     }
@@ -128,7 +144,7 @@ public class ArticleBookStoreDummyData {
         List<BookStoreImage> bookStoreImageList = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             BookStoreImage bookStoreImage = BookStoreImage.builder()
-                    .url("https://http.cat/" + i*80)
+                    .url("https://http.cat/" + i * 80)
                     .bookStore(bookStore)
                     .build();
             bookStoreImageRepository.save(bookStoreImage);

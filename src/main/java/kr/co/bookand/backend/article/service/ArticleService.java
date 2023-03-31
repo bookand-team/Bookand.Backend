@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
@@ -101,20 +102,32 @@ public class ArticleService {
         article.getArticleBookStoreList()
                 .stream().filter(articleBookStore -> articleBookStore.getBookStore().getStatus().equals(Status.VISIBLE))
                 .forEach(articleBookStore -> {
-            BookStore bookStore = articleBookStore.getBookStore();
-            boolean isBookmark = bookmarkService.isBookmark(bookStore.getId(), BookmarkType.ARTICLE.toString());
-            bookStoreSimpleResponse.add(BookStoreSimpleResponse.of(bookStore, isBookmark));
-        });
+                    BookStore bookStore = articleBookStore.getBookStore();
+                    boolean isBookmark = bookmarkService.isBookmark(bookStore.getId(), BookmarkType.ARTICLE.toString());
+                    bookStoreSimpleResponse.add(BookStoreSimpleResponse.of(bookStore, isBookmark));
+                });
         boolean bookmark = bookmarkService.isBookmark(id, BookmarkType.ARTICLE.toString());
         return ArticleResponse.of(article, bookStoreSimpleResponse, bookmark);
     }
 
     // 전체 조회 (APP)
-    public ArticleSimplePageResponse getSimpleArticleList(Pageable pageable) {
-        Page<ArticleSimpleResponse> articlePage = articleRepository.findAllByStatus(Status.VISIBLE, pageable)
+    public ArticleSimplePageResponse getSimpleArticleList(Pageable pageable, Long cursorId) {
+        Long nextCursorId = cursorId;
+        if (cursorId != null && cursorId == 0) {
+            nextCursorId = articleRepository.findFirstByStatusOrderByCreatedAtDesc(Status.VISIBLE)
+                    .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, cursorId))
+                    .getId();
+        }
+        String date = cursorId == null ? null : getArticle(nextCursorId).createdDate();
+
+
+        Page<ArticleSimpleResponse> articlePage = articleRepository
+                .findAllByStatus(Status.VISIBLE, pageable, cursorId, date)
                 .map((Article article) -> ArticleSimpleResponse
                         .of(article, bookmarkService.isBookmark(article.getId(), BookmarkType.ARTICLE.toString())));
-        return ArticleSimplePageResponse.of(articlePage);
+
+        Long totalElements = articleRepository.countAllByStatus(Status.VISIBLE);
+        return ArticleSimplePageResponse.of(articlePage, totalElements);
     }
 
     // 전체 조회 (WEB)

@@ -1,6 +1,7 @@
 package kr.co.bookand.backend.article.controller;
 
 import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
 import kr.co.bookand.backend.article.service.ArticleService;
 import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +42,14 @@ public class ArticleController {
     }
 
     @ApiOperation(value = "아티클 전체 조회 (APP)")
+    @Operation(summary = "아티클 전체 조회 (APP)", description = "커서 기반으로 되어 있습니다. " +
+            "\n 초기에는 cursorId를 0 넣으시거나 요청 안하시면 됩니다.")
     @GetMapping("")
     public ResponseEntity<ArticleSimplePageResponse> getSimpleArticleList(
-            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false) Long cursorId
     ) {
-        ArticleSimplePageResponse articleList = articleService.getSimpleArticleList(pageable);
+        ArticleSimplePageResponse articleList = articleService.getSimpleArticleList(pageable, cursorId);
         return ResponseEntity.ok(articleList);
     }
 

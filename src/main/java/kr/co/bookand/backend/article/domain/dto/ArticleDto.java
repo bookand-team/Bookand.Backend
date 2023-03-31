@@ -12,6 +12,7 @@ import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
@@ -41,6 +42,7 @@ public class ArticleDto {
                     .articleTagList(null)
                     .articleBookStoreList(null)
                     .markArticleList(null)
+                    .displayDate(null)
                     .deviceOSFilter(DeviceOSFilter.ALL)
                     .memberIdFilter(MemberIdFilter.ALL)
                     .build();
@@ -67,7 +69,7 @@ public class ArticleDto {
             ArticleFilter filter,
             String createdDate,
             String modifiedDate,
-            String displayDate
+            LocalDateTime displayDate
     ) {
         @Builder
         public ArticleResponse {
@@ -93,7 +95,7 @@ public class ArticleDto {
                     .filter(ArticleFilter.of(article))
                     .createdDate(article.getCreatedAt())
                     .modifiedDate(article.getModifiedAt())
-                    .displayDate(article.getDisplayDate().toString())
+                    .displayDate(article.getDisplayDate())
                     .build();
         }
     }
@@ -115,7 +117,7 @@ public class ArticleDto {
             ArticleFilter filter,
             String createdDate,
             String modifiedDate,
-            String displayDate
+            LocalDateTime displayDate
     ) {
         @Builder
         public ArticleDetailResponse {
@@ -139,7 +141,7 @@ public class ArticleDto {
                     .filter(ArticleFilter.of(article))
                     .createdDate(article.getCreatedAt())
                     .modifiedDate(article.getModifiedAt())
-                    .displayDate(article.getDisplayDate().toString())
+                    .displayDate(article.getDisplayDate())
                     .build();
         }
     }
@@ -181,7 +183,7 @@ public class ArticleDto {
             boolean visibility,
             String createdDate,
             String modifiedDate,
-            String displayDate
+            LocalDateTime displayDate
     ) {
         @Builder
         public ArticleWebResponse {
@@ -201,7 +203,7 @@ public class ArticleDto {
                     .articleTagList(article.getArticleTagList().stream().map(ArticleTag::getTag).toList())
                     .createdDate(article.getCreatedAt())
                     .modifiedDate(article.getModifiedAt())
-                    .displayDate(article.getDisplayDate().toString())
+                    .displayDate(article.getDisplayDate())
                     .visibility(article.isVisibility())
                     .build();
         }
@@ -273,9 +275,9 @@ public class ArticleDto {
         public ArticleSimplePageResponse {
         }
 
-        public static ArticleSimplePageResponse of(Page<ArticleSimpleResponse> article) {
+        public static ArticleSimplePageResponse of(Page<ArticleSimpleResponse> article, Long totalElements) {
             return ArticleSimplePageResponse.builder()
-                    .data(PageResponse.of(article))
+                    .data(PageResponse.ofCursor(article, totalElements))
                     .build();
         }
     }

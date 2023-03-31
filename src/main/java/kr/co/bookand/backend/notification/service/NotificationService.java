@@ -23,8 +23,8 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final AccountService accountService;
 
-    public PageResponse<NotificationResponse> getNotificationList(Pageable pageable) {
-        Page<NotificationResponse> notificationList = notificationRepository.findAllByVisibility(pageable, true)
+    public PageResponse<NotificationResponse> getNotificationList(Pageable pageable, Long cursorId) {
+        Page<NotificationResponse> notificationList = notificationRepository.findAllByVisibility(pageable, true, cursorId)
                 .map(NotificationResponse::of);
         return PageResponse.of(notificationList);
     }

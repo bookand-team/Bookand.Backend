@@ -34,6 +34,12 @@ public class BookStore extends BaseEntity {
     private String facility;
     private String sns;
 
+    // 위도
+    private String latitude;
+
+    // 경도
+    private String longitude;
+
     private String introduction;
     private String mainImage;
 

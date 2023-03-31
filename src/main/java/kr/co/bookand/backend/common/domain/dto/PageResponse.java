@@ -25,7 +25,7 @@ public class PageResponse<T> {
 
     public static <T> PageResponse<T> ofCursor(Page<T> page, Long totalElements) {
         return PageResponse.<T>builder()
-                .totalPages(page.getTotalPages())
+                .totalPages(0)
                 .totalElements(totalElements)
                 .last(page.isLast())
                 .content(page.getContent())

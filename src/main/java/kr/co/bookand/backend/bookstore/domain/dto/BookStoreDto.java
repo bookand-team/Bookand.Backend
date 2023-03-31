@@ -23,6 +23,8 @@ public class BookStoreDto {
             String businessHours,
             String contact,
             String facility,
+            String latitude,
+            String longitude,
             String sns,
             String mainImage,
             @ApiModelProperty(
@@ -46,6 +48,8 @@ public class BookStoreDto {
                     .businessHours(businessHours)
                     .contact(contact)
                     .facility(facility)
+                    .latitude(latitude)
+                    .longitude(longitude)
                     .sns(sns)
                     .mainImage(mainImage)
                     .themeList(bookStoreThemeList)
@@ -109,6 +113,8 @@ public class BookStoreDto {
                     .businessHours(bookStore.getBusinessHours())
                     .contact(bookStore.getContact())
                     .facility(bookStore.getFacility())
+                    .latitude(bookStore.getLatitude())
+                    .longitude(bookStore.getLongitude())
                     .sns(bookStore.getSns())
                     .build();
 
@@ -162,6 +168,8 @@ public class BookStoreDto {
                     .businessHours(bookStore.getBusinessHours())
                     .contact(bookStore.getContact())
                     .facility(bookStore.getFacility())
+                    .latitude(bookStore.getLatitude())
+                    .longitude(bookStore.getLongitude())
                     .sns(bookStore.getSns())
                     .build();
 
@@ -196,6 +204,8 @@ public class BookStoreDto {
             String businessHours,
             String contact,
             String facility,
+            String latitude,
+            String longitude,
             String sns
 
     ) {

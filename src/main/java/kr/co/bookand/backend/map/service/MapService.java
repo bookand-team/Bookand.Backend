@@ -24,7 +24,7 @@ public class MapService {
     public Object searchByKeyword(String query, Pageable pageable) {
         RestTemplate restTemplate = new RestTemplate();
         ObjectMapper objectMapper = new ObjectMapper();
-        String url = BASE_URL + "?query=" + query + "&page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize();
+        String url = BASE_URL + "?query=" + query + "&page=" + (pageable.getPageNumber() + 1) + "&size=" + pageable.getPageSize();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "KakaoAK " + restApiKey);
         HttpEntity http = new HttpEntity(headers);

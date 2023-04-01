@@ -86,5 +86,8 @@ public class SwaggerConfig {
     static class MyPagable {
         @ApiModelProperty(value = "페이지 번호(0..N)", example = "0")
         private Integer page;
+
+        @ApiModelProperty(value = "페이지당 데이터 수", example = "10")
+        private Integer size;
     }
 }

@@ -8,10 +8,7 @@ import kr.co.bookand.backend.bookmark.domain.BookmarkType;
 import kr.co.bookand.backend.bookmark.service.BookmarkService;
 import kr.co.bookand.backend.bookstore.domain.*;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
-import kr.co.bookand.backend.bookstore.repository.BookStoreImageRepository;
-import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
-import kr.co.bookand.backend.bookstore.repository.BookStoreThemeRepository;
-import kr.co.bookand.backend.bookstore.repository.ReportBookStoreRepository;
+import kr.co.bookand.backend.bookstore.repository.*;
 import kr.co.bookand.backend.common.domain.Status;
 import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import kr.co.bookand.backend.common.exception.ErrorCode;
@@ -23,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +37,7 @@ public class BookStoreService {
     private final BookStoreRepository bookStoreRepository;
     private final BookStoreImageRepository bookStoreImageRepository;
     private final BookStoreThemeRepository bookStoreThemeRepository;
+    private final BookStoreVersionRepository bookStoreVersionRepository;
     private final ReportBookStoreRepository reportBookStoreRepository;
     private final AccountService accountService;
     private final BookmarkService bookmarkService;
@@ -200,9 +197,21 @@ public class BookStoreService {
         return Message.of("답변 완료");
     }
 
-    public PageResponse<BookStoreReportList> getBookStoreReportList(Pageable pageable) {
+    public PageResponse<BookStoreReportListResponse> getBookStoreReportList(Pageable pageable) {
         accountService.isAccountAdmin();
-        Page<BookStoreReportList> bookStoreReportList = reportBookStoreRepository.findAll(pageable).map(BookStoreReportList::of);
+        Page<BookStoreReportListResponse> bookStoreReportList = reportBookStoreRepository.findAll(pageable).map(BookStoreReportListResponse::of);
         return PageResponse.of(bookStoreReportList);
+    }
+
+    public BookStoreVersionListResponse checkBookStoreVersion(Long versionId) {
+        Long currentVersionId = bookStoreVersionRepository.findFirstByOrderByIdDesc().getId();
+        List<BookStoreVersionResponse> bookStoreList = new ArrayList<>();
+        if (versionId < currentVersionId) {
+            bookStoreList = bookStoreRepository.findAllByStatus(Status.VISIBLE)
+                    .stream()
+                    .map(it -> BookStoreVersionResponse.of(it, bookmarkService.isBookmark(it.getId(), BookmarkType.BOOKSTORE.toString())))
+                    .toList();
+        }
+        return BookStoreVersionListResponse.of(bookStoreList, currentVersionId);
     }
 }

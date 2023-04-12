@@ -8,13 +8,11 @@ import kr.co.bookand.backend.article.domain.ArticleTag;
 import kr.co.bookand.backend.article.repository.ArticleBookStoreRepository;
 import kr.co.bookand.backend.article.repository.ArticleRepository;
 import kr.co.bookand.backend.article.repository.ArticleTagRepository;
-import kr.co.bookand.backend.bookstore.domain.BookStore;
-import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
-import kr.co.bookand.backend.bookstore.domain.BookStoreTheme;
-import kr.co.bookand.backend.bookstore.domain.BookStoreType;
+import kr.co.bookand.backend.bookstore.domain.*;
 import kr.co.bookand.backend.bookstore.repository.BookStoreImageRepository;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
 import kr.co.bookand.backend.bookstore.repository.BookStoreThemeRepository;
+import kr.co.bookand.backend.bookstore.repository.BookStoreVersionRepository;
 import kr.co.bookand.backend.common.domain.DeviceOSFilter;
 import kr.co.bookand.backend.common.domain.MemberIdFilter;
 import kr.co.bookand.backend.common.domain.Status;
@@ -29,7 +27,6 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -43,6 +40,7 @@ public class ArticleBookStoreDummyData {
     private final BookStoreRepository bookStoreRepository;
     private final BookStoreImageRepository bookStoreImageRepository;
     private final BookStoreThemeRepository bookStoreThemeRepository;
+    private final BookStoreVersionRepository bookStoreVersionRepository;
 
     @PostConstruct
     @Transactional
@@ -57,6 +55,8 @@ public class ArticleBookStoreDummyData {
             log.info("[1] 서점이 이미 존재하여 더미를 생성하지 않았습니다.");
             return;
         }
+        // 버전1 생성
+        BookStoreVersion version = bookStoreVersionRepository.save(BookStoreVersion.builder().build());
 
         for (int i = 0; i < 15; i++) {
             BookStore store = BookStore.builder()
@@ -71,6 +71,7 @@ public class ArticleBookStoreDummyData {
                     .status(Status.valueOf("VISIBLE"))
                     .displayDate(LocalDateTime.now())
                     .view(1)
+                    .bookStoreVersion(version)
                     .build();
             BookStore save = bookStoreRepository.save(store);
             save.updateBookStoreSubImage(bookStoreImageDummyData(save));

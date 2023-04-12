@@ -191,12 +191,42 @@ public class BookStoreDto {
         }
     }
 
+    public record BookStoreVersionResponse(
+            Long id,
+            String name,
+            String mainImage,
+            List<BookStoreType> theme,
+            String latitude,
+            String longitude,
+            Boolean isBookmark
+            ) {
+        public static BookStoreVersionResponse of(BookStore bookStore, boolean isBookmark) {
+            return new BookStoreVersionResponse(
+                    bookStore.getId(),
+                    bookStore.getName(),
+                    bookStore.getMainImage(),
+                    bookStore.getThemeList().stream().map(BookStoreTheme::getTheme).toList(),
+                    bookStore.getLatitude(),
+                    bookStore.getLongitude(),
+                    isBookmark
+            );
+        }
+    }
+
+    public record BookStoreVersionListResponse(
+            List<BookStoreVersionResponse> bookStoreVersionListResponse,
+            Long currentVersionId
+    ) {
+        public static BookStoreVersionListResponse of(List<BookStoreVersionResponse> bookStoreVersionListResponse, Long currentVersionId) {
+            return new BookStoreVersionListResponse(bookStoreVersionListResponse, currentVersionId);
+        }
+    }
+
     // 서점 id 리스트 Request
     public record BookStoreListRequest(
             List<Long> bookStoreDtoList
     ) {
     }
-
 
     // 서점 Info
     public record BookStoreInfo(
@@ -274,7 +304,7 @@ public class BookStoreDto {
         }
     }
 
-    public record BookStoreReportList(
+    public record BookStoreReportListResponse(
             Long reportId,
             String providerEmail,
             String bookStoreName,
@@ -284,11 +314,11 @@ public class BookStoreDto {
             String answeredAt
     ) {
         @Builder
-        public BookStoreReportList {
+        public BookStoreReportListResponse {
         }
 
-        public static BookStoreReportList of(ReportBookStore reportBookStore) {
-            return BookStoreReportList.builder()
+        public static BookStoreReportListResponse of(ReportBookStore reportBookStore) {
+            return BookStoreReportListResponse.builder()
                     .reportId(reportBookStore.getId())
                     .providerEmail(reportBookStore.getAccount().getEmail())
                     .bookStoreName(reportBookStore.getName())
@@ -297,14 +327,6 @@ public class BookStoreDto {
                     .createdAt(reportBookStore.getCreatedAt())
                     .answeredAt(reportBookStore.getAnsweredAt())
                     .build();
-        }
-    }
-
-    public record Search(
-            String data
-    ){
-        @Builder
-        public Search {
         }
     }
 }

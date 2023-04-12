@@ -118,9 +118,15 @@ public class BookStoreController {
 
     @ApiOperation(value = "서점 제보 전체 조회")
     @GetMapping("/report")
-    public ResponseEntity<PageResponse<BookStoreReportList>> getBookStoreReportList(
+    public ResponseEntity<PageResponse<BookStoreReportListResponse>> getBookStoreReportList(
             @PageableDefault Pageable pageable
     ) {
         return ResponseEntity.ok(bookStoreService.getBookStoreReportList(pageable));
+    }
+
+    @ApiOperation(value = "서점 버전 체크")
+    @GetMapping("/version")
+    public ResponseEntity<BookStoreVersionListResponse> checkBookStoreVersion(@RequestHeader("versionId") Long versionId) {
+        return ResponseEntity.ok(bookStoreService.checkBookStoreVersion(versionId));
     }
 }

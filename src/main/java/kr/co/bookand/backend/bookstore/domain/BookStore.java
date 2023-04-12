@@ -137,4 +137,8 @@ public class BookStore extends BaseEntity {
     public void updateDisplayDate(LocalDateTime displayDate) {
         this.displayDate = displayDate;
     }
+
+    public void updateBookStoreVersion(BookStoreVersion newVersion) {
+        this.bookStoreVersion = newVersion;
+    }
 }

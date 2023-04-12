@@ -41,7 +41,7 @@ public class BookStoreDto {
         public BookStoreRequest {
         }
 
-        public BookStore toEntity(List<BookStoreImage> bookStoreImageList, List<BookStoreTheme> bookStoreThemeList) {
+        public BookStore toEntity(List<BookStoreImage> bookStoreImageList, List<BookStoreTheme> bookStoreThemeList, BookStoreVersion bookStoreVersion) {
             return BookStore.builder()
                     .name(name)
                     .address(address)
@@ -58,6 +58,7 @@ public class BookStoreDto {
                     .status(Status.INVISIBLE)
                     .displayDate(null)
                     .view(view)
+                    .bookStoreVersion(bookStoreVersion)
                     .build();
         }
     }

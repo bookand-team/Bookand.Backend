@@ -37,7 +37,6 @@ public class ArticleBookStoreDummyData {
     private final BookStoreRepository bookStoreRepository;
     private final BookStoreImageRepository bookStoreImageRepository;
     private final BookStoreThemeRepository bookStoreThemeRepository;
-    private final BookStoreVersionRepository bookStoreVersionRepository;
 
     @PostConstruct
     @Transactional
@@ -52,8 +51,6 @@ public class ArticleBookStoreDummyData {
             log.info("[1] 서점이 이미 존재하여 더미를 생성하지 않았습니다.");
             return;
         }
-        // 버전1 생성
-        BookStoreVersion version = bookStoreVersionRepository.save(BookStoreVersion.builder().build());
 
         for (int i = 0; i < 15; i++) {
             BookStore store = BookStore.builder()
@@ -68,7 +65,6 @@ public class ArticleBookStoreDummyData {
                     .status(Status.valueOf("VISIBLE"))
                     .displayDate(LocalDateTime.now())
                     .view(1)
-                    .bookStoreVersion(version)
                     .build();
             BookStore save = bookStoreRepository.save(store);
             save.updateBookStoreSubImage(bookStoreImageDummyData(save));

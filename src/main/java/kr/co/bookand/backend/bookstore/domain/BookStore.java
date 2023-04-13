@@ -43,10 +43,6 @@ public class BookStore extends BaseEntity {
     private String introduction;
     private String mainImage;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bookstore_version_id")
-    private BookStoreVersion bookStoreVersion;
-
     @OneToMany(mappedBy = "bookStore", cascade = CascadeType.ALL)
     private List<BookStoreImage> subImages = new ArrayList<>();
 
@@ -136,9 +132,5 @@ public class BookStore extends BaseEntity {
 
     public void updateDisplayDate(LocalDateTime displayDate) {
         this.displayDate = displayDate;
-    }
-
-    public void updateBookStoreVersion(BookStoreVersion newVersion) {
-        this.bookStoreVersion = newVersion;
     }
 }

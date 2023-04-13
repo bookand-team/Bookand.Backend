@@ -37,7 +37,6 @@ public class BookStoreService {
     private final BookStoreRepository bookStoreRepository;
     private final BookStoreImageRepository bookStoreImageRepository;
     private final BookStoreThemeRepository bookStoreThemeRepository;
-    private final BookStoreVersionRepository bookStoreVersionRepository;
     private final ReportBookStoreRepository reportBookStoreRepository;
     private final AccountService accountService;
     private final BookmarkService bookmarkService;
@@ -61,12 +60,10 @@ public class BookStoreService {
                     bookStoreThemeRepository.save(bookStoreTheme);
                     bookStoreThemeList.add(bookStoreTheme);
                 });
-        BookStoreVersion newBookStoreVersion = createBookStoreVersion();
-        BookStore bookStore = bookStoreRequest.toEntity(bookStoreImageList, bookStoreThemeList, newBookStoreVersion);
+        BookStore bookStore = bookStoreRequest.toEntity(bookStoreImageList, bookStoreThemeList);
         bookStoreImageList.forEach(bookStoreImage -> bookStoreImage.updateBookStore(bookStore));
         bookStoreThemeList.forEach(bookStoreTheme -> bookStoreTheme.updateBookStore(bookStore));
         BookStore saveBookStore = bookStoreRepository.save(bookStore);
-        updateBookStoreVersion(newBookStoreVersion);
         return of(saveBookStore, false, null);
     }
 
@@ -149,7 +146,6 @@ public class BookStoreService {
         }
         duplicateBookStoreName(bookStoreRequest.name());
         bookStore.updateBookStoreData(bookStoreRequest);
-        updateBookStoreVersion();
         return BookStoreWebResponse.of(bookStore);
     }
 
@@ -159,7 +155,6 @@ public class BookStoreService {
         BookStore bookStore = bookStoreRepository.findById(id)
                 .orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
         bookStore.softDelete();
-        updateBookStoreVersion();
     }
 
     @Transactional
@@ -170,7 +165,6 @@ public class BookStoreService {
                     .orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
             bookStore.softDelete();
         }
-        updateBookStoreVersion();
         return Message.of("삭제완료");
     }
 
@@ -181,7 +175,6 @@ public class BookStoreService {
                 .orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
         bookStore.updateBookStoreStatus(bookStore.getStatus() == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE);
         bookStore.updateDisplayDate(LocalDateTime.now());
-        updateBookStoreVersion();
         return BookStoreWebResponse.of(bookStore);
     }
 
@@ -208,32 +201,9 @@ public class BookStoreService {
         return PageResponse.of(bookStoreReportList);
     }
 
-    public BookStoreVersionListResponse checkBookStoreVersion(Long versionId) {
-        Long currentVersionId = bookStoreVersionRepository.findFirstByOrderByIdDesc().getId();
-        List<BookStoreVersionResponse> bookStoreList = new ArrayList<>();
-        if (versionId < currentVersionId) {
-            bookStoreList = bookStoreRepository.findAllByStatus(Status.VISIBLE)
-                    .stream()
-                    .map(it -> BookStoreVersionResponse.of(it, bookmarkService.isBookmark(it.getId(), BookmarkType.BOOKSTORE.toString())))
-                    .toList();
-        }
-        return BookStoreVersionListResponse.of(bookStoreList, currentVersionId);
+    public BookStoreAddressListResponse getBookStoreAddress() {
+        return BookStoreAddressListResponse.of(bookStoreRepository.findAllByStatus(Status.VISIBLE)
+                .stream().map(it -> BookStoreAddressResponse.of(it, bookmarkService.isBookmark(it.getId(), BookmarkType.BOOKSTORE.toString())))
+                .toList());
     }
-
-    @Transactional
-    public BookStoreVersion createBookStoreVersion() {
-        return bookStoreVersionRepository.save(BookStoreVersion.builder().build());
-    }
-
-    @Transactional
-    public void updateBookStoreVersion() {
-        BookStoreVersion newVersion = bookStoreVersionRepository.save(BookStoreVersion.builder().build());
-        bookStoreRepository.findAll().forEach(it -> it.updateBookStoreVersion(newVersion));
-    }
-
-    @Transactional
-    public void updateBookStoreVersion(BookStoreVersion newVersion) {
-        bookStoreRepository.findAll().forEach(it -> it.updateBookStoreVersion(newVersion));
-    }
-
 }

@@ -124,9 +124,9 @@ public class BookStoreController {
         return ResponseEntity.ok(bookStoreService.getBookStoreReportList(pageable));
     }
 
-    @ApiOperation(value = "서점 버전 체크")
-    @GetMapping("/version")
-    public ResponseEntity<BookStoreVersionListResponse> checkBookStoreVersion(@RequestHeader("versionId") Long versionId) {
-        return ResponseEntity.ok(bookStoreService.checkBookStoreVersion(versionId));
+    @ApiOperation(value = "서점 지도 정보 조회")
+    @GetMapping("/address")
+    public ResponseEntity<BookStoreAddressListResponse> getBookStoreAddress() {
+        return ResponseEntity.ok(bookStoreService.getBookStoreAddress());
     }
 }

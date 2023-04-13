@@ -41,7 +41,7 @@ public class BookStoreDto {
         public BookStoreRequest {
         }
 
-        public BookStore toEntity(List<BookStoreImage> bookStoreImageList, List<BookStoreTheme> bookStoreThemeList, BookStoreVersion bookStoreVersion) {
+        public BookStore toEntity(List<BookStoreImage> bookStoreImageList, List<BookStoreTheme> bookStoreThemeList) {
             return BookStore.builder()
                     .name(name)
                     .address(address)
@@ -58,7 +58,6 @@ public class BookStoreDto {
                     .status(Status.INVISIBLE)
                     .displayDate(null)
                     .view(view)
-                    .bookStoreVersion(bookStoreVersion)
                     .build();
         }
     }
@@ -192,7 +191,7 @@ public class BookStoreDto {
         }
     }
 
-    public record BookStoreVersionResponse(
+    public record BookStoreAddressResponse(
             Long id,
             String name,
             String mainImage,
@@ -201,8 +200,8 @@ public class BookStoreDto {
             String longitude,
             Boolean isBookmark
             ) {
-        public static BookStoreVersionResponse of(BookStore bookStore, boolean isBookmark) {
-            return new BookStoreVersionResponse(
+        public static BookStoreAddressResponse of(BookStore bookStore, boolean isBookmark) {
+            return new BookStoreAddressResponse(
                     bookStore.getId(),
                     bookStore.getName(),
                     bookStore.getMainImage(),
@@ -214,12 +213,11 @@ public class BookStoreDto {
         }
     }
 
-    public record BookStoreVersionListResponse(
-            List<BookStoreVersionResponse> bookStoreVersionListResponse,
-            Long currentVersionId
+    public record BookStoreAddressListResponse(
+            List<BookStoreAddressResponse> bookStoreAddressListResponse
     ) {
-        public static BookStoreVersionListResponse of(List<BookStoreVersionResponse> bookStoreVersionListResponse, Long currentVersionId) {
-            return new BookStoreVersionListResponse(bookStoreVersionListResponse, currentVersionId);
+        public static BookStoreAddressListResponse of(List<BookStoreAddressResponse> bookStoreAddressListResponse) {
+            return new BookStoreAddressListResponse(bookStoreAddressListResponse);
         }
     }
 

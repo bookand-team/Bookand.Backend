@@ -8,13 +8,8 @@ import kr.co.bookand.backend.article.domain.ArticleTag;
 import kr.co.bookand.backend.article.repository.ArticleBookStoreRepository;
 import kr.co.bookand.backend.article.repository.ArticleRepository;
 import kr.co.bookand.backend.article.repository.ArticleTagRepository;
-import kr.co.bookand.backend.bookstore.domain.BookStore;
-import kr.co.bookand.backend.bookstore.domain.BookStoreImage;
-import kr.co.bookand.backend.bookstore.domain.BookStoreTheme;
-import kr.co.bookand.backend.bookstore.domain.BookStoreType;
-import kr.co.bookand.backend.bookstore.repository.BookStoreImageRepository;
-import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
-import kr.co.bookand.backend.bookstore.repository.BookStoreThemeRepository;
+import kr.co.bookand.backend.bookstore.domain.*;
+import kr.co.bookand.backend.bookstore.repository.*;
 import kr.co.bookand.backend.common.domain.DeviceOSFilter;
 import kr.co.bookand.backend.common.domain.MemberIdFilter;
 import kr.co.bookand.backend.common.domain.Status;
@@ -29,7 +24,6 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)

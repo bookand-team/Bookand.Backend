@@ -118,9 +118,15 @@ public class BookStoreController {
 
     @ApiOperation(value = "서점 제보 전체 조회")
     @GetMapping("/report")
-    public ResponseEntity<PageResponse<BookStoreReportList>> getBookStoreReportList(
+    public ResponseEntity<PageResponse<BookStoreReportListResponse>> getBookStoreReportList(
             @PageableDefault Pageable pageable
     ) {
         return ResponseEntity.ok(bookStoreService.getBookStoreReportList(pageable));
+    }
+
+    @ApiOperation(value = "서점 지도 정보 조회")
+    @GetMapping("/address")
+    public ResponseEntity<BookStoreAddressListResponse> getBookStoreAddress() {
+        return ResponseEntity.ok(bookStoreService.getBookStoreAddress());
     }
 }

@@ -107,21 +107,20 @@ public class BookStoreController {
         return ResponseEntity.ok(bookStoreService.reportBookStore(reportBookStoreRequest));
     }
 
-    @ApiOperation(value = "서점 제보 답변")
-    @PutMapping("/report/{reportId}/answer")
-    public ResponseEntity<Message> answerReportBookStore(
-            @PathVariable Long reportId,
-            @RequestBody AnswerReportRequest answerReportRequest
-    ) {
-        return ResponseEntity.ok(bookStoreService.answerReportBookStore(reportId, answerReportRequest));
-    }
-
     @ApiOperation(value = "서점 제보 전체 조회")
     @GetMapping("/report")
     public ResponseEntity<PageResponse<BookStoreReportListResponse>> getBookStoreReportList(
             @PageableDefault Pageable pageable
     ) {
         return ResponseEntity.ok(bookStoreService.getBookStoreReportList(pageable));
+    }
+
+    @ApiOperation(value = "서점 제보 상세 조회")
+    @GetMapping("/report/{name}")
+    public ResponseEntity<BookStoreReportResponse> getBookStoreReport(
+            @PathVariable String name
+    ) {
+        return ResponseEntity.ok(bookStoreService.getBookStoreReport(name));
     }
 
     @ApiOperation(value = "서점 지도 정보 조회")

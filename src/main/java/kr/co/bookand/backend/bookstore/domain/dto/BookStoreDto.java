@@ -287,44 +287,79 @@ public class BookStoreDto {
             return ReportBookStore.builder()
                     .name(name)
                     .address(address)
-                    .isAnswered(false)
-                    .answerContent("미답변")
+                    .isRegistered(false)
                     .account(account)
                     .build();
         }
     }
 
-    public record AnswerReportRequest(
-            String answerTitle,
-            String answerContent
-    ) {
-        @Builder
-        public AnswerReportRequest {
-        }
-    }
-
     public record BookStoreReportListResponse(
-            Long reportId,
-            String providerEmail,
-            String bookStoreName,
-            int reportCount,
-            Boolean isAnswered,
+            String email,
+            String name,
+            Long reportCount,
+            Boolean isRegistered,
             String createdAt,
-            String answeredAt
+            String registeredAt
     ) {
         @Builder
         public BookStoreReportListResponse {
         }
 
-        public static BookStoreReportListResponse of(ReportBookStore reportBookStore) {
+        public static BookStoreReportListResponse of(ReportBookStore reportBookStore, Long reportCount) {
             return BookStoreReportListResponse.builder()
-                    .reportId(reportBookStore.getId())
-                    .providerEmail(reportBookStore.getAccount().getEmail())
-                    .bookStoreName(reportBookStore.getName())
-                    .reportCount(1)
-                    .isAnswered(reportBookStore.getIsAnswered())
+                    .email(reportBookStore.getAccount().getEmail())
+                    .name(reportBookStore.getName())
+                    .reportCount(reportCount)
+                    .isRegistered(reportBookStore.getIsRegistered())
                     .createdAt(reportBookStore.getCreatedAt())
-                    .answeredAt(reportBookStore.getAnsweredAt())
+                    .registeredAt(reportBookStore.getRegisteredAt())
+                    .build();
+        }
+    }
+
+    public record BookStoreReportResponse(
+            String name,
+            String address,
+            int reportCount,
+            Boolean isRegistered,
+            String reportedAt,
+            String registeredAt,
+            List<ReportHistory> reportHistoryList
+    ) {
+        @Builder
+        public BookStoreReportResponse {
+        }
+
+        public static BookStoreReportResponse of(List<ReportBookStore> reportBookStoreList) {
+            ReportBookStore reportBookStore = reportBookStoreList.stream().findFirst().get();
+            return BookStoreReportResponse.builder()
+                    .name(reportBookStore.getName())
+                    .address(reportBookStore.getAddress())
+                    .reportCount(reportBookStoreList.size())
+                    .isRegistered(reportBookStore.getIsRegistered())
+                    .reportedAt(reportBookStore.getCreatedAt())
+                    .registeredAt(reportBookStore.getRegisteredAt())
+                    .reportHistoryList(reportBookStoreList.stream().map(ReportHistory::of).toList())
+                    .build();
+        }
+    }
+
+    public record ReportHistory(
+            Long reportId,
+            String nickname,
+            String email,
+            String reportedAt
+    ) {
+        @Builder
+        public ReportHistory {
+        }
+
+        public static ReportHistory of(ReportBookStore reportBookStore) {
+            return ReportHistory.builder()
+                    .reportId(reportBookStore.getId())
+                    .nickname(reportBookStore.getAccount().getNickname())
+                    .email(reportBookStore.getAccount().getEmail())
+                    .reportedAt(reportBookStore.getCreatedAt())
                     .build();
         }
     }

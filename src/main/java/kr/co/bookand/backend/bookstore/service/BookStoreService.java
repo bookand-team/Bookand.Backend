@@ -175,6 +175,7 @@ public class BookStoreService {
                 .orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE, id));
         bookStore.updateBookStoreStatus(bookStore.getStatus() == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE);
         bookStore.updateDisplayDate(LocalDateTime.now());
+        reportBookStoreRepository.findAllByName(bookStore.getName()).forEach(ReportBookStore::updateReport);
         return BookStoreWebResponse.of(bookStore);
     }
 
@@ -186,18 +187,10 @@ public class BookStoreService {
         return Message.of("제보 완료");
     }
 
-    @Transactional
-    public Message answerReportBookStore(Long reportId, AnswerReportRequest answerReportRequest) {
-        accountService.isAccountAdmin();
-        ReportBookStore reportBookStore = reportBookStoreRepository.findById(reportId)
-                .orElseThrow(() -> new BookStoreException(ErrorCode.NOT_FOUND_BOOKSTORE_REPORT, reportId));
-        reportBookStore.updateAnswer(answerReportRequest);
-        return Message.of("답변 완료");
-    }
-
     public PageResponse<BookStoreReportListResponse> getBookStoreReportList(Pageable pageable) {
         accountService.isAccountAdmin();
-        Page<BookStoreReportListResponse> bookStoreReportList = reportBookStoreRepository.findAll(pageable).map(BookStoreReportListResponse::of);
+        Page<BookStoreReportListResponse> bookStoreReportList =  reportBookStoreRepository.findAllByName(pageable)
+                .map(it -> BookStoreReportListResponse.of(it, reportBookStoreRepository.countAllByName(it.getName())));
         return PageResponse.of(bookStoreReportList);
     }
 
@@ -205,5 +198,9 @@ public class BookStoreService {
         return BookStoreAddressListResponse.of(bookStoreRepository.findAllByStatus(Status.VISIBLE)
                 .stream().map(it -> BookStoreAddressResponse.of(it, bookmarkService.isBookmark(it.getId(), BookmarkType.BOOKSTORE.toString())))
                 .toList());
+    }
+
+    public BookStoreReportResponse getBookStoreReport(String name) {
+        return null;
     }
 }

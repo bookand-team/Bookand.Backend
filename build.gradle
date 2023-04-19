@@ -15,6 +15,7 @@ group = 'kr.co.bookand'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -23,6 +24,10 @@ configurations {
 
 repositories {
 	mavenCentral()
+}
+
+test {
+	useJUnitPlatform()
 }
 
 dependencies {
@@ -53,6 +58,11 @@ dependencies {
 	// queryDSL
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+	// kotest
+	testImplementation 'io.kotest:kotest-runner-junit5:$version'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:<version>'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:<version>'
 
 }
 

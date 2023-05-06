@@ -4,16 +4,10 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum FeedbackType {
-    LOGIN("로그인"),
-    PUSH("PUSH"),
-    UPDATE("업데이트"),
-    INFORMATION_ERROR("정보 오류"),
-    CONTENTS("콘텐츠"),
-    BOOKSTORE_INFO("서점정보"),
-    UNKNOWN_BOOKSTORE("미등록서점"),
-    UXUI("UXUI"),
-    ERROR("에러"),
-    ETC("미분류");
+    PUSH("알림이 너무 자주 와요"),
+    INFORMATION_ERROR("정보가 정확하지 않거나 부족해요"),
+    INCONVENIENCE("이용방법이 불편해요"),
+    ETC("기타");
 
     private final String detail;
 

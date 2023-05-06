@@ -10,18 +10,10 @@ import lombok.Builder;
 public class FeedbackDto {
 
     public record FeedbackRequest(
-            Double rating,
-
-            @ApiModelProperty(
-                    value = "피드백 타입 (HOME, MAP, BOOKMARK, MY_PAGE, ETC)",
-                    example = "HOME/MAP/BOOKMARK/MY_PAGE/ETC"
-            )
+            @ApiModelProperty(value = "피드백 유형 (PUSH, INFORMATION_ERROR, INCONVENIENCE, ETC)")
             String feedbackType,
 
-            @ApiModelProperty(
-                    value = "피드백 대상 (LOGIN, PUSH, UPDATE, INFORMATION_ERROR, CONTENTS, BOOKSTORE_INFO, UNKNOWN_BOOKSTORE, UXUI, ERROR, ETC)",
-                    example = "LOGIN/PUSH/UPDATE/INFORMATION_ERROR/CONTENTS/BOOKSTORE_INFO/UNKNOWN_BOOKSTORE/UXUI/RROR/ETC"
-            )
+            @ApiModelProperty(value = "피드백 대상 (HOME, MAP, BOOKMARK, MY_PAGE, ETC)")
             String feedbackTarget,
             String content
     ) {
@@ -31,7 +23,6 @@ public class FeedbackDto {
 
         public Feedback toEntity(Account account) {
             return Feedback.builder()
-                    .rating(rating)
                     .feedbackType(FeedbackType.valueOf(feedbackType))
                     .feedbackTarget(feedbackTarget == null ? null : FeedbackTarget.valueOf(feedbackTarget))
                     .content(content)
@@ -55,7 +46,6 @@ public class FeedbackDto {
             String providerEmail,
             String feedbackType,
             String content,
-            Double rating,
             String createdAt
     ) {
         public static FeedbackListResponse of(Feedback feedback) {
@@ -64,7 +54,6 @@ public class FeedbackDto {
                     feedback.getAccount().getEmail(),
                     feedback.getFeedbackType().toDetail(),
                     feedback.getContent(),
-                    feedback.getRating(),
                     feedback.getCreatedAt()
             );
         }
@@ -82,7 +71,7 @@ public class FeedbackDto {
                     feedback.getId(),
                     feedback.getAccount().getEmail(),
                     feedback.getFeedbackType().toDetail(),
-                    feedback.getFeedbackTarget() == null ? null : feedback.getFeedbackTarget().name(),
+                    feedback.getFeedbackTarget() == null ? null : feedback.getFeedbackTarget().toDetail(),
                     feedback.getContent()
             );
         }

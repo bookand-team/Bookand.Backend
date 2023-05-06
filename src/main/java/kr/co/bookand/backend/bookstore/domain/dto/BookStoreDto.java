@@ -198,6 +198,7 @@ public class BookStoreDto {
             List<BookStoreType> theme,
             String latitude,
             String longitude,
+            String address,
             Boolean isBookmark
             ) {
         public static BookStoreAddressResponse of(BookStore bookStore, boolean isBookmark) {
@@ -208,6 +209,7 @@ public class BookStoreDto {
                     bookStore.getThemeList().stream().map(BookStoreTheme::getTheme).toList(),
                     bookStore.getLatitude(),
                     bookStore.getLongitude(),
+                    bookStore.getAddress(),
                     isBookmark
             );
         }

@@ -13,7 +13,7 @@ public class FeedbackDto {
             @ApiModelProperty(value = "피드백 유형 (PUSH, INFORMATION_ERROR, INCONVENIENCE, ETC)")
             String feedbackType,
 
-            @ApiModelProperty(value = "피드백 대상 (HOME, MAP, BOOKMARK, MY_PAGE, ETC)")
+            @ApiModelProperty(value = "피드백 대상 (HOME, MAP, BOOKMARK, MY_PAGE, ARTICLE, BOOKSTORE, ETC)")
             String feedbackTarget,
             String content
     ) {

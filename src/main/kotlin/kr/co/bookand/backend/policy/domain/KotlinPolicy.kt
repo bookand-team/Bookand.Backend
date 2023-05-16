@@ -7,7 +7,7 @@ import javax.persistence.*
 class KotlinPolicy(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "policy_id")
+    @Column(name = "kpolicy_id")
     var id: Long = 0,
     var name: String,
     var title: String,

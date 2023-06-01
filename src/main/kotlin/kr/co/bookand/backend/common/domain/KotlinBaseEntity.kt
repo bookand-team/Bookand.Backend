@@ -16,4 +16,8 @@ abstract class KotlinBaseEntity(
     var modifiedAt: LocalDateTime? = null,
     var visibility: Boolean = true
 ) {
+
+    fun softDelete() {
+        visibility = false
+    }
 }

@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.account.domain
 
+import kr.co.bookand.backend.common.domain.KotlinBaseEntity
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -23,7 +24,7 @@ class KotlinAccount(
     @Enumerated(EnumType.STRING)
     var accountStatus : AccountStatus
 
-) {
+): KotlinBaseEntity() {
     fun updateProfile(profileImage: String, nickname: String) {
         this.profileImage = profileImage
         this.nickname = nickname

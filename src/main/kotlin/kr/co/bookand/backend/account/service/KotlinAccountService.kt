@@ -45,4 +45,20 @@ class KotlinAccountService(
             ?: throw IllegalArgumentException("존재하지 않는 계정입니다.")
         return KotlinAccountInfoResponse(account)
     }
+
+    fun checkAccountAdmin(id: Long) {
+        val account = kotlinAccountRepository.findById(id)
+            .orElseThrow { IllegalArgumentException("존재하지 않는 계정입니다.") }
+        if (account.role.name != "ADMIN") {
+            throw IllegalArgumentException("관리자 계정이 아닙니다.")
+        }
+    }
+
+    fun checkAccountUser(id: Long) {
+        val account = kotlinAccountRepository.findById(id)
+            .orElseThrow { IllegalArgumentException("존재하지 않는 계정입니다.") }
+        if (account.role.name != "USER") {
+            throw IllegalArgumentException("일반 계정이 아닙니다.")
+        }
+    }
 }

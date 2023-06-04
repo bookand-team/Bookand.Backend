@@ -1,25 +1,25 @@
-package kr.co.bookand.backend.notification.repository;
+package kr.co.bookand.backend.notice.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import kr.co.bookand.backend.notification.domain.Notification;
+import kr.co.bookand.backend.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
-import static kr.co.bookand.backend.notification.domain.QNotification.notification;
+import static kr.co.bookand.backend.notice.domain.QNotification.notification;
 
 @Slf4j
 @RequiredArgsConstructor
-public class NotificationRepositoryImpl implements NotificationRepositoryCustom {
+public class NoticeRepositoryImpl implements NoticeRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Notification> findAllByVisibility(Pageable pageable, boolean visibility, Long cursorId) {
-        JPAQuery<Notification> query = queryFactory
+    public Page<Notice> findAllByVisibility(Pageable pageable, boolean visibility, Long cursorId) {
+        JPAQuery<Notice> query = queryFactory
                 .selectFrom(notification)
                 .where(
                         notification.visibility.eq(visibility),

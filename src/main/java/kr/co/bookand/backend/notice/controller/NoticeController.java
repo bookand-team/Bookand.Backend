@@ -22,7 +22,7 @@ public class NoticeController {
 
     @ApiOperation(value = "공지사항 생성")
     @PostMapping()
-    public ResponseEntity<NoticeResponse> createNotice(@RequestBody CreateNoticeRequest createNoticeRequest) {
+    public ResponseEntity<NoticeIdResponse> createNotice(@RequestBody CreateNoticeRequest createNoticeRequest) {
         return ResponseEntity.ok(noticeService.createNotice(createNoticeRequest));
     }
 
@@ -30,11 +30,19 @@ public class NoticeController {
     @Operation(summary = "공지사항 목록 조회", description = "커서 기반으로 되어 있습니다. " +
             "\n 초기에는 cursorId를 0 넣으시거나 요청 안하시면 됩니다.")
     @GetMapping()
-    public ResponseEntity<PageResponse<NoticeResponse>> getNoticeList(
+    public ResponseEntity<PageResponse<NoticeResponse>> getNoticeSimpleList(
             @PageableDefault Pageable pageable,
             @RequestParam(required = false) Long cursorId
     ) {
-        return ResponseEntity.ok(noticeService.getNoticeList(pageable, cursorId));
+        return ResponseEntity.ok(noticeService.getNoticeSimpleList(pageable, cursorId));
+    }
+
+    @ApiOperation(value = "공지사항 목록 조회")
+    @GetMapping("/web")
+    public ResponseEntity<PageResponse<NoticeWebResponse>> getNoticeList(
+            @PageableDefault Pageable pageable
+    ) {
+        return ResponseEntity.ok(noticeService.getNoticeList(pageable));
     }
 
     @Deprecated
@@ -42,5 +50,23 @@ public class NoticeController {
     @GetMapping("/{notificationId}")
     public ResponseEntity<NoticeResponse> getNotice(@PathVariable Long notificationId) {
         return ResponseEntity.ok(noticeService.getNotice(notificationId));
+    }
+
+    @ApiOperation(value = "공지사항 수정")
+    @PutMapping("/{notificationId}")
+    public ResponseEntity<NoticeIdResponse> updateNotice(@PathVariable Long notificationId, @RequestBody UpdateNoticeRequest updateNoticeRequest) {
+        return ResponseEntity.ok(noticeService.updateNotice(notificationId, updateNoticeRequest));
+    }
+
+    @ApiOperation(value = "공지사항 삭제")
+    @DeleteMapping("/{notificationId}")
+    public ResponseEntity<NoticeMessage> deleteNotice(@PathVariable Long notificationId) {
+        return ResponseEntity.ok(noticeService.deleteNotice(notificationId));
+    }
+
+    @ApiOperation(value = "공지사항 상태 변경")
+    @PutMapping("/{notificationId}/status")
+    public ResponseEntity<NoticeMessage> updateNoticeStatus(@PathVariable Long notificationId) {
+        return ResponseEntity.ok(noticeService.updateNoticeStatus(notificationId));
     }
 }

@@ -29,6 +29,7 @@ public class Issue extends BaseEntity {
     private String logFileName;
     private Long accountId;
     private boolean checkConfirmed;
+    @Enumerated(EnumType.STRING)
     private DeviceOSFilter deviceOS;
 
     @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL)

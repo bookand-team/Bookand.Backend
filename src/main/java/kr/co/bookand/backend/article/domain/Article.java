@@ -1,7 +1,6 @@
 package kr.co.bookand.backend.article.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import kr.co.bookand.backend.article.domain.dto.ArticleDto;
 import kr.co.bookand.backend.bookmark.domain.BookmarkArticle;
 import kr.co.bookand.backend.common.domain.BaseEntity;
 import kr.co.bookand.backend.common.domain.DeviceOSFilter;
@@ -41,7 +40,7 @@ public class Article extends BaseEntity {
     private int view;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime displayDate;
+    private LocalDateTime displayAt;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -102,7 +101,7 @@ public class Article extends BaseEntity {
         this.articleTagList = articleTagList;
     }
 
-    public void updateDisplayDate(LocalDateTime displayDate) {
-        this.displayDate = displayDate;
+    public void updateDisplayAt(LocalDateTime displayAt) {
+        this.displayAt = displayAt;
     }
 }

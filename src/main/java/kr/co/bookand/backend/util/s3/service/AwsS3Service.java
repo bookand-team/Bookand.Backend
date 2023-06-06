@@ -87,6 +87,7 @@ public class AwsS3Service {
         return switch (type) {
             case "profile" -> S3SaveDir.ACCOUNT_PROFILE;
             case "article" -> S3SaveDir.ARTICLE;
+            case "reportLog" -> S3SaveDir.REPORT_LOG;
             default -> S3SaveDir.ARTICLE;
         };
     }

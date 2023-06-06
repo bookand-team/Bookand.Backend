@@ -21,7 +21,7 @@ public class Issue extends BaseEntity {
     @Column(name = "issue_id")
     private Long id;
 
-    private LocalDateTime issueAt;
+    private LocalDateTime issuedAt;
     private String issueContent;
     private String issueReportResponseEmail;
     private boolean sendLogs;

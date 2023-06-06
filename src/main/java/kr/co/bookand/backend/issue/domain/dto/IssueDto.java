@@ -16,7 +16,7 @@ public class IssueDto {
     public record CreateIssueRequest(
 
             @ApiModelProperty(value = "오류 및 버그 신고 날짜 yyyy-MM-dd'T'HH:mm:ss")
-            String issueAt,
+            String issuedAt,
             @ApiModelProperty(value = "오류 및 버그 신고 내용")
             String issueContent,
             @ApiModelProperty(value = "오류 및 버그 신고 답변 이메일")
@@ -31,10 +31,10 @@ public class IssueDto {
             DeviceOSFilter deviceOS
     ) {
         public Issue toEntity(Long accountId) {
-            LocalDateTime parsedIssueAt = LocalDateTime.parse(issueAt(), formatter);
+            LocalDateTime parsedIssueAt = LocalDateTime.parse(issuedAt(), formatter);
             return Issue.builder()
                     .accountId(accountId)
-                    .issueAt(parsedIssueAt)
+                    .issuedAt(parsedIssueAt)
                     .issueContent(issueContent)
                     .issueReportResponseEmail(issueReportResponseEmail)
                     .sendLogs(sendLogs)
@@ -62,7 +62,7 @@ public class IssueDto {
             @ApiModelProperty(value = "오류 및 버그 신고 내용")
             String issueContent,
             @ApiModelProperty(value = "오류 및 버그 신고 발생 날짜 yyyy-MM-dd'T'HH:mm:ss")
-            LocalDateTime issueAt,
+            LocalDateTime issuedAt,
             @ApiOperation(value = "등록 일자")
             String createdAt,
             @ApiModelProperty(value = "확인 여부")
@@ -75,7 +75,7 @@ public class IssueDto {
                     issue.getIssueReportResponseEmail(),
                     issue.getAccountId(),
                     issue.getIssueContent(),
-                    issue.getIssueAt(),
+                    issue.getIssuedAt(),
                     issue.getCreatedAt(),
                     issue.isCheckConfirmed()
             );
@@ -96,7 +96,7 @@ public class IssueDto {
 
 
             @ApiModelProperty(value = "오류 및 버그 신고 발생 날짜 yyyy-MM-dd'T'HH:mm:ss")
-            LocalDateTime issueAt,
+            LocalDateTime issuedAt,
             @ApiModelProperty(value = "오류 및 버그 신고 내용")
             String issueContent,
             @ApiModelProperty(value = "오류 및 버그 신고 이미지")
@@ -114,7 +114,7 @@ public class IssueDto {
                     issue.getDeviceOS(),
                     issue.getCreatedAt(),
                     issue.getLogFilePath(),
-                    issue.getIssueAt(),
+                    issue.getIssuedAt(),
                     issue.getIssueContent(),
                     issueImages
             );

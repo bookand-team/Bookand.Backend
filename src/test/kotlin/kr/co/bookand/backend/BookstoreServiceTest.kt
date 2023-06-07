@@ -115,27 +115,17 @@ class BookstoreServiceTest : BehaviorSpec({
             bookstore
         )
 
-        val bookstoreImage2 = KotlinBookstoreImage(
-            2L,
-            "imageUrl2",
-            bookstore
-        )
-
-
-        val bookstoreTheme11 = KotlinBookstoreTheme(
+        val bookstoreTheme1 = KotlinBookstoreTheme(
             1L,
             BookStoreType.TRAVEL,
             bookstore
         )
 
-        val bookstoreTheme22 = KotlinBookstoreTheme(
+        val bookstoreTheme2 = KotlinBookstoreTheme(
             2L,
             BookStoreType.MUSIC,
             bookstore
         )
-
-        val bookstoreTheme1 = KotlinBookstoreTheme(theme = BookStoreType.valueOf("TRAVEL"))
-        val bookstoreTheme2 = KotlinBookstoreTheme(theme = BookStoreType.valueOf("MUSIC"))
 
         val reportBookstore = KotlinReportBookstore(
             1L,
@@ -225,7 +215,7 @@ class BookstoreServiceTest : BehaviorSpec({
             0,
             0,
             LocalDateTime.now(),
-            mutableListOf(bookstoreTheme11, bookstoreTheme22),
+            mutableListOf(bookstoreTheme1, bookstoreTheme2),
             mutableListOf(bookstoreImage)
         )
 
@@ -263,8 +253,8 @@ class BookstoreServiceTest : BehaviorSpec({
             every { accountService.checkAccountAdmin(accountId) } returns Unit
             every { bookstoreRepository.save(any()) } returns createBookstore
             every { bookstoreImageRepository.save(any()) } returns bookstoreImage
-            every { bookstoreThemeRepository.save(match { it.theme == BookStoreType.TRAVEL }) } returns bookstoreTheme11
-            every { bookstoreThemeRepository.save(match { it.theme == BookStoreType.MUSIC }) } returns bookstoreTheme22
+            every { bookstoreThemeRepository.save(match { it.theme == BookStoreType.TRAVEL }) } returns bookstoreTheme1
+            every { bookstoreThemeRepository.save(match { it.theme == BookStoreType.MUSIC }) } returns bookstoreTheme2
             every { bookstoreRepository.existsByName("Book Store") } returns false
 
             val createBookstore = bookstoreService.createBookStore(1L, bookstoreRequest)
@@ -295,8 +285,8 @@ class BookstoreServiceTest : BehaviorSpec({
             every { bookstoreImageRepository.deleteAll(bookstore.imageList) } returns Unit
             every { bookstoreThemeRepository.deleteAll(bookstore.themeList) } returns Unit
             every { bookstoreImageRepository.save(any()) } returns bookstoreImage
-            every { bookstoreThemeRepository.save(match { it.theme == BookStoreType.TRAVEL }) } returns bookstoreTheme11
-            every { bookstoreThemeRepository.save(match { it.theme == BookStoreType.MUSIC }) } returns bookstoreTheme22
+            every { bookstoreThemeRepository.save(match { it.theme == BookStoreType.TRAVEL }) } returns bookstoreTheme1
+            every { bookstoreThemeRepository.save(match { it.theme == BookStoreType.MUSIC }) } returns bookstoreTheme2
             every { bookstoreRepository.existsByName("Book Store") } returns false
 
             // When

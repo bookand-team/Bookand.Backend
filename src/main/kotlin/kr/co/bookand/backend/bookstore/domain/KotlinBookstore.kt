@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.bookstore.domain
 
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.BookStoreRequest
+import kr.co.bookand.backend.article.domain.KotlinIntroducedBookstore
 import kr.co.bookand.backend.bookstore.domain.dto.KotlinBookstoreRequest
 import kr.co.bookand.backend.common.domain.KotlinBaseEntity
 import kr.co.bookand.backend.common.domain.Status
@@ -29,13 +29,16 @@ class KotlinBookstore(
     var status: Status,
     var view: Int,
     var bookmark: Int,
-    var displayDate: LocalDateTime?,
+    var displayedAt: LocalDateTime?,
 
     @OneToMany(mappedBy = "bookStore", cascade = [CascadeType.ALL], orphanRemoval = true)
     var themeList: MutableList<KotlinBookstoreTheme> = mutableListOf(),
 
     @OneToMany(mappedBy = "bookStore", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var imageList: MutableList<KotlinBookstoreImage> = mutableListOf()
+    var imageList: MutableList<KotlinBookstoreImage> = mutableListOf(),
+
+    @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var introducedBookstoreList: MutableList<KotlinIntroducedBookstore> = mutableListOf()
 
 ) : KotlinBaseEntity() {
     constructor(kotlinBookstoreRequest : KotlinBookstoreRequest) : this(
@@ -52,14 +55,14 @@ class KotlinBookstore(
         status = Status.VISIBLE,
         view = 0,
         bookmark = 0,
-        displayDate = null
+        displayedAt = null
     )
 
     fun updateBookStoreStatus(status: Status) {
         this.status = status
     }
-    fun updateDisplayDate(displayDate: LocalDateTime) {
-        this.displayDate = displayDate
+    fun updateDisplayedAt(displayedAt: LocalDateTime) {
+        this.displayedAt = displayedAt
     }
 
     fun updateBookStoreTheme(theme: KotlinBookstoreTheme) {
@@ -68,6 +71,10 @@ class KotlinBookstore(
 
     fun updateBookStoreImage(image: KotlinBookstoreImage) {
         imageList.add(image)
+    }
+
+    fun updateIntroducedBookstore(kotlinIntroducedBookstore: KotlinIntroducedBookstore) {
+        introducedBookstoreList.add(kotlinIntroducedBookstore)
     }
 
     fun updateBookStoreData(bookStoreRequest: KotlinBookstoreRequest) {
@@ -79,6 +86,10 @@ class KotlinBookstore(
         sns = bookStoreRequest.sns
         introduction = bookStoreRequest.introduction
         mainImage = bookStoreRequest.mainImage
+    }
+
+    fun removeIntroducedBookstore(kotlinIntroducedBookstore: KotlinIntroducedBookstore) {
+        introducedBookstoreList.remove(kotlinIntroducedBookstore)
     }
 
 }

@@ -59,14 +59,14 @@ class KotlinBookstoreService(
         val bookstore = getBookstore(bookstoreId)
         val imageList = bookstore.imageList
         kotlinBookstoreImageRepository.deleteAll(imageList)
-        for (image in kotlinBookstoreRequest.subImageList) {
+        kotlinBookstoreRequest.subImageList.forEach { image ->
             val bookStoreImage = KotlinBookstoreImage(url = image)
             kotlinBookstoreImageRepository.save(bookStoreImage)
             bookstore.updateBookStoreImage(bookStoreImage)
         }
         val themeList = bookstore.themeList
         kotlinBookstoreThemeRepository.deleteAll(themeList)
-        for (theme in kotlinBookstoreRequest.themeList) {
+        kotlinBookstoreRequest.themeList.forEach { theme ->
             val bookStoreTheme = KotlinBookstoreTheme(theme = BookStoreType.valueOf(theme))
             kotlinBookstoreThemeRepository.save(bookStoreTheme)
             bookstore.updateBookStoreTheme(bookStoreTheme)

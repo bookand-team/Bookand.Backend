@@ -36,10 +36,8 @@ public class IssueService {
     @Transactional
     public IssueIdResponse createIssue (CreateIssueRequest createIssueRequest) {
         Account loginAccount = accountService.getCurrentAccount();
-        accountService.isAccountAdmin();
         List<String> issueImages = createIssueRequest.issueImages();
-
-
+        
         FileDto fileDto = null;
         if (createIssueRequest.logFile() != null) {
             MultipartFile multipartFile = createIssueRequest.logFile();

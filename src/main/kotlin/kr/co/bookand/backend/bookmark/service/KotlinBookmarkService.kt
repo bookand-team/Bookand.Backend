@@ -15,8 +15,6 @@ import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
-import kotlin.collections.List
 
 @Service
 @RequiredArgsConstructor
@@ -259,7 +257,7 @@ class KotlinBookmarkService(
 
     fun checkBookmarkedArticle(myBookmark: KotlinBookmark, article: KotlinArticle, accountId: Long) {
         val isBookmarkedArticle = kotlinBookmarkedArticleRepository
-            .existByBookmarkIdAndArticleIdAndAccountId(myBookmark.id, article.id, accountId)
+            .existsByBookmarkIdAndArticleIdAndAccountId(myBookmark.id, article.id, accountId)
 
         if (isBookmarkedArticle) deleteBookmarkArticle(myBookmark.id, article.id)
         else createBookmarkArticle(myBookmark, article, accountId)
@@ -267,7 +265,7 @@ class KotlinBookmarkService(
 
     fun checkBookmarkedBookstore(myBookmark: KotlinBookmark, bookstore: KotlinBookstore, accountId: Long) {
         val isBookmarkedBookstore = kotlinBookmarkedBookstoreRepository
-            .existByBookmarkIdAndBookstoreIdAndAccountId(myBookmark.id, bookstore.id, accountId)
+            .existsByBookmarkIdAndBookstoreIdAndAccountId(myBookmark.id, bookstore.id, accountId)
 
         if (isBookmarkedBookstore) deleteBookmarkBookstore(myBookmark.id, bookstore.id)
         else createBookmarkBookstore(myBookmark, bookstore, accountId)
@@ -289,7 +287,7 @@ class KotlinBookmarkService(
 
     fun existBookmarkedBookstore(bookmarkId: Long, contentId: Long) {
         val checkExist =
-            kotlinBookmarkedBookstoreRepository.existByBookmarkIdAndBookstoreId(bookmarkId, contentId)
+            kotlinBookmarkedBookstoreRepository.existsByBookmarkIdAndBookstoreId(bookmarkId, contentId)
         if (checkExist) throw RuntimeException("ALREADY EXIST BOOKMARKED BOOKSTORE")
     }
 
@@ -300,7 +298,7 @@ class KotlinBookmarkService(
 
     fun existBookmarkedArticle(bookmarkId: Long, contentId: Long) {
         val checkExist =
-            kotlinBookmarkedArticleRepository.existByBookmarkIdAndArticleId(bookmarkId, contentId)
+            kotlinBookmarkedArticleRepository.existsByBookmarkIdAndArticleId(bookmarkId, contentId)
         if (checkExist) throw RuntimeException("ALREADY EXIST BOOKMARKED ARTICLE")
     }
 

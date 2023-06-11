@@ -232,7 +232,7 @@ class BookmarkServiceTest : BehaviorSpec({
                     } returns bookmark
                     every { articleRepository.findById(any()) } returns Optional.of(article)
                     every {
-                        bookmarkedArticleRepository.existByBookmarkIdAndArticleIdAndAccountId(
+                        bookmarkedArticleRepository.existsByBookmarkIdAndArticleIdAndAccountId(
                             any(),
                             any(),
                             any()
@@ -257,7 +257,7 @@ class BookmarkServiceTest : BehaviorSpec({
                     } returns bookmark
                     every { articleRepository.findById(any()) } returns Optional.of(article)
                     every {
-                        bookmarkedArticleRepository.existByBookmarkIdAndArticleIdAndAccountId(
+                        bookmarkedArticleRepository.existsByBookmarkIdAndArticleIdAndAccountId(
                             any(),
                             any(),
                             any()
@@ -325,7 +325,7 @@ class BookmarkServiceTest : BehaviorSpec({
                     } returns bookmark
                     every { bookstoreRepository.findById(any()) } returns Optional.of(bookstore)
                     every {
-                        bookmarkedBookstoreRepository.existByBookmarkIdAndBookstoreIdAndAccountId(
+                        bookmarkedBookstoreRepository.existsByBookmarkIdAndBookstoreIdAndAccountId(
                             any(),
                             any(),
                             any()
@@ -350,7 +350,7 @@ class BookmarkServiceTest : BehaviorSpec({
                     } returns bookmark
                     every { bookstoreRepository.findById(any()) } returns Optional.of(bookstore)
                     every {
-                        bookmarkedBookstoreRepository.existByBookmarkIdAndBookstoreIdAndAccountId(
+                        bookmarkedBookstoreRepository.existsByBookmarkIdAndBookstoreIdAndAccountId(
                             any(),
                             any(),
                             any()
@@ -425,7 +425,7 @@ class BookmarkServiceTest : BehaviorSpec({
 
             When("fail - exist Bookmarked Bookstore") {
                 every { bookmarkedBookstoreRepository.findByBookmarkIdAndBookstoreId(any(), any()) } returns bookmarkedBookstore
-                every { bookmarkedBookstoreRepository.existByBookmarkIdAndBookstoreId(any(), any()) } returns true
+                every { bookmarkedBookstoreRepository.existsByBookmarkIdAndBookstoreId(any(), any()) } returns true
 
                 val exception = shouldThrow<RuntimeException> {
                     bookmarkService.updateBookmarkFolder(1L, 1L, kotlinBookmarkContentListRequest)
@@ -443,7 +443,7 @@ class BookmarkServiceTest : BehaviorSpec({
                         any()
                     )
                 } returns bookmarkedBookstore
-                every { bookmarkedBookstoreRepository.existByBookmarkIdAndBookstoreId(any(), any()) } returns false
+                every { bookmarkedBookstoreRepository.existsByBookmarkIdAndBookstoreId(any(), any()) } returns false
                 every { accountService.getAccount(any()) } returns adminAccount
                 every { bookstoreRepository.findById(any()) } returns Optional.of(bookstore)
                 every { bookmarkedBookstoreRepository.save(any()) } returns bookmarkedBookstore

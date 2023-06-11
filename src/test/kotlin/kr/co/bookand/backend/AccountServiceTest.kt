@@ -99,7 +99,7 @@ class AccountServiceTest : BehaviorSpec({
 
         When("account 조회 (id)"){
             every { accountRepository.findById(account.id) } returns Optional.of(account)
-            val findAccount = accountService.getAccount(account.id)
+            val findAccount = accountService.getAccountById(account.id)
 
             Then("it should return the account with the given id"){
                 findAccount.id shouldBe account.id
@@ -108,7 +108,7 @@ class AccountServiceTest : BehaviorSpec({
 
         When("account 조회 (닉네임)"){
             every { accountRepository.findByNickname(account.nickname) } returns account
-            val findAccount = accountService.getAccount(account.nickname)
+            val findAccount = accountService.getAccountByNickname(account.nickname)
 
             Then("it should return the account with the given nickname"){
                 findAccount.id shouldBe account.id

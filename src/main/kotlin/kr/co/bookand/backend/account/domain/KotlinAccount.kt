@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.account.domain
 
+import kr.co.bookand.backend.bookmark.domain.KotlinBookmark
 import kr.co.bookand.backend.common.domain.KotlinBaseEntity
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -22,7 +23,10 @@ class KotlinAccount(
     @Enumerated(EnumType.STRING)
     var role : Role,
     @Enumerated(EnumType.STRING)
-    var accountStatus : AccountStatus
+    var accountStatus : AccountStatus,
+
+    @OneToMany(mappedBy = "account", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var bookmarkList: MutableList<KotlinBookmark> = mutableListOf(),
 
 ): KotlinBaseEntity() {
     fun updateProfile(profileImage: String, nickname: String) {

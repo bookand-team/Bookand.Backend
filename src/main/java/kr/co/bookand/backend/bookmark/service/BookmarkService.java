@@ -183,23 +183,10 @@ public class BookmarkService {
                 // 모아보기에 있는지 체크
                 bookmarkBookStoreRepository.findByBookmarkIdAndBookStoreId(myBookmark.getId(), contentId)
                         .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKSTORE, contentId));
-
-//                myBookmark.getBookmarkBookStoreList().stream()
-//                        .filter(bookmarkBookStore -> bookmarkBookStore.getBookStore().getId().equals(contentId))
-//                        .findFirst()
-//                        .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKSTORE, contentId));
-//
-
                 // 기존 정보에 있는지 확인
                 bookmarkBookStoreRepository.findByBookmarkIdAndBookStoreId(bookmark.getId(), contentId)
                         .ifPresentOrElse(bookmarkBookStore -> {
                         }, () -> {
-
-//                myBookmark.getBookmarkBookStoreList().stream()
-//                        .filter(bookmarkBookStore -> bookmarkBookStore.getBookStore().getId().equals(contentId))
-//                        .findFirst()
-//                        .ifPresentOrElse(bookmarkBookStore -> {
-//                        }, () -> {
 
                             // 서점이 있는지 먼저 체크
                             BookStore bookStore = bookStoreRepository.findById(contentId)
@@ -214,25 +201,6 @@ public class BookmarkService {
                             // 북마크에 추가
                             bookmarkBookStoreList.add(bookmarkBookStore);
                         });
-
-//                myBookmark.getBookmarkBookStoreList().stream()
-//                        .filter(bookmarkBookStore -> bookmarkBookStore.getBookStore().getId().equals(contentId))
-//                        .findFirst()
-//                        .ifPresentOrElse(bookmarkBookStore -> {
-//                        }, () -> {
-//                            // 서점이 있는지 먼저 체크
-//                            BookStore bookStore = bookStoreRepository.findById(contentId)
-//                                    .orElseThrow(() -> new BookmarkException(ErrorCode.NOT_FOUND_BOOKSTORE, contentId));
-//                            // 북마크-서점에 추가
-//                            BookmarkBookStore bookmarkBookStore = BookmarkBookStore.builder()
-//                                    .bookmark(myBookmark)
-//                                    .bookStore(bookStore)
-//                                    .build();
-//                            bookmarkBookStoreList.add(bookmarkBookStore);
-//                            myBookmark.addBookmarkBookStore(bookmarkBookStore);
-//                        });
-
-
             });
             bookmark.updateBookmarkBookStore(bookmarkBookStoreList);
         } else {

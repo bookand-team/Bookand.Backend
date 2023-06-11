@@ -18,7 +18,7 @@ class KotlinAccountController(
     fun getAccountInfo(
         @PathVariable id: Long
     ): ResponseEntity<KotlinAccountInfoResponse> {
-        return ResponseEntity.ok(kotlinAccountService.getAccount(id))
+        return ResponseEntity.ok(kotlinAccountService.getAccountById(id))
     }
 
     @ApiOperation(value = "회원 조회 (닉네임)")
@@ -27,7 +27,7 @@ class KotlinAccountController(
     fun getAccountInfo(
         @PathVariable nickname: String
     ): ResponseEntity<KotlinAccountInfoResponse> {
-        return ResponseEntity.ok(kotlinAccountService.getAccount(nickname))
+        return ResponseEntity.ok(kotlinAccountService.getAccountByNickname(nickname))
     }
 
     @ApiOperation(value = "회원 프로필 변경")

@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.account.service
 
+import kr.co.bookand.backend.account.domain.KotlinAccount
 import kr.co.bookand.backend.account.domain.dto.KotlinAccountInfoResponse
 import kr.co.bookand.backend.account.domain.dto.KotlinAccountRequest
 import kr.co.bookand.backend.account.repository.KotlinAccountRepository
@@ -23,7 +24,6 @@ class KotlinAccountService(
         return KotlinAccountInfoResponse(account)
     }
 
-
     fun isAdmin(email: String): Boolean {
         val account = kotlinAccountRepository.findByEmail(email) ?: return false
         return account.role.name == "ADMIN"
@@ -34,16 +34,21 @@ class KotlinAccountService(
         return account.role.name == "USER"
     }
 
-    fun getAccount(id: Long?): KotlinAccountInfoResponse {
+    fun getAccountById(id: Long?): KotlinAccountInfoResponse {
         return kotlinAccountRepository.findById(id)
             .map { KotlinAccountInfoResponse(it) }
             .orElseThrow { IllegalArgumentException("존재하지 않는 계정입니다.") }
     }
 
-    fun getAccount(nickname: String): KotlinAccountInfoResponse {
+    fun getAccountByNickname(nickname: String): KotlinAccountInfoResponse {
         val account = kotlinAccountRepository.findByNickname(nickname)
             ?: throw IllegalArgumentException("존재하지 않는 계정입니다.")
         return KotlinAccountInfoResponse(account)
+    }
+
+    fun getAccount(id: Long): KotlinAccount {
+        return kotlinAccountRepository.findById(id)
+            .orElseThrow { IllegalArgumentException("존재하지 않는 계정입니다.") }
     }
 
     fun checkAccountAdmin(id: Long) {

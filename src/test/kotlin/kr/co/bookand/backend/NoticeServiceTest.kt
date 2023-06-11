@@ -30,7 +30,7 @@ class NoticeServiceTest : BehaviorSpec({
     )
 
 
-    given("notice service") {
+    Given("notice service") {
 
         val adminAccount = KotlinAccount(
             2L,

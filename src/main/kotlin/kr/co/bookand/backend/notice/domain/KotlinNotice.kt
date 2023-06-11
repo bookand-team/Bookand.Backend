@@ -2,6 +2,7 @@ package kr.co.bookand.backend.notice.domain
 
 
 import kr.co.bookand.backend.common.domain.DeviceOSFilter
+import kr.co.bookand.backend.common.domain.KotlinBaseEntity
 import kr.co.bookand.backend.common.domain.MemberIdFilter
 import kr.co.bookand.backend.common.domain.Status
 import kr.co.bookand.backend.notice.domain.dto.CreateNoticeRequest
@@ -36,7 +37,7 @@ class KotlinNotice(
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     var displayAt: LocalDateTime? = null
 
-) {
+) : KotlinBaseEntity() {
 
     constructor(createNoticeRequest: CreateNoticeRequest) : this(
         title = createNoticeRequest.title,

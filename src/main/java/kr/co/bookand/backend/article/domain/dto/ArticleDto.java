@@ -1,7 +1,6 @@
 package kr.co.bookand.backend.article.domain.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.v3.oas.annotations.Operation;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleCategory;
 import kr.co.bookand.backend.article.domain.ArticleTag;
@@ -42,7 +41,7 @@ public class ArticleDto {
                     .articleTagList(null)
                     .articleBookStoreList(null)
                     .markArticleList(null)
-                    .displayDate(null)
+                    .displayAt(null)
                     .deviceOSFilter(DeviceOSFilter.ALL)
                     .memberIdFilter(MemberIdFilter.ALL)
                     .build();
@@ -95,7 +94,7 @@ public class ArticleDto {
                     .filter(ArticleFilter.of(article))
                     .createdDate(article.getCreatedAt())
                     .modifiedDate(article.getModifiedAt())
-                    .displayDate(article.getDisplayDate())
+                    .displayDate(article.getDisplayAt())
                     .build();
         }
     }
@@ -141,7 +140,7 @@ public class ArticleDto {
                     .filter(ArticleFilter.of(article))
                     .createdDate(article.getCreatedAt())
                     .modifiedDate(article.getModifiedAt())
-                    .displayDate(article.getDisplayDate())
+                    .displayDate(article.getDisplayAt())
                     .build();
         }
     }
@@ -203,7 +202,7 @@ public class ArticleDto {
                     .articleTagList(article.getArticleTagList().stream().map(ArticleTag::getTag).toList())
                     .createdDate(article.getCreatedAt())
                     .modifiedDate(article.getModifiedAt())
-                    .displayDate(article.getDisplayDate())
+                    .displayDate(article.getDisplayAt())
                     .visibility(article.isVisibility())
                     .build();
         }

@@ -93,7 +93,7 @@ public class ArticleBookStoreDummyData {
                     .mainImage("https://http.cat/" + i)
                     .deviceOSFilter(DeviceOSFilter.ALL)
                     .memberIdFilter(MemberIdFilter.ALL)
-                    .displayDate(LocalDateTime.now())
+                    .displayAt(LocalDateTime.now())
                     .view(1)
                     .build();
 

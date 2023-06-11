@@ -1,4 +1,4 @@
-package kr.co.bookand.backend.notification.domain;
+package kr.co.bookand.backend.issue.domain;
 
 import kr.co.bookand.backend.common.domain.BaseEntity;
 import lombok.*;
@@ -10,14 +10,14 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Notification extends BaseEntity {
-
+public class IssueImage extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "notification_id")
+    @Column(name = "issue_image_id")
     private Long id;
 
-    private String title;
-    private String content;
+    private String imageUrl;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Issue issue;
 }

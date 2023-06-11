@@ -3,7 +3,6 @@ package kr.co.bookand.backend.article.service;
 import kr.co.bookand.backend.account.service.AccountService;
 import kr.co.bookand.backend.article.domain.Article;
 import kr.co.bookand.backend.article.domain.ArticleBookStore;
-import kr.co.bookand.backend.article.domain.ArticleCategory;
 import kr.co.bookand.backend.article.domain.ArticleTag;
 import kr.co.bookand.backend.article.exception.ArticleException;
 import kr.co.bookand.backend.article.repository.ArticleBookStoreRepository;
@@ -20,7 +19,6 @@ import kr.co.bookand.backend.common.exception.ErrorCode;
 import kr.co.bookand.backend.common.domain.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,11 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static kr.co.bookand.backend.article.domain.dto.ArticleDto.*;
 import static kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*;
-import static kr.co.bookand.backend.common.domain.dto.PageStateDto.*;
 
 @Service
 @RequiredArgsConstructor
@@ -198,7 +194,7 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ArticleException(ErrorCode.NOT_FOUND_ARTICLE, id));
         article.updateArticleStatus(article.getStatus() == Status.VISIBLE ? Status.INVISIBLE : Status.VISIBLE);
-        article.updateDisplayDate(LocalDateTime.now());
+        article.updateDisplayAt(LocalDateTime.now());
         return Message.of("상태 변경 완료");
     }
 }

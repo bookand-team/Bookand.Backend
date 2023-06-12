@@ -3,7 +3,6 @@ package kr.co.bookand.backend.bookmark.repository
 import kr.co.bookand.backend.bookmark.domain.BookmarkType
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmark
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.Optional
 
 interface KotlinBookmarkRepository : JpaRepository<KotlinBookmark, Long> {
 
@@ -18,4 +17,8 @@ interface KotlinBookmarkRepository : JpaRepository<KotlinBookmark, Long> {
     fun findByAccountIdAndBookmarkType(accountId: Long, bookmarkType: BookmarkType): List<KotlinBookmark>
 
     fun findAllByAccountId(accountId: Long): List<KotlinBookmark>
+
+    fun countAllByVisibility(visibility: Boolean): Long
+
+    fun countAllByVisibilityAndBookmarkType(visibility: Boolean, bookmarkType: BookmarkType): Long
 }

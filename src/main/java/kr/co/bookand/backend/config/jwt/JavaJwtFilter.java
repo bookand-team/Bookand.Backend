@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class JwtFilter extends OncePerRequestFilter {
+public class JavaJwtFilter extends OncePerRequestFilter {
     private final TokenFactory tokenFactory;
 
     @Override
@@ -28,9 +28,9 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String resolveToken(HttpServletRequest request){
-        String bearerToken = request.getHeader(TokenInfo.AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TokenInfo.BEARER_TYPE)){
-            return bearerToken.substring(TokenInfo.START_TOKEN_LOCATION);
+        String bearerToken = request.getHeader(JavaTokenInfo.AUTHORIZATION_HEADER);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(JavaTokenInfo.BEARER_TYPE)){
+            return bearerToken.substring(JavaTokenInfo.START_TOKEN_LOCATION);
         }
         return null;
     }

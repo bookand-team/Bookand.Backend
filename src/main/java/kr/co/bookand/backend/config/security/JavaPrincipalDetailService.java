@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class PrincipalDetailService implements UserDetailsService {
+public class JavaPrincipalDetailService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
 
@@ -22,8 +22,8 @@ public class PrincipalDetailService implements UserDetailsService {
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new AccountException(ErrorCode.NOT_FOUND_MEMBER, email));
     }
-    private PrincipalDetails createUserDetails(Account account){
-        return new PrincipalDetails(account);
+    private JavaPrincipalDetails createUserDetails(Account account){
+        return new JavaPrincipalDetails(account);
     }
 
 }

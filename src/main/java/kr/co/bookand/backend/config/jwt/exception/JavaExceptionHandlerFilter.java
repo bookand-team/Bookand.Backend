@@ -15,12 +15,12 @@ import java.io.IOException;
 
 @Slf4j
 @Component
-public class ExceptionHandlerFilter extends OncePerRequestFilter {
+public class JavaExceptionHandlerFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (JwtException ex) {
+        } catch (JavaJwtException ex) {
             setErrorResponse(HttpStatus.UNAUTHORIZED, response, ex.getErrorCode());
         } catch (RuntimeException ex) {
             log.error("runtime exception exception handler filter");
@@ -32,7 +32,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         response.setStatus(status.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        JwtException errorResponse = new JwtException(ex, ex.getErrorLog());
+        JavaJwtException errorResponse = new JavaJwtException(ex, ex.getErrorLog());
         try {
             String json = errorResponse.convertToJson(ex.getErrorLog());
             response.getWriter().write(json);

@@ -1,7 +1,7 @@
 package kr.co.bookand.backend.account.util;
 
 import kr.co.bookand.backend.account.domain.Account;
-import kr.co.bookand.backend.config.security.PrincipalDetails;
+import kr.co.bookand.backend.config.security.JavaPrincipalDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
@@ -15,7 +15,7 @@ public class AccountUtil {
 
     public static Account getAccount() {
         Authentication authentication = getAuthentication();
-        PrincipalDetails principalDetails = getPrincipalDetails(authentication);
+        JavaPrincipalDetails principalDetails = getPrincipalDetails(authentication);
         return getAccountFromPrincipalDetails(principalDetails);
     }
 
@@ -24,15 +24,15 @@ public class AccountUtil {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Authentication object is null"));
     }
 
-    private static PrincipalDetails getPrincipalDetails(Authentication authentication) {
+    private static JavaPrincipalDetails getPrincipalDetails(Authentication authentication) {
         Object principal = Optional.ofNullable(authentication.getPrincipal())
-                .filter(p -> p instanceof PrincipalDetails)
+                .filter(p -> p instanceof JavaPrincipalDetails)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Principal is not an instance of PrincipalDetails"));
 
-        return (PrincipalDetails) principal;
+        return (JavaPrincipalDetails) principal;
     }
 
-    private static Account getAccountFromPrincipalDetails(PrincipalDetails principalDetails) {
+    private static Account getAccountFromPrincipalDetails(JavaPrincipalDetails principalDetails) {
         return Optional.ofNullable(principalDetails.getAccount())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account is null"));
     }

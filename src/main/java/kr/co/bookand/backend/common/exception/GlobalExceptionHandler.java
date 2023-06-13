@@ -4,7 +4,7 @@ import kr.co.bookand.backend.account.exception.AccountException;
 import kr.co.bookand.backend.article.exception.ArticleException;
 import kr.co.bookand.backend.bookmark.exception.BookmarkException;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
-import kr.co.bookand.backend.config.jwt.exception.JwtException;
+import kr.co.bookand.backend.config.jwt.exception.JavaJwtException;
 import kr.co.bookand.backend.policy.exception.PolicyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -79,8 +79,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ex.errorCode.getHttpStatus()).body(response);
     }
 
-    @ExceptionHandler(JwtException.class)
-    public ResponseEntity<ApiErrorResponse> handle(JwtException ex) {
+    @ExceptionHandler(JavaJwtException.class)
+    public ResponseEntity<ApiErrorResponse> handle(JavaJwtException ex) {
         log.error("GlobalExceptionHandler JwtException {}", ex.getMessage());
         ApiErrorResponse response = ApiErrorResponse.builder()
                 .code(ex.errorCode.getErrorCode())

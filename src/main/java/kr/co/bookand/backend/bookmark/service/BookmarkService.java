@@ -9,23 +9,19 @@ import kr.co.bookand.backend.bookmark.domain.Bookmark;
 import kr.co.bookand.backend.bookmark.domain.BookmarkArticle;
 import kr.co.bookand.backend.bookmark.domain.BookmarkBookStore;
 import kr.co.bookand.backend.bookmark.domain.BookmarkType;
-import kr.co.bookand.backend.bookmark.domain.dto.BookmarkDto;
 import kr.co.bookand.backend.bookmark.exception.BookmarkException;
 import kr.co.bookand.backend.bookmark.repository.BookmarkArticleRepository;
 import kr.co.bookand.backend.bookmark.repository.BookmarkBookStoreRepository;
 import kr.co.bookand.backend.bookmark.repository.BookmarkRepository;
 import kr.co.bookand.backend.bookstore.domain.BookStore;
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto;
 import kr.co.bookand.backend.bookstore.exception.BookStoreException;
 import kr.co.bookand.backend.bookstore.repository.BookStoreRepository;
 import kr.co.bookand.backend.common.domain.Message;
-import kr.co.bookand.backend.common.domain.Status;
 import kr.co.bookand.backend.common.domain.dto.PageResponse;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,10 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static kr.co.bookand.backend.bookmark.domain.dto.BookmarkDto.*;
-import static kr.co.bookand.backend.config.security.SecurityUtils.getCurrentAccount;
+import static kr.co.bookand.backend.config.security.JavaSecurityUtils.getCurrentAccount;
 
 @Service
 @RequiredArgsConstructor

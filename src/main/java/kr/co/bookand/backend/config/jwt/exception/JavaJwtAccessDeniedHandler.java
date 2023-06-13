@@ -18,7 +18,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 @Component
-public class JwtAccessDeniedHandler implements AccessDeniedHandler {
+public class JavaJwtAccessDeniedHandler implements AccessDeniedHandler {
 
     private final ObjectMapper objectMapper;
 

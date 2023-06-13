@@ -7,13 +7,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class PrincipalDetails implements UserDetails {
+public class JavaPrincipalDetails implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
     private final transient Account account;
 
-    public PrincipalDetails(Account account) {
+    public JavaPrincipalDetails(Account account) {
         this.account = account;
     }
 

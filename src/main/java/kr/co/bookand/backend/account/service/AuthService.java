@@ -22,7 +22,7 @@ import kr.co.bookand.backend.bookmark.repository.BookmarkRepository;
 import kr.co.bookand.backend.common.service.RestTemplateService;
 import kr.co.bookand.backend.common.exception.ErrorCode;
 import kr.co.bookand.backend.common.domain.Message;
-import kr.co.bookand.backend.config.jwt.exception.JwtException;
+import kr.co.bookand.backend.config.jwt.exception.JavaJwtException;
 import kr.co.bookand.backend.config.jwt.RefreshToken;
 import kr.co.bookand.backend.config.jwt.RefreshTokenRepository;
 import kr.co.bookand.backend.config.jwt.TokenFactory;
@@ -124,7 +124,7 @@ public class AuthService {
             case DELETED:
                 if (isAccountExpired) {
                     RefreshToken refreshToken = refreshTokenRepository.findByKey(account.getEmail())
-                            .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, account.getEmail()));
+                            .orElseThrow(() -> new JavaJwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, account.getEmail()));
 
                     refreshTokenRepository.delete(refreshToken);
                     suspendedAccountRepository.deleteById(suspendedAccount.get().getId());
@@ -339,11 +339,11 @@ public class AuthService {
     @Transactional
     public TokenResponse reissue(TokenRequest tokenRequestDto) {
         if (!tokenFactory.validateToken(tokenRequestDto.getRefreshToken())) {
-            throw new JwtException(ErrorCode.JWT_ERROR, "토큰이 유효하지 않습니다.");
+            throw new JavaJwtException(ErrorCode.JWT_ERROR, "토큰이 유효하지 않습니다.");
         }
         Authentication authentication = tokenFactory.getAuthentication(tokenRequestDto.getRefreshToken());
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getErrorLog()));
+                .orElseThrow(() -> new JavaJwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getErrorLog()));
 
         checkSuspended(refreshToken.getAccount());
 
@@ -361,10 +361,10 @@ public class AuthService {
 
     private void reissueRefreshExceptionCheck(String refreshToken, TokenRequest tokenRequestDto) {
         if (refreshToken == null) {
-            throw new JwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getErrorLog());
+            throw new JavaJwtException(ErrorCode.NOT_FOUND_REFRESH_TOKEN, ErrorCode.NOT_FOUND_REFRESH_TOKEN.getErrorLog());
         }
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())) {
-            throw new JwtException(ErrorCode.NOT_MATCH_REFRESH_TOKEN, ErrorCode.NOT_MATCH_REFRESH_TOKEN.getErrorLog());
+            throw new JavaJwtException(ErrorCode.NOT_MATCH_REFRESH_TOKEN, ErrorCode.NOT_MATCH_REFRESH_TOKEN.getErrorLog());
         }
     }
 

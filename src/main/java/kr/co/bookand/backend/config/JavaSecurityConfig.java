@@ -1,16 +1,14 @@
 package kr.co.bookand.backend.config;
 
 import kr.co.bookand.backend.config.jwt.*;
-import kr.co.bookand.backend.config.jwt.exception.ExceptionHandlerFilter;
-import kr.co.bookand.backend.config.jwt.exception.JwtAccessDeniedHandler;
-import kr.co.bookand.backend.config.jwt.exception.JwtAuthenticationEntryPoint;
+import kr.co.bookand.backend.config.jwt.exception.JavaExceptionHandlerFilter;
+import kr.co.bookand.backend.config.jwt.exception.JavaJwtAccessDeniedHandler;
+import kr.co.bookand.backend.config.jwt.exception.JavaJwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,15 +20,14 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
-@EnableWebSecurity
+
 @RequiredArgsConstructor
-@Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class JavaSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final TokenFactory tokenFactory;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final ExceptionHandlerFilter exceptionHandlerFilter;
+    private final JavaJwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JavaJwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JavaExceptionHandlerFilter exceptionHandlerFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder();}
@@ -57,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
 
                 .and()
-                .apply(new JwtSecurityConfig(tokenFactory, exceptionHandlerFilter));
+                .apply(new JavaJwtSecurityConfig(tokenFactory, exceptionHandlerFilter));
 
 
     }

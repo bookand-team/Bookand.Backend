@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @RequiredArgsConstructor
-public class SecurityUtils {
+public class JavaSecurityUtils {
 
     private final AccountRepository accountRepository;
     public static String getCurrentAccountEmail() {

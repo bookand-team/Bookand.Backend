@@ -23,7 +23,7 @@ import java.util.Optional;
 import static kr.co.bookand.backend.account.domain.dto.AccountDto.*;
 import static kr.co.bookand.backend.account.domain.dto.AuthDto.*;
 import static kr.co.bookand.backend.account.domain.dto.RevokeDto.*;
-import static kr.co.bookand.backend.config.security.SecurityUtils.getCurrentAccountEmail;
+import static kr.co.bookand.backend.config.security.JavaSecurityUtils.getCurrentAccountEmail;
 
 @Slf4j
 @Service

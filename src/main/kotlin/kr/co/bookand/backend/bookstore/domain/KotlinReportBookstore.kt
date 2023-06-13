@@ -20,6 +20,11 @@ class KotlinReportBookstore(
     var answerTitle: String,
     var answerContent: String,
     var answeredAt: String,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kaccount_id")
+    var account: KotlinAccount? = null
+
 ): KotlinBaseEntity() {
     fun updateAnswer(answerReportRequest: KotlinAnswerReportRequest) {
         isAnswered = true

@@ -7,5 +7,6 @@ interface KotlinAccountRepository : JpaRepository<KotlinAccount, Long> {
     fun findByEmail(email: String): KotlinAccount?
     fun findByNickname(nickname: String): KotlinAccount?
     fun existsByNickname(nickname: String): Boolean
+    fun existsByEmail(email: String): Boolean
     fun countAllByVisibility(visibility: Boolean): Long
 }

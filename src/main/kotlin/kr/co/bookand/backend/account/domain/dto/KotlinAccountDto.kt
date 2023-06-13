@@ -1,6 +1,7 @@
 package kr.co.bookand.backend.account.domain.dto
 
 import kr.co.bookand.backend.account.domain.KotlinAccount
+import kr.co.bookand.backend.common.domain.dto.PageResponse
 
 data class KotlinAccountRequest(
     val nickname: String,
@@ -30,3 +31,18 @@ data class KotlinAccountInfoResponse(
         accountStatus = kotlinAccount.accountStatus.name
     )
 }
+
+data class KotlinManagerRequest(
+    val id: Long,
+    val email: String,
+    val password: String,
+    val nickname: String,
+)
+
+data class KotlinNickNameResponse(
+    val nickname: String
+)
+
+data class KotlinAccountListResponse(
+    val memberList : PageResponse<KotlinAccountInfoResponse>
+)

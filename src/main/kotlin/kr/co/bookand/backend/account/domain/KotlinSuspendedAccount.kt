@@ -10,9 +10,9 @@ class KotlinSuspendedAccount(
     @Column(name = "krevoke_account_id")
     var id: Long? = 0,
 
-    var suspendedCount: Int,
-    var startedSuspendedAt: LocalDateTime,
-    var endedSuspendedAt: LocalDateTime,
+    var suspendedCount: Int = 0,
+    var startedSuspendedAt: LocalDateTime? = null,
+    var endedSuspendedAt: LocalDateTime? = null,
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kaccount_id")

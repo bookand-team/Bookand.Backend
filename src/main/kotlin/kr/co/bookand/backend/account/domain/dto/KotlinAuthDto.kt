@@ -1,7 +1,11 @@
 package kr.co.bookand.backend.account.domain.dto
 
 import io.swagger.annotations.ApiModelProperty
+import kr.co.bookand.backend.account.domain.KotlinAccount
+import kr.co.bookand.backend.account.domain.KotlinSocialType
 import kr.co.bookand.backend.account.domain.SocialType
+import org.springframework.http.HttpStatus
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 
 data class KotlinAuthRequest(
     @ApiModelProperty(value = "소셜 액세스 토큰", example = "ya29.a0Aa4xrXNXkiDBMm7MtSneVejzvupPun8S8EHorgvrt-nlCNy83PA9TI")
@@ -9,22 +13,24 @@ data class KotlinAuthRequest(
     @ApiModelProperty(value = "소셜타입", example = "GOOGLE/APPLE")
     val socialType: String,
     @ApiModelProperty(value = "소셜해당아이디", example = "요청 값이 아님")
-    var id: String
+    var id: String? = null,
 ) {
-    fun insertId(id: String) {
-        this.id = id
+    fun insertId(id: String?) {
+        if (id != null) {
+            this.id = id
+        }
     }
 
-    private fun getSocialType(): SocialType {
-        return if (socialType.equals(SocialType.GOOGLE.name, ignoreCase = true)) {
-            SocialType.GOOGLE
+    fun getSocialType(): KotlinSocialType {
+        return if (socialType.equals(KotlinSocialType.GOOGLE.name, ignoreCase = true)) {
+            KotlinSocialType.GOOGLE
         } else {
-            SocialType.APPLE
+            KotlinSocialType.APPLE
         }
     }
 
     fun extraEmail(): String {
-        return if (getSocialType() == SocialType.GOOGLE) {
+        return if (getSocialType() == KotlinSocialType.GOOGLE) {
             "$id@google.com"
         } else {
             "$id@apple.com"
@@ -33,8 +39,8 @@ data class KotlinAuthRequest(
 }
 
 data class KotlinProviderIdAndEmail(
-    val userId: String,
-    val email: String
+    val userId: String?,
+    val email: String?
 )
 
 data class KotlinSigningAccount(
@@ -45,6 +51,35 @@ data class KotlinSigningAccount(
 
 data class KotlinMiddleAccount(
     val email: String,
-    val providerEmail: String,
-    val socialType: SocialType
+    val providerEmail: String?,
+    val socialType: KotlinSocialType
 )
+
+data class KotlinLoginRequest(
+    @ApiModelProperty(value = "이메일", example = "bookand@example.com")
+    var email: String,
+    @ApiModelProperty(value = "비밀번호", example = "비밀번호")
+    var password: String
+){
+
+    fun toAuthentication(): UsernamePasswordAuthenticationToken {
+        return UsernamePasswordAuthenticationToken(email, password)
+    }
+}
+
+data class KotlinLoginResponse(
+    val tokenResponse: Any,
+    val httpStatus: HttpStatus
+)
+
+data class KotlinAccountLoginRequest(
+    val account : KotlinAccount,
+    val suffix : String
+){
+    fun toLoginRequest() : KotlinLoginRequest {
+        return KotlinLoginRequest(
+            email = account.email,
+            password = account.password + suffix
+        )
+    }
+}

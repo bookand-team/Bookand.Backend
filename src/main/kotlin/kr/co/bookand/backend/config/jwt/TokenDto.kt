@@ -5,6 +5,10 @@ data class TokenResponse(
     val refreshToken: String
 )
 
-data class SignTokenResponse(
+data class SignTokenRequest(
     val signToken: String
+)
+
+data class TokenRequest(
+    val refreshToken: String
 )

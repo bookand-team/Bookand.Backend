@@ -31,7 +31,7 @@ class JwtProvider(
     private val refreshTokenExpireTime: Long
 ) {
     private val key: Key = Keys.hmacShaKeyFor(secretKey.toByteArray())
-    fun createSignTokenDto(middleAccount: KotlinMiddleAccount): SignTokenResponse {
+    fun createSignTokenDto(middleAccount: KotlinMiddleAccount): SignTokenRequest {
         val now = Date().time
         val accessTokenExpiresIn: Date = Date(now + accessTokenExpireTime)
         val signToken = Jwts.builder()
@@ -40,7 +40,7 @@ class JwtProvider(
             .setExpiration(accessTokenExpiresIn)
             .signWith(key, SignatureAlgorithm.HS512)
             .compact()
-        return SignTokenResponse(
+        return SignTokenRequest(
             signToken = signToken
         )
     }

@@ -1,7 +1,7 @@
 package kr.co.bookand.backend.account.domain.dto
 
 import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.common.domain.dto.PageResponse
+import kr.co.bookand.backend.common.KotlinPageResponse
 
 data class KotlinAccountRequest(
     val nickname: String,
@@ -24,7 +24,7 @@ data class KotlinAccountInfoResponse(
         email = kotlinAccount.email,
         providerEmail = kotlinAccount.providerEmail,
         nickname = kotlinAccount.nickname,
-        profileImage = kotlinAccount.profileImage,
+        profileImage = kotlinAccount.profileImage ?: "",
         providerType = kotlinAccount.provider,
         lastLoginDate = kotlinAccount.lastLoginDate.toString(),
         signUpDate = kotlinAccount.signUpDate.toString(),
@@ -39,10 +39,17 @@ data class KotlinManagerRequest(
     val nickname: String,
 )
 
-data class KotlinNickNameResponse(
+data class KotlinAccountListResponse(
+    val memberList : KotlinPageResponse<KotlinAccountInfoResponse>
+)
+
+data class KotlinNicknameResponse(
     val nickname: String
 )
 
-data class KotlinAccountListResponse(
-    val memberList : PageResponse<KotlinAccountInfoResponse>
+data class KotlinManagerInfoRequest(
+    val id: Long,
+    val email: String,
+    val password: String,
+    val nickname: String,
 )

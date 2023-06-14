@@ -6,5 +6,5 @@ import kr.co.bookand.backend.account.domain.SuspendedAccount
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface KotlinSuspendedAccountRepository : JpaRepository<KotlinSuspendedAccount, Long> {
-    fun findByAccount(account: KotlinAccount): SuspendedAccount?
+    fun findByAccount(account: KotlinAccount): KotlinSuspendedAccount?
 }

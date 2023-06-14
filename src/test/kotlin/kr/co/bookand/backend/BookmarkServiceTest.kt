@@ -5,9 +5,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import kr.co.bookand.backend.account.domain.AccountStatus
-import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.account.domain.Role
+import kr.co.bookand.backend.account.domain.*
 import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.article.domain.ArticleCategory
 import kr.co.bookand.backend.article.domain.KotlinArticle
@@ -59,8 +57,8 @@ class BookmarkServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            Role.ADMIN,
-            AccountStatus.NORMAL
+            KotlinRole.ADMIN,
+            KotlinAccountStatus.NORMAL
         )
 
         val bookmark = KotlinBookmark(
@@ -263,7 +261,7 @@ class BookmarkServiceTest : BehaviorSpec({
                             any()
                         )
                     } returns false
-                    every { accountService.getAccount(any()) } returns adminAccount
+                    every { accountService.getAccountById(any()) } returns adminAccount
 
                     bookmarkService.createBookmarkedArticle(accountId = 1L, articleId = 1L)
 
@@ -356,7 +354,7 @@ class BookmarkServiceTest : BehaviorSpec({
                             any()
                         )
                     } returns false
-                    every { accountService.getAccount(any()) } returns adminAccount
+                    every { accountService.getAccountById(any()) } returns adminAccount
 
                     bookmarkService.createBookmarkedBookstore(accountId = 1L, bookstoreId = 1L)
 
@@ -371,7 +369,7 @@ class BookmarkServiceTest : BehaviorSpec({
 
         When("bookmark Folder") {
             When("create Bookmark Folder") {
-                every { accountService.getAccount(any()) } returns adminAccount
+                every { accountService.getAccountById(any()) } returns adminAccount
                 every { bookmarkRepository.save(any()) } returns bookmark
 
                 val createBookmarkFolder = bookmarkService.createBookmarkFolder(1L, kotlinBookmarkFolderRequest)
@@ -444,7 +442,7 @@ class BookmarkServiceTest : BehaviorSpec({
                     )
                 } returns bookmarkedBookstore
                 every { bookmarkedBookstoreRepository.existsByBookmarkIdAndBookstoreId(any(), any()) } returns false
-                every { accountService.getAccount(any()) } returns adminAccount
+                every { accountService.getAccountById(any()) } returns adminAccount
                 every { bookstoreRepository.findById(any()) } returns Optional.of(bookstore)
                 every { bookmarkedBookstoreRepository.save(any()) } returns bookmarkedBookstore
                 every { bookmarkRepository.findByIdAndAccountId(any(), any()) } returns bookmark

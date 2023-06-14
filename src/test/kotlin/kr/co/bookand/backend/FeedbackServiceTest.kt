@@ -4,9 +4,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import kr.co.bookand.backend.account.domain.AccountStatus
-import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.account.domain.Role
+import kr.co.bookand.backend.account.domain.*
 import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.feedback.domain.FeedbackTarget
 import kr.co.bookand.backend.feedback.domain.FeedbackType
@@ -36,8 +34,8 @@ class FeedbackServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            Role.ADMIN,
-            AccountStatus.NORMAL
+            KotlinRole.ADMIN,
+            KotlinAccountStatus.NORMAL
         )
 
         val feedback = KotlinFeedback(

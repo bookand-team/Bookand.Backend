@@ -47,7 +47,7 @@ class KotlinBookmarkService(
         accountId: Long,
         bookmarkFolderRequest: KotlinBookmarkFolderRequest
     ): KotlinBookmarkIdResponse {
-        val account = kotlinAccountService.getAccount(accountId)
+        val account = kotlinAccountService.getAccountById(accountId)
         val bookmark = KotlinBookmark(account, bookmarkFolderRequest)
         val saveBookmark = kotlinBookmarkRepository.save(bookmark)
         return KotlinBookmarkIdResponse(saveBookmark.id)
@@ -180,7 +180,7 @@ class KotlinBookmarkService(
     }
 
     fun checkBookmark(accountId: Long, contentId: Long, bookmarkType: String): Boolean {
-        val account = kotlinAccountService.getAccount(accountId)
+        val account = kotlinAccountService.getAccountById(accountId)
         val bookmarkTypeEnum = BookmarkType.valueOf(bookmarkType)
 
         return account.bookmarkList.any { bookmark ->
@@ -194,7 +194,7 @@ class KotlinBookmarkService(
 
 
     fun addBookmarkedBookstore(contentId: Long, bookmark: KotlinBookmark, accountId: Long): KotlinBookmarkedBookstore {
-        val account = kotlinAccountService.getAccount(accountId)
+        val account = kotlinAccountService.getAccountById(accountId)
         val bookstore = getBookstore(contentId)
         val kotlinBookmarkedBookstore =
             KotlinBookmarkedBookstore(bookmark = bookmark, bookstore = bookstore, account = account)
@@ -204,7 +204,7 @@ class KotlinBookmarkService(
     }
 
     fun addBookmarkedArticle(contentId: Long, bookmark: KotlinBookmark, accountId: Long): KotlinBookmarkedArticle {
-        val account = kotlinAccountService.getAccount(accountId)
+        val account = kotlinAccountService.getAccountById(accountId)
         val article = getArticle(contentId)
         val kotlinBookmarkedArticle = KotlinBookmarkedArticle(bookmark = bookmark, article = article, account = account)
         val saveBookmarkedArticle = kotlinBookmarkedArticleRepository.save(kotlinBookmarkedArticle)
@@ -322,7 +322,7 @@ class KotlinBookmarkService(
     }
 
     fun createBookmarkArticle(myBookmark: KotlinBookmark, article: KotlinArticle, accountId: Long) {
-        val account = kotlinAccountService.getAccount(accountId)
+        val account = kotlinAccountService.getAccountById(accountId)
         val bookmarkArticle = KotlinBookmarkedArticle(
             bookmark = myBookmark,
             article = article,
@@ -332,7 +332,7 @@ class KotlinBookmarkService(
     }
 
     fun createBookmarkBookstore(myBookmark: KotlinBookmark, bookstore: KotlinBookstore, accountId: Long) {
-        val account = kotlinAccountService.getAccount(accountId)
+        val account = kotlinAccountService.getAccountById(accountId)
         val bookmarkBookstore = KotlinBookmarkedBookstore(
             bookmark = myBookmark,
             bookstore = bookstore,

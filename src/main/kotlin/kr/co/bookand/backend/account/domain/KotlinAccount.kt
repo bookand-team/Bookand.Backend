@@ -19,9 +19,9 @@ class KotlinAccount(
     var nickname: String,
     var provider: String,
     var providerEmail: String,
-    var profileImage: String,
-    var lastLoginDate: LocalDateTime,
-    var signUpDate: LocalDateTime,
+    var profileImage: String? = null,
+    var lastLoginDate: LocalDateTime? = null,
+    var signUpDate: LocalDateTime? = null,
 
     @Enumerated(EnumType.STRING)
     var role: KotlinRole,
@@ -37,10 +37,32 @@ class KotlinAccount(
     @OneToMany(mappedBy = "account", cascade = [CascadeType.ALL], orphanRemoval = true)
     var tipList: MutableList<KotlinReportBookstore> = mutableListOf(),
 
-    ): KotlinBaseEntity() {
+    ) : KotlinBaseEntity() {
     fun updateProfile(profileImage: String, nickname: String) {
         this.profileImage = profileImage
         this.nickname = nickname
+    }
+
+    fun updateLastLoginDate() {
+        this.lastLoginDate = LocalDateTime.now()
+    }
+
+    fun updateAccountStatus(accountStatus: KotlinAccountStatus) {
+        this.accountStatus = accountStatus
+    }
+
+    fun updateBookmarks(bookmarkList: MutableList<KotlinBookmark>) {
+        this.bookmarkList = bookmarkList
+    }
+
+    fun deletedBanAccount() {
+        this.nickname = "BAN"
+        this.password = "BAN"
+        this.email = "BAN"
+        this.provider = "BAN"
+        this.providerEmail = "BAN"
+        this.profileImage = "BAN"
+        this.role = KotlinRole.SUSPENDED
     }
 
 }

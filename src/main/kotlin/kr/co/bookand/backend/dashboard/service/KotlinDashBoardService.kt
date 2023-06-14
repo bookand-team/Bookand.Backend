@@ -4,13 +4,11 @@ import kr.co.bookand.backend.account.repository.KotlinAccountRepository
 import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.article.domain.ArticleCategory
 import kr.co.bookand.backend.article.repository.KotlinArticleRepository
-import kr.co.bookand.backend.article.repository.KotlinIntroducedBookstoreRepository
 import kr.co.bookand.backend.bookmark.domain.BookmarkType
 import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinReportBookstoreRepository
 import kr.co.bookand.backend.common.domain.Status
-import kr.co.bookand.backend.dashboard.domain.DashBoard
 import kr.co.bookand.backend.dashboard.domain.KotlinDashBoard
 import kr.co.bookand.backend.dashboard.domain.dto.StatusBoardResponse
 import kr.co.bookand.backend.dashboard.repository.KotlinDashBoardRepository
@@ -34,7 +32,7 @@ class KotlinDashBoardService(
     private val feedbackRepository: KotlinFeedbackRepository
 ) {
     fun getStatusBoard() : StatusBoardResponse{
-        val account = accountService.getAccount(1L)
+        val account = accountService.getAccountById(1L)
         account.role.checkNotUser()
         val dashBoard = dashBoardRepository.findById(dashBoardRepository.count()).get()
         return StatusBoardResponse(

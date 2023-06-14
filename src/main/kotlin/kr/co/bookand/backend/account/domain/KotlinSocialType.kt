@@ -3,9 +3,9 @@ package kr.co.bookand.backend.account.domain
 import org.springframework.http.HttpMethod
 
 enum class KotlinSocialType(
-    private val socialName: String,
-    private val userInfoUrl: String,
-    private val method: HttpMethod
+    val socialName: String,
+    val userInfoUrl: String,
+    val method: HttpMethod
 ) {
     GOOGLE(
         "google",
@@ -18,16 +18,4 @@ enum class KotlinSocialType(
         "https://appleid.apple.com/auth/keys",
         HttpMethod.GET
     );
-
-    fun getMethod(): HttpMethod {
-        return method
-    }
-
-    fun getSocialName(): String {
-        return socialName
-    }
-
-    fun getUserInfoUrl(): String {
-        return userInfoUrl
-    }
 }

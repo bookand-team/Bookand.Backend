@@ -21,10 +21,10 @@ class KotlinArticle(
     var mainImage: String,
     var writer: String,
     @Enumerated(EnumType.STRING)
-    var category: ArticleCategory,
+    var category: KotlinArticleCategory,
 
     var viewCount: Int,
-    var displayedAt: LocalDateTime?,
+    var displayedAt: LocalDateTime? = null,
 
     @Enumerated(EnumType.STRING)
     var status: Status,
@@ -49,7 +49,7 @@ class KotlinArticle(
         writer = kotlinArticleRequest.writer,
         viewCount = 0,
         displayedAt = null,
-        category = ArticleCategory.valueOf(kotlinArticleRequest.category),
+        category = KotlinArticleCategory.valueOf(kotlinArticleRequest.category),
         status = Status.VISIBLE,
         deviceOSFilter = DeviceOSFilter.ALL,
         memberIdFilter = MemberIdFilter.ALL
@@ -79,6 +79,6 @@ class KotlinArticle(
         this.content = kotlinArticleRequest.content
         this.mainImage = kotlinArticleRequest.mainImage
         this.writer = kotlinArticleRequest.writer
-        this.category = ArticleCategory.valueOf(kotlinArticleRequest.category)
+        this.category = KotlinArticleCategory.valueOf(kotlinArticleRequest.category)
     }
 }

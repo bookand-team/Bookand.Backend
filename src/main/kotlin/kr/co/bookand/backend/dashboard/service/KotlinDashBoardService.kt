@@ -3,6 +3,7 @@ package kr.co.bookand.backend.dashboard.service
 import kr.co.bookand.backend.account.repository.KotlinAccountRepository
 import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.article.domain.ArticleCategory
+import kr.co.bookand.backend.article.domain.KotlinArticleCategory
 import kr.co.bookand.backend.article.repository.KotlinArticleRepository
 import kr.co.bookand.backend.bookmark.domain.BookmarkType
 import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkRepository
@@ -33,7 +34,7 @@ class KotlinDashBoardService(
 ) {
     fun getStatusBoard() : StatusBoardResponse{
         val account = accountService.getAccountById(1L)
-        account.role.checkNotUser()
+        account.role.checkAdminAndManager()
         val dashBoard = dashBoardRepository.findById(dashBoardRepository.count()).get()
         return StatusBoardResponse(
             totalArticleNum = dashBoard.totalArticleNum,
@@ -68,9 +69,9 @@ class KotlinDashBoardService(
 
         val dashBoard = KotlinDashBoard(
             articleRepository.countAllByVisibility(true),
-            articleRepository.countAllByVisibilityAndCategory(true, ArticleCategory.BOOK_REVIEW),
-            articleRepository.countAllByVisibilityAndCategory(true, ArticleCategory.BOOKSTORE_REVIEW),
-            articleRepository.countAllByVisibilityAndCategory(true, ArticleCategory.INTERVIEW),
+            articleRepository.countAllByVisibilityAndCategory(true, KotlinArticleCategory.BOOK_REVIEW),
+            articleRepository.countAllByVisibilityAndCategory(true, KotlinArticleCategory.BOOKSTORE_REVIEW),
+            articleRepository.countAllByVisibilityAndCategory(true, KotlinArticleCategory.INTERVIEW),
             bookstoreRepository.countAllByVisibility(true),  // api 등록 서점 수
             bookstoreRepository.countAllByVisibilityAndStatus(true, Status.VISIBLE),
             bookmarkRepository.countAllByVisibility(true),

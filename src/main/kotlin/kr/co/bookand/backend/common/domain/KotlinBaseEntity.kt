@@ -11,7 +11,7 @@ import javax.persistence.MappedSuperclass
 @MappedSuperclass
 abstract class KotlinBaseEntity(
     @CreatedDate
-    protected var createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = null,
     @LastModifiedDate
     var modifiedAt: LocalDateTime? = null,
     var visibility: Boolean = true

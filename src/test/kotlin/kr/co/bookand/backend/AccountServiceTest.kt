@@ -36,7 +36,7 @@ class AccountServiceTest : BehaviorSpec({
     )
 
     Given("account Test") {
-        val accountId = 1L
+
         val account = KotlinAccount(
             1L,
             "email@email.com",

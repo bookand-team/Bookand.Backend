@@ -11,7 +11,7 @@ enum class KotlinRole {
         }
     }
 
-    fun checkNotUser() {
+    fun checkAdminAndManager() {
         if (this != MANAGER && this != ADMIN) {
             throw RuntimeException("KotlinErrorCode.ROLE_ACCESS_ERROR")
         }

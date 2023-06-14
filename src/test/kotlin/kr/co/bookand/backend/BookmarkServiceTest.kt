@@ -9,6 +9,7 @@ import kr.co.bookand.backend.account.domain.*
 import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.article.domain.ArticleCategory
 import kr.co.bookand.backend.article.domain.KotlinArticle
+import kr.co.bookand.backend.article.domain.KotlinArticleCategory
 import kr.co.bookand.backend.article.repository.KotlinArticleRepository
 import kr.co.bookand.backend.bookmark.domain.BookmarkType
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmark
@@ -99,7 +100,7 @@ class BookmarkServiceTest : BehaviorSpec({
             subTitle = "subTitle",
             content = "content",
             mainImage = "mainImage",
-            category = ArticleCategory.BOOKSTORE_REVIEW,
+            category = KotlinArticleCategory.BOOKSTORE_REVIEW,
             writer = "writer",
             viewCount = 0,
             displayedAt = LocalDateTime.now(),

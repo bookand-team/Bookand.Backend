@@ -1,10 +1,8 @@
 package kr.co.bookand.backend.article.domain
 
 import kr.co.bookand.backend.article.domain.dto.KotlinIntroducedBookstoreRequest
-import kr.co.bookand.backend.bookstore.domain.BookStore
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import javax.persistence.*
-import kotlin.jvm.internal.Intrinsics.Kotlin
 
 @Entity
 class KotlinIntroducedBookstore(
@@ -19,10 +17,10 @@ class KotlinIntroducedBookstore(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kbookstore_id")
-    val bookStore: KotlinBookstore
+    val bookstore: KotlinBookstore
 ) {
     constructor(introducedBookstoreRequest: KotlinIntroducedBookstoreRequest) : this(
         article = introducedBookstoreRequest.article,
-        bookStore = introducedBookstoreRequest.bookstore
+        bookstore = introducedBookstoreRequest.bookstore
     )
 }

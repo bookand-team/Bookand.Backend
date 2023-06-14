@@ -5,17 +5,19 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import kr.co.bookand.backend.account.domain.KotlinAccount
+import kr.co.bookand.backend.account.domain.KotlinAccountStatus
+import kr.co.bookand.backend.account.domain.KotlinRole
 import kr.co.bookand.backend.account.service.KotlinAccountService
-import kr.co.bookand.backend.article.domain.ArticleCategory
-import kr.co.bookand.backend.article.domain.KotlinArticle
-import kr.co.bookand.backend.article.domain.KotlinArticleTag
-import kr.co.bookand.backend.article.domain.KotlinIntroducedBookstore
+import kr.co.bookand.backend.article.domain.*
+import kr.co.bookand.backend.article.domain.dto.KotlinArticleListRequest
 import kr.co.bookand.backend.article.domain.dto.KotlinArticleRequest
 import kr.co.bookand.backend.article.domain.dto.KotlinIntroducedBookstoreRequest
 import kr.co.bookand.backend.article.repository.KotlinArticleRepository
 import kr.co.bookand.backend.article.repository.KotlinArticleTagRepository
 import kr.co.bookand.backend.article.repository.KotlinIntroducedBookstoreRepository
 import kr.co.bookand.backend.article.service.KotlinArticleService
+import kr.co.bookand.backend.bookmark.service.KotlinBookmarkService
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
 import kr.co.bookand.backend.common.domain.DeviceOSFilter
@@ -26,22 +28,50 @@ import java.util.*
 
 class ArticleServiceTest : BehaviorSpec({
     val articleRepository = mockk<KotlinArticleRepository>()
-    val accountService = mockk<KotlinAccountService>()
     val bookstoreRepository = mockk<KotlinBookstoreRepository>()
     val introducedBookstoreRepository = mockk<KotlinIntroducedBookstoreRepository>()
     val articleTagRepository = mockk<KotlinArticleTagRepository>()
+    val bookmarkService = mockk<KotlinBookmarkService>()
 
     val articleService = KotlinArticleService(
         articleRepository,
-        accountService,
         bookstoreRepository,
         introducedBookstoreRepository,
         articleTagRepository,
+        bookmarkService
     )
 
     Given("article test") {
         val accountId = 1L
         val articleId = 1L
+
+        val account = KotlinAccount(
+            1L,
+            "email@email.com",
+            "password",
+            "nickname",
+            "provider",
+            "providerEmail",
+            "profileImage",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            KotlinRole.USER,
+            KotlinAccountStatus.NORMAL
+        )
+
+        val adminAccount = KotlinAccount(
+            2L,
+            "admin@email.com",
+            "password",
+            "admin",
+            "provider",
+            "providerEmail",
+            "profileImage",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            KotlinRole.ADMIN,
+            KotlinAccountStatus.NORMAL
+        )
 
         val article = KotlinArticle(
             id = articleId,
@@ -49,7 +79,7 @@ class ArticleServiceTest : BehaviorSpec({
             subTitle = "subTitle",
             content = "content",
             mainImage = "mainImage",
-            category = ArticleCategory.BOOKSTORE_REVIEW,
+            category = KotlinArticleCategory.BOOKSTORE_REVIEW,
             writer = "writer",
             viewCount = 0,
             displayedAt = LocalDateTime.now(),
@@ -148,28 +178,30 @@ class ArticleServiceTest : BehaviorSpec({
             )
         )
 
+        val articleIdList = KotlinArticleListRequest(
+            articleIdList = listOf(1L, 2L)
+        )
+
 
 
         When("create article") {
 
             When("account is not Admin") {
-                every { accountService.checkAccountAdmin(2L) } throws RuntimeException("Not admin")
 
                 val exception = shouldThrow<RuntimeException> {
-                    articleService.createArticle(2L, articleRequest)
+                    articleService.createArticle(account, articleRequest)
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "Not admin"
+                    exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
                 }
             }
 
             When("duplicate title") {
-                every { accountService.checkAccountAdmin(1L) } returns Unit
                 every { articleRepository.existsByTitle("title") } returns true
 
                 val exception = shouldThrow<RuntimeException> {
-                    articleService.createArticle(1L, articleRequest)
+                    articleService.createArticle(adminAccount, articleRequest)
                 }
 
                 Then("it should throw exception") {
@@ -178,13 +210,12 @@ class ArticleServiceTest : BehaviorSpec({
             }
 
             When("not found bookstore") {
-                every { accountService.checkAccountAdmin(accountId) } returns Unit
                 every { articleRepository.existsByTitle("title") } returns false
                 every { articleRepository.save(any()) } returns article
                 every { bookstoreRepository.findById(any()) } returns Optional.ofNullable(null)
 
                 val exception = shouldThrow<RuntimeException> {
-                    articleService.createArticle(accountId, articleRequest)
+                    articleService.createArticle(adminAccount, articleRequest)
                 }
 
                 Then("it should throw exception") {
@@ -193,7 +224,6 @@ class ArticleServiceTest : BehaviorSpec({
             }
 
             When("success create article") {
-                every { accountService.checkAccountAdmin(accountId) } returns Unit
                 every { articleRepository.existsByTitle("title") } returns false
                 every { bookstoreRepository.findById(1L) } returns Optional.of(bookstore)
                 every { bookstoreRepository.findById(2L) } returns Optional.of(bookstore2)
@@ -202,14 +232,14 @@ class ArticleServiceTest : BehaviorSpec({
                 every { articleTagRepository.save(any()) } returns articleTag1 andThen articleTag2
             }
 
-            articleService.createArticle(accountId, articleRequest)
+            articleService.createArticle(adminAccount, articleRequest)
 
             Then("it should return article") {
                 article.title shouldBe "title"
                 article.subTitle shouldBe "subTitle"
                 article.content shouldBe "content"
                 article.mainImage shouldBe "mainImage"
-                article.category shouldBe ArticleCategory.BOOKSTORE_REVIEW
+                article.category shouldBe KotlinArticleCategory.BOOKSTORE_REVIEW
                 article.writer shouldBe "writer"
                 article.viewCount shouldBe 0
                 article.status shouldBe Status.VISIBLE
@@ -217,8 +247,8 @@ class ArticleServiceTest : BehaviorSpec({
                 article.memberIdFilter shouldBe MemberIdFilter.ALL
                 article.articleTagList[0].tag shouldBe articleTag1.tag
                 article.articleTagList[1].tag shouldBe articleTag2.tag
-                article.introducedBookstoreList[0].bookStore.id shouldBe bookstore.id
-                article.introducedBookstoreList[1].bookStore.id shouldBe bookstore2.id
+                article.introducedBookstoreList[0].bookstore.id shouldBe bookstore.id
+                article.introducedBookstoreList[1].bookstore.id shouldBe bookstore2.id
             }
 
         }
@@ -226,23 +256,21 @@ class ArticleServiceTest : BehaviorSpec({
         When("update article") {
 
             When("account is not Admin") {
-                every { accountService.checkAccountAdmin(2L) } throws RuntimeException("Not admin")
 
                 val exception = shouldThrow<RuntimeException> {
-                    articleService.createArticle(2L, articleRequest)
+                    articleService.createArticle(account, articleRequest)
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "Not admin"
+                    exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
                 }
             }
 
             When("not found article") {
-                every { accountService.checkAccountAdmin(accountId) } returns Unit
                 every { articleRepository.findById(articleId) } returns Optional.ofNullable(null)
 
                 val exception = shouldThrow<RuntimeException> {
-                    articleService.updateArticle(accountId, articleId, articleRequest)
+                    articleService.updateArticle(adminAccount, articleId, articleRequest)
                 }
 
                 Then("it should throw exception") {
@@ -251,14 +279,13 @@ class ArticleServiceTest : BehaviorSpec({
             }
 
             When("not found bookstore2") {
-                every { accountService.checkAccountAdmin(accountId) } returns Unit
                 every { articleRepository.findById(articleId) } returns Optional.of(article)
                 every { bookstoreRepository.findById(1L) } returns Optional.empty()
                 every { bookstoreRepository.findById(2L) } returns Optional.empty()
                 every { introducedBookstoreRepository.delete(any()) } returns Unit
 
                 val exception = shouldThrow<RuntimeException> {
-                    articleService.updateArticle(accountId, articleId, articleRequest)
+                    articleService.updateArticle(adminAccount, articleId, articleRequest)
                 }
 
                 Then("it should throw exception") {
@@ -267,7 +294,6 @@ class ArticleServiceTest : BehaviorSpec({
             }
 
             When("update article info") {
-                every { accountService.checkAccountAdmin(accountId) } returns Unit
                 every { articleRepository.findById(articleId) } returns Optional.of(article)
                 every { introducedBookstoreRepository.delete(any()) } returns Unit
                 every { bookstoreRepository.findById(1L) } returns Optional.of(bookstore)
@@ -277,14 +303,14 @@ class ArticleServiceTest : BehaviorSpec({
                 every { articleTagRepository.delete(any()) } returns Unit
                 every { articleRepository.save(any()) } returns article
 
-                articleService.updateArticle(accountId, articleId, updateArticleRequest)
+                articleService.updateArticle(adminAccount, articleId, updateArticleRequest)
 
                 Then("it should return article") {
                     article.title shouldBe "title2"
                     article.subTitle shouldBe "subTitle2"
                     article.content shouldBe "content2"
                     article.mainImage shouldBe "mainImage2"
-                    article.category shouldBe ArticleCategory.BOOKSTORE_REVIEW
+                    article.category shouldBe KotlinArticleCategory.BOOKSTORE_REVIEW
                     article.writer shouldBe "writer"
                     article.viewCount shouldBe 0
                     article.status shouldBe Status.VISIBLE
@@ -292,30 +318,28 @@ class ArticleServiceTest : BehaviorSpec({
                     article.memberIdFilter shouldBe MemberIdFilter.ALL
                     article.articleTagList[0].tag shouldBe articleTag1.tag
                     article.articleTagList[1].tag shouldBe articleTag2.tag
-                    article.introducedBookstoreList[0].bookStore.name shouldBe bookstore.name
-                    article.introducedBookstoreList[1].bookStore.name shouldBe bookstore2.name
+                    article.introducedBookstoreList[0].bookstore.name shouldBe bookstore.name
+                    article.introducedBookstoreList[1].bookstore.name shouldBe bookstore2.name
                 }
             }
 
             When("update article Status") {
-                every { accountService.checkAccountAdmin(accountId) } returns Unit
                 every { articleRepository.findById(articleId) } returns Optional.of(article)
                 every { articleRepository.save(any()) } returns article
 
-                articleService.updateArticleStatus(1L, Status.VISIBLE)
+                articleService.updateArticleStatus(articleId)
 
                 Then("it should return article") {
-                    article.status shouldBe Status.VISIBLE
+                    article.status shouldBe Status.INVISIBLE
                 }
             }
         }
 
         When("delete article") {
-            every { accountService.checkAccountAdmin(accountId) } returns Unit
             every { articleService.getArticle(articleId) } returns article
             every { introducedBookstoreRepository.delete(any()) } returns Unit
 
-            articleService.removeArticle(accountId, articleId)
+            articleService.removeArticle(adminAccount, articleId)
 
             Then("it should return article") {
                 val deletedArticle = articleService.getArticle(articleId)
@@ -324,11 +348,11 @@ class ArticleServiceTest : BehaviorSpec({
         }
 
         When("delete article list") {
-            every { accountService.checkAccountAdmin(accountId) } returns Unit
             every { articleService.getArticle(articleId) } returns article
+            every { articleRepository.findById(any()) } returns Optional.of(article)
             every { introducedBookstoreRepository.delete(any()) } returns Unit
 
-            articleService.removeArticleList(accountId, listOf(articleId))
+            articleService.removeArticleList(adminAccount, articleIdList)
 
             Then("it should return article") {
                 val deletedArticle = articleService.getArticle(articleId)

@@ -60,3 +60,12 @@ data class KotlinBookstoreWebResponse(
     val themeList: List<String>,
     val subImageList : List<String>
 )
+
+data class KotlinBookstoreSimpleResponse(
+    val id: Long,
+    val name: String,
+    val introduction: String,
+    val mainImage: String,
+    val themeList: List<String>,
+    val isBookmark: Boolean
+)

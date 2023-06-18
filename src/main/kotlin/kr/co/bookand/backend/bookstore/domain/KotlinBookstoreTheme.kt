@@ -10,7 +10,7 @@ class KotlinBookstoreTheme(
     var id: Long = 0,
 
     @Enumerated(EnumType.STRING)
-    var theme: BookStoreType,
+    var theme: KotlinBookstoreType,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kbookstore_id")

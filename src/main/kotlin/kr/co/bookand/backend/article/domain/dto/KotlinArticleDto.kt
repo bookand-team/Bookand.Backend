@@ -131,4 +131,20 @@ data class KotlinArticleResponse(
     val visibility: Boolean,
     val createdDate: String,
     val modifiedDate: String
-)
+){
+    constructor(kotlinArticle : KotlinArticle): this(
+        id = kotlinArticle.id,
+        title = kotlinArticle.title,
+        subTitle = kotlinArticle.subTitle,
+        mainImage = kotlinArticle.mainImage,
+        category = kotlinArticle.category,
+        writer = kotlinArticle.writer,
+        status = kotlinArticle.status,
+        view = kotlinArticle.viewCount,
+        isBookmark = false,
+        articleTagList = kotlinArticle.articleTagList.map { it.tag },
+        visibility = kotlinArticle.visibility,
+        createdDate = kotlinArticle.createdAt.toString(),
+        modifiedDate = kotlinArticle.modifiedAt.toString()
+    )
+}

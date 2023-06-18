@@ -1,6 +1,9 @@
 package kr.co.bookand.backend.bookstore.service
 
+import kr.co.bookand.backend.account.domain.KotlinAccount
 import kr.co.bookand.backend.account.service.KotlinAccountService
+import kr.co.bookand.backend.bookmark.domain.BookmarkType
+import kr.co.bookand.backend.bookmark.service.KotlinBookmarkService
 import kr.co.bookand.backend.bookstore.domain.*
 import kr.co.bookand.backend.bookstore.domain.dto.*
 import kr.co.bookand.backend.bookstore.exception.BookStoreException
@@ -8,9 +11,11 @@ import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreImageRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreThemeRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinReportBookstoreRepository
+import kr.co.bookand.backend.common.domain.KotlinMessageResponse
 import kr.co.bookand.backend.common.domain.Status
 import kr.co.bookand.backend.common.exception.ErrorCode
 import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -22,11 +27,16 @@ class KotlinBookstoreService(
     private val kotlinBookstoreImageRepository: KotlinBookstoreImageRepository,
     private val kotlinBookstoreThemeRepository: KotlinBookstoreThemeRepository,
     private val kotlinReportBookstoreRepository: KotlinReportBookstoreRepository,
-    private val kotlinAccountService: KotlinAccountService
+    private val kotlinAccountService: KotlinAccountService,
+    private val kotlinBookmarkService: KotlinBookmarkService
 ) {
+
     @Transactional
-    fun createBookStore(id: Long, kotlinBookstoreRequest: KotlinBookstoreRequest): KotlinBookstore {
-        kotlinAccountService.checkAccountAdmin(id)
+    fun createBookStore(
+        currentAccount: KotlinAccount,
+        kotlinBookstoreRequest: KotlinBookstoreRequest
+    ): KotlinBookstoreIdResponse {
+        currentAccount.role.checkAdminAndManager()
         duplicateBookStoreName(kotlinBookstoreRequest.name)
         val themeList = kotlinBookstoreRequest.themeList
         val subImageList = kotlinBookstoreRequest.subImageList
@@ -41,7 +51,7 @@ class KotlinBookstoreService(
             }
 
         themeList
-            .map { theme -> KotlinBookstoreTheme(theme = BookStoreType.valueOf(theme)) }
+            .map { theme -> KotlinBookstoreTheme(theme = KotlinBookstoreType.valueOf(theme)) }
             .forEach { bookStoreTheme ->
                 kotlinBookstoreThemeRepository.save(bookStoreTheme)
                 bookStoreThemeList.add(bookStoreTheme)
@@ -50,11 +60,15 @@ class KotlinBookstoreService(
         val bookStore = KotlinBookstore(kotlinBookstoreRequest)
         bookStoreImageList.forEach { bookStoreImage -> bookStoreImage.updateBookStore(bookStore) }
         bookStoreThemeList.forEach { bookStoreTheme -> bookStoreTheme.updateBookStore(bookStore) }
-        return kotlinBookstoreRepository.save(bookStore)
+        val saveBookstore = kotlinBookstoreRepository.save(bookStore)
+        return KotlinBookstoreIdResponse(saveBookstore.id)
     }
 
     @Transactional
-    fun updateBookStore(bookstoreId: Long, kotlinBookstoreRequest: KotlinBookstoreRequest): KotlinBookstoreWebResponse {
+    fun updateBookStore(
+        bookstoreId: Long,
+        kotlinBookstoreRequest: KotlinBookstoreRequest
+    ): KotlinWebBookstoreResponse {
         kotlinAccountService.checkAccountAdmin(bookstoreId)
         val bookstore = getBookstore(bookstoreId)
         val imageList = bookstore.imageList
@@ -67,70 +81,63 @@ class KotlinBookstoreService(
         val themeList = bookstore.themeList
         kotlinBookstoreThemeRepository.deleteAll(themeList)
         kotlinBookstoreRequest.themeList.forEach { theme ->
-            val bookStoreTheme = KotlinBookstoreTheme(theme = BookStoreType.valueOf(theme))
+            val bookStoreTheme = KotlinBookstoreTheme(theme = KotlinBookstoreType.valueOf(theme))
             kotlinBookstoreThemeRepository.save(bookStoreTheme)
             bookstore.updateBookStoreTheme(bookStoreTheme)
         }
         duplicateBookStoreName(kotlinBookstoreRequest.name)
         bookstore.updateBookStoreData(kotlinBookstoreRequest)
 
-        return KotlinBookstoreWebResponse(
-            id = bookstore.id,
-            name = bookstore.name,
-            address = bookstore.address,
-            businessHours = bookstore.businessHours,
-            contact = bookstore.contact,
-            facility = bookstore.facility,
-            sns = bookstore.sns,
-            latitude = bookstore.latitude,
-            longitude = bookstore.longitude,
-            introduction = bookstore.introduction,
-            mainImage = bookstore.mainImage,
-            status = bookstore.status,
-            themeList = bookstore.themeList.map { it.theme.name },
-            subImageList = bookstore.imageList.map { it.url }
-        )
+        return KotlinWebBookstoreResponse(bookstore)
     }
+
     @Transactional
-    fun deleteBookStore(bookstoreId: Long) {
+    fun deleteBookStore(bookstoreId: Long): KotlinMessageResponse {
         val bookstore = getBookstore(bookstoreId)
         if (!bookstore.visibility) {
             throw RuntimeException("Bookstore already deleted")
         }
         bookstore.softDelete()
+        return KotlinMessageResponse(message = "서점 삭제", statusCode = 200)
     }
 
     @Transactional
-    fun deleteBookStoreList(request: KotlinBookstoreListRequest) {
+    fun deleteBookStoreList(request: KotlinBookstoreListRequest): KotlinMessageResponse {
         for (bookstoreId in request.bookstoreList) {
             deleteBookStore(bookstoreId)
         }
+        return KotlinMessageResponse(message = "서점 삭제", statusCode = 200)
     }
 
     @Transactional
-    fun updateBookstoreStatus(bookstoreId: Long, status: Status) : KotlinBookstore {
+    fun updateBookstoreStatus(bookstoreId: Long): KotlinMessageResponse {
         val bookstore = getBookstore(bookstoreId)
-        bookstore.updateBookStoreStatus(status)
-        return bookstore
+        val status = bookstore.status
+        if (status == Status.VISIBLE) bookstore.updateBookStoreStatus(Status.INVISIBLE)
+        else bookstore.updateBookStoreStatus(Status.VISIBLE)
+        return KotlinMessageResponse(message = "SUCCESS", statusCode = 200)
     }
 
     @Transactional
-    fun createReportBookstore(request: KotlinReportBookstoreRequest): KotlinReportBookstore {
+    fun createReportBookstore(request: KotlinReportBookstoreRequest): KotlinReportBookstoreIdResponse {
         val kotlinReportBookstore = KotlinReportBookstore(
-            title = request.title,
-            content = request.content,
+            name = request.name,
+            address = request.address,
             isAnswered = false,
             answerTitle = "",
             answerContent = "",
             answeredAt = "2023-01-01 00:00:00"
         )
-        return kotlinReportBookstoreRepository.save(kotlinReportBookstore)
+        val saveReportBookstore = kotlinReportBookstoreRepository.save(kotlinReportBookstore)
+        return KotlinReportBookstoreIdResponse(saveReportBookstore.id)
+
     }
 
     @Transactional
-    fun answerReportBookstore(reportId: Long, request: KotlinAnswerReportRequest) {
+    fun answerReportBookstore(reportId: Long, request: KotlinAnswerReportRequest): KotlinMessageResponse {
         val reportBookstore = getReportBookstore(reportId)
         reportBookstore.updateAnswer(request)
+        return KotlinMessageResponse(message = "SUCCESS", statusCode = 200)
     }
 
     fun duplicateBookStoreName(name: String) {
@@ -152,6 +159,72 @@ class KotlinBookstoreService(
     fun getReportBookstore(id: Long): KotlinReportBookstore {
         return kotlinReportBookstoreRepository.findById(id)
             .orElseThrow { IllegalArgumentException("존재하지 않는 신고입니다.") }
+    }
+
+    fun getBookstoreSimpleList(currentAccount: KotlinAccount, pageable: Pageable?): KotlinBookstorePageResponse {
+        val bookstorePage = kotlinBookstoreRepository.findAllByStatus(Status.VISIBLE, pageable)
+            .map { bookstore ->
+                val checkBookmark =
+                    kotlinBookmarkService.checkBookmark(currentAccount.id, bookstore.id, BookmarkType.BOOKSTORE.name)
+                return@map KotlinBookstoreSimpleResponse(bookstore, checkBookmark)
+            }
+        return KotlinBookstorePageResponse.of(bookstorePage)
+    }
+
+    fun searchBookstoreList(
+        currentAccount: KotlinAccount,
+        searchKeyword: String?,
+        theme: String?,
+        status: String?,
+        pageable: Pageable?
+    ): KotlinWebBookstorePageResponse {
+        val bookstorePage = kotlinBookstoreRepository
+            .findAllBySearch(
+                account = currentAccount,
+                search = searchKeyword,
+                theme = theme,
+                status = status,
+                pageable = pageable
+            )
+            .map { bookstore ->
+                return@map KotlinWebBookstoreResponse(bookstore)
+            }
+        return KotlinWebBookstorePageResponse.of(bookstorePage)
+    }
+
+    fun getWebBookstoreList(
+        currentAccount: KotlinAccount, pageable: Pageable?
+    ): KotlinWebBookstorePageResponse {
+        currentAccount.role.checkAdminAndManager()
+        val bookstorePage = kotlinBookstoreRepository.findAll(pageable)
+            .map { bookstore ->
+                return@map KotlinWebBookstoreResponse(bookstore)
+            }
+        return KotlinWebBookstorePageResponse.of(bookstorePage)
+    }
+
+
+    fun getBookStoreReportList(
+        pageable: Pageable?,
+        currentAccount: KotlinAccount
+    ): KotlinReportBookstoreListResponse {
+
+        val reportBookstorePage = kotlinReportBookstoreRepository.findAll(pageable)
+            .map { reportBookstore ->
+                return@map KotlinReportBookstoreResponse(reportBookstore)
+            }
+
+        return KotlinReportBookstoreListResponse.of(reportBookstorePage)
+    }
+
+    fun getBookstoreAddressList(currentAccount: KotlinAccount): KotlinBookStoreAddressListResponse {
+        val bookStoreAddressListResponse = kotlinBookstoreRepository.findAllByStatus(Status.VISIBLE)
+            .map { bookstore ->
+                val checkBookmark =
+                    kotlinBookmarkService.checkBookmark(currentAccount.id, bookstore.id, BookmarkType.BOOKSTORE.name)
+                return@map KotlinBookstoreAddressResponse(bookstore, checkBookmark)
+            }.toList()
+        return KotlinBookStoreAddressListResponse(bookStoreAddressListResponse)
     }
 
 }

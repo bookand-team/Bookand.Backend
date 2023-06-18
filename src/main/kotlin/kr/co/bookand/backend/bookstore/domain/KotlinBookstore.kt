@@ -38,7 +38,7 @@ class KotlinBookstore(
     var imageList: MutableList<KotlinBookstoreImage> = mutableListOf(),
 
     @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var introducedBookstoreList: MutableList<KotlinIntroducedBookstore> = mutableListOf()
+    var introducedBookstoreList: MutableList<KotlinIntroducedBookstore> = mutableListOf(),
 
 ) : KotlinBaseEntity() {
     constructor(kotlinBookstoreRequest : KotlinBookstoreRequest) : this(

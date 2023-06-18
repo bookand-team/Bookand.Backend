@@ -1,7 +1,6 @@
 package kr.co.bookand.backend.bookstore.domain
 
 import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.AnswerReportRequest
 import kr.co.bookand.backend.bookstore.domain.dto.KotlinAnswerReportRequest
 import kr.co.bookand.backend.common.domain.KotlinBaseEntity
 import java.time.LocalDateTime
@@ -14,8 +13,8 @@ class KotlinReportBookstore(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "kreport_bookstore_id")
     var id: Long = 0,
-    var title: String,
-    var content: String,
+    var name: String,
+    val address: String,
     var isAnswered: Boolean,
     var answerTitle: String,
     var answerContent: String,
@@ -25,7 +24,7 @@ class KotlinReportBookstore(
     @JoinColumn(name = "kaccount_id")
     var account: KotlinAccount? = null
 
-): KotlinBaseEntity() {
+) : KotlinBaseEntity() {
     fun updateAnswer(answerReportRequest: KotlinAnswerReportRequest) {
         isAnswered = true
         answerTitle = answerReportRequest.answerTitle

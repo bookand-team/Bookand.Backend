@@ -2,15 +2,13 @@ package kr.co.bookand.backend.dashboard.service
 
 import kr.co.bookand.backend.account.repository.KotlinAccountRepository
 import kr.co.bookand.backend.account.service.KotlinAccountService
-import kr.co.bookand.backend.article.domain.ArticleCategory
 import kr.co.bookand.backend.article.domain.KotlinArticleCategory
 import kr.co.bookand.backend.article.repository.KotlinArticleRepository
-import kr.co.bookand.backend.bookmark.domain.BookmarkType
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkType
 import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinReportBookstoreRepository
-import kr.co.bookand.backend.common.domain.Status
+import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.dashboard.domain.KotlinDashBoard
 import kr.co.bookand.backend.dashboard.domain.dto.StatusBoardResponse
 import kr.co.bookand.backend.dashboard.repository.KotlinDashBoardRepository
@@ -74,7 +72,7 @@ class KotlinDashBoardService(
             articleRepository.countAllByVisibilityAndCategory(true, KotlinArticleCategory.BOOKSTORE_REVIEW),
             articleRepository.countAllByVisibilityAndCategory(true, KotlinArticleCategory.INTERVIEW),
             bookstoreRepository.countAllByVisibility(true),  // api 등록 서점 수
-            bookstoreRepository.countAllByVisibilityAndStatus(true, Status.VISIBLE),
+            bookstoreRepository.countAllByVisibilityAndStatus(true, KotlinStatus.VISIBLE),
             bookmarkRepository.countAllByVisibility(true),
             bookmarkRepository.countAllByVisibilityAndBookmarkType(true, KotlinBookmarkType.BOOKSTORE),
             bookmarkRepository.countAllByVisibilityAndBookmarkType(true, KotlinBookmarkType.BOOKSTORE) / totalAccountNum,

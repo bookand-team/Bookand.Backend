@@ -7,9 +7,11 @@ import io.mockk.every
 import io.mockk.mockk
 import kr.co.bookand.backend.account.domain.*
 import kr.co.bookand.backend.account.service.KotlinAccountService
+import kr.co.bookand.backend.common.KotlinDeviceOSFilter
+import kr.co.bookand.backend.common.KotlinMemberIdFilter
+import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.common.domain.DeviceOSFilter
 import kr.co.bookand.backend.common.domain.MemberIdFilter
-import kr.co.bookand.backend.common.domain.Status
 import kr.co.bookand.backend.notice.domain.KotlinNotice
 import kr.co.bookand.backend.notice.domain.NoticeType
 import kr.co.bookand.backend.notice.domain.dto.CreateNoticeRequest
@@ -58,10 +60,10 @@ class NoticeServiceTest : BehaviorSpec({
             "title",
             "content",
             "image",
-            Status.INVISIBLE,
+            KotlinStatus.INVISIBLE,
             NoticeType.SERVICE,
-            DeviceOSFilter.ALL,
-            MemberIdFilter.ALL
+            KotlinDeviceOSFilter.ALL,
+            KotlinMemberIdFilter.ALL
         )
 
         val updateNoticeRequest = UpdateNoticeRequest(
@@ -126,7 +128,7 @@ class NoticeServiceTest : BehaviorSpec({
                 When("fail - not admin") {
                     every { accountService.checkAccountAdmin(any()) } throws Exception("관리자가 아닙니다.")
                     val exception = shouldThrow<Exception> {
-                        noticeService.updateNoticeStatus(1L, 1L, Status.VISIBLE)
+                        noticeService.updateNoticeStatus(1L, 1L, KotlinStatus.VISIBLE)
                     }
 
                     Then("throw exception") {
@@ -137,7 +139,7 @@ class NoticeServiceTest : BehaviorSpec({
                 When("success") {
                     every { accountService.checkAccountAdmin(any()) } returns Unit
                     every { noticeRepository.findById(any()) } returns Optional.of(notice)
-                    val noticeMessageResponse = noticeService.updateNoticeStatus(1L, 1L, Status.VISIBLE)
+                    val noticeMessageResponse = noticeService.updateNoticeStatus(1L, 1L, KotlinStatus.VISIBLE)
 
                     Then("return notice id") {
                         noticeMessageResponse.message shouldBe "Update Status to Visible."

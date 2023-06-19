@@ -2,7 +2,7 @@ package kr.co.bookand.backend.article.repository
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import kr.co.bookand.backend.article.domain.KotlinArticle
-import kr.co.bookand.backend.common.domain.Status
+import kr.co.bookand.backend.common.KotlinStatus
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -20,7 +20,7 @@ class KotlinArticleRepositoryImpl(
     }
 
     override fun findAllByStatus(
-        status: Status?,
+        status: KotlinStatus?,
         pageable: Pageable?,
         cursorId: Long?,
         date: String?

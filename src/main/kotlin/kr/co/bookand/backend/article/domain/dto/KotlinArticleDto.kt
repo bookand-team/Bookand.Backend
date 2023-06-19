@@ -4,10 +4,10 @@ import kr.co.bookand.backend.article.domain.KotlinArticle
 import kr.co.bookand.backend.article.domain.KotlinArticleCategory
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import kr.co.bookand.backend.bookstore.domain.dto.KotlinBookstoreSimpleResponse
+import kr.co.bookand.backend.common.KotlinDeviceOSFilter
+import kr.co.bookand.backend.common.KotlinMemberIdFilter
 import kr.co.bookand.backend.common.KotlinPageResponse
-import kr.co.bookand.backend.common.domain.DeviceOSFilter
-import kr.co.bookand.backend.common.domain.MemberIdFilter
-import kr.co.bookand.backend.common.domain.Status
+import kr.co.bookand.backend.common.KotlinStatus
 import org.springframework.data.domain.Page
 import java.time.LocalDateTime
 
@@ -39,7 +39,7 @@ data class KotlinArticleDetailResponse(
     val content: String,
     val category: KotlinArticleCategory,
     val writer: String,
-    val status: Status,
+    val status: KotlinStatus,
     val view: Int,
     val bookmark: Boolean,
     val visibility: Boolean,
@@ -58,7 +58,7 @@ data class KotlinWebArticleResponse(
     val content: String,
     val category: KotlinArticleCategory,
     val writer: String,
-    val status: Status,
+    val status: KotlinStatus,
     val view: Int,
     val articleTagList: List<String>,
     val visibility: Boolean,
@@ -86,8 +86,8 @@ data class KotlinWebArticleResponse(
 }
 
 data class KotlinArticleFilter(
-    val deviceOS: DeviceOSFilter,
-    val memberId: MemberIdFilter
+    val deviceOS: KotlinDeviceOSFilter,
+    val memberId: KotlinMemberIdFilter
 )
 
 data class KotlinArticlePageResponse(
@@ -124,7 +124,7 @@ data class KotlinArticleResponse(
     val mainImage: String,
     val category: KotlinArticleCategory,
     val writer: String,
-    val status: Status,
+    val status: KotlinStatus,
     val view: Int,
     val isBookmark: Boolean,
     val articleTagList: List<String>,

@@ -20,9 +20,9 @@ import kr.co.bookand.backend.article.service.KotlinArticleService
 import kr.co.bookand.backend.bookmark.service.KotlinBookmarkService
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
-import kr.co.bookand.backend.common.domain.DeviceOSFilter
-import kr.co.bookand.backend.common.domain.MemberIdFilter
-import kr.co.bookand.backend.common.domain.Status
+import kr.co.bookand.backend.common.KotlinDeviceOSFilter
+import kr.co.bookand.backend.common.KotlinMemberIdFilter
+import kr.co.bookand.backend.common.KotlinStatus
 import java.time.LocalDateTime
 import java.util.*
 
@@ -83,9 +83,9 @@ class ArticleServiceTest : BehaviorSpec({
             writer = "writer",
             viewCount = 0,
             displayedAt = LocalDateTime.now(),
-            status = Status.VISIBLE,
-            deviceOSFilter = DeviceOSFilter.ALL,
-            memberIdFilter = MemberIdFilter.ALL,
+            status = KotlinStatus.VISIBLE,
+            deviceOSFilter = KotlinDeviceOSFilter.ALL,
+            memberIdFilter = KotlinMemberIdFilter.ALL,
             articleTagList = mutableListOf(),
             introducedBookstoreList = mutableListOf(),
         )
@@ -102,7 +102,7 @@ class ArticleServiceTest : BehaviorSpec({
             longitude = "longitude",
             introduction = "introduction",
             mainImage = "mainImage",
-            status = Status.VISIBLE,
+            status = KotlinStatus.VISIBLE,
             view = 0,
             bookmark = 0,
             displayedAt = LocalDateTime.now(),
@@ -122,7 +122,7 @@ class ArticleServiceTest : BehaviorSpec({
             longitude = "longitude",
             introduction = "introduction",
             mainImage = "mainImage",
-            status = Status.VISIBLE,
+            status = KotlinStatus.VISIBLE,
             view = 0,
             bookmark = 0,
             displayedAt = LocalDateTime.now(),
@@ -242,9 +242,9 @@ class ArticleServiceTest : BehaviorSpec({
                 article.category shouldBe KotlinArticleCategory.BOOKSTORE_REVIEW
                 article.writer shouldBe "writer"
                 article.viewCount shouldBe 0
-                article.status shouldBe Status.VISIBLE
-                article.deviceOSFilter shouldBe DeviceOSFilter.ALL
-                article.memberIdFilter shouldBe MemberIdFilter.ALL
+                article.status shouldBe KotlinStatus.VISIBLE
+                article.deviceOSFilter shouldBe KotlinDeviceOSFilter.ALL
+                article.memberIdFilter shouldBe KotlinMemberIdFilter.ALL
                 article.articleTagList[0].tag shouldBe articleTag1.tag
                 article.articleTagList[1].tag shouldBe articleTag2.tag
                 article.introducedBookstoreList[0].bookstore.id shouldBe bookstore.id
@@ -313,9 +313,9 @@ class ArticleServiceTest : BehaviorSpec({
                     article.category shouldBe KotlinArticleCategory.BOOKSTORE_REVIEW
                     article.writer shouldBe "writer"
                     article.viewCount shouldBe 0
-                    article.status shouldBe Status.VISIBLE
-                    article.deviceOSFilter shouldBe DeviceOSFilter.ALL
-                    article.memberIdFilter shouldBe MemberIdFilter.ALL
+                    article.status shouldBe KotlinStatus.VISIBLE
+                    article.deviceOSFilter shouldBe KotlinDeviceOSFilter.ALL
+                    article.memberIdFilter shouldBe KotlinMemberIdFilter.ALL
                     article.articleTagList[0].tag shouldBe articleTag1.tag
                     article.articleTagList[1].tag shouldBe articleTag2.tag
                     article.introducedBookstoreList[0].bookstore.name shouldBe bookstore.name
@@ -330,7 +330,7 @@ class ArticleServiceTest : BehaviorSpec({
                 articleService.updateArticleStatus(articleId)
 
                 Then("it should return article") {
-                    article.status shouldBe Status.INVISIBLE
+                    article.status shouldBe KotlinStatus.INVISIBLE
                 }
             }
         }

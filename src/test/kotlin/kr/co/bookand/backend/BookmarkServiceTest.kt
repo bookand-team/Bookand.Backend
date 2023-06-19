@@ -24,9 +24,9 @@ import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkedBookstoreReposi
 import kr.co.bookand.backend.bookmark.service.KotlinBookmarkService
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
+import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.common.domain.DeviceOSFilter
 import kr.co.bookand.backend.common.domain.MemberIdFilter
-import kr.co.bookand.backend.common.domain.Status
 import java.time.LocalDateTime
 import java.util.*
 
@@ -120,7 +120,7 @@ class BookmarkServiceTest : BehaviorSpec({
             writer = "writer",
             viewCount = 0,
             displayedAt = LocalDateTime.now(),
-            status = Status.VISIBLE,
+            status = KotlinStatus.VISIBLE,
             deviceOSFilter = DeviceOSFilter.ALL,
             memberIdFilter = MemberIdFilter.ALL,
             articleTagList = mutableListOf(),
@@ -139,7 +139,7 @@ class BookmarkServiceTest : BehaviorSpec({
             longitude = "longitude",
             introduction = "introduction",
             mainImage = "mainImage",
-            status = Status.VISIBLE,
+            status = KotlinStatus.VISIBLE,
             view = 0,
             bookmark = 0,
             displayedAt = LocalDateTime.now(),
@@ -159,7 +159,7 @@ class BookmarkServiceTest : BehaviorSpec({
             longitude = "longitude2",
             introduction = "introduction2",
             mainImage = "mainImage2",
-            status = Status.VISIBLE,
+            status = KotlinStatus.VISIBLE,
             view = 0,
             bookmark = 0,
             displayedAt = LocalDateTime.now(),

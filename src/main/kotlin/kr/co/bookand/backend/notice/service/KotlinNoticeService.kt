@@ -1,7 +1,7 @@
 package kr.co.bookand.backend.notice.service
 
 import kr.co.bookand.backend.account.service.KotlinAccountService
-import kr.co.bookand.backend.common.domain.Status
+import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.notice.domain.KotlinNotice
 import kr.co.bookand.backend.notice.domain.dto.CreateNoticeRequest
 import kr.co.bookand.backend.notice.domain.dto.NoticeIdResponse
@@ -46,10 +46,10 @@ class KotlinNoticeService(
     }
 
     @Transactional
-    fun updateNoticeStatus(accountId: Long, noticeId: Long, status: Status): NoticeMessageResponse {
+    fun updateNoticeStatus(accountId: Long, noticeId: Long, status: KotlinStatus): NoticeMessageResponse {
         accountService.checkAccountAdmin(accountId)
         val kotlinNotice = getNotice(noticeId)
-        return if (kotlinNotice.status == Status.INVISIBLE) {
+        return if (kotlinNotice.status == KotlinStatus.INVISIBLE) {
             NoticeMessageResponse("Update Status to Visible.")
         } else NoticeMessageResponse("Update Status to Invisible.")
     }

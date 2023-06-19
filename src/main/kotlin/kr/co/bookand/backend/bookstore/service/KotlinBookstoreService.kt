@@ -11,8 +11,8 @@ import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreImageRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreThemeRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinReportBookstoreRepository
+import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.common.domain.KotlinMessageResponse
-import kr.co.bookand.backend.common.domain.Status
 import kr.co.bookand.backend.common.exception.ErrorCode
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Pageable
@@ -113,8 +113,8 @@ class KotlinBookstoreService(
     fun updateBookstoreStatus(bookstoreId: Long): KotlinMessageResponse {
         val bookstore = getBookstore(bookstoreId)
         val status = bookstore.status
-        if (status == Status.VISIBLE) bookstore.updateBookStoreStatus(Status.INVISIBLE)
-        else bookstore.updateBookStoreStatus(Status.VISIBLE)
+        if (status == KotlinStatus.VISIBLE) bookstore.updateBookStoreStatus(KotlinStatus.INVISIBLE)
+        else bookstore.updateBookStoreStatus(KotlinStatus.VISIBLE)
         return KotlinMessageResponse(message = "SUCCESS", statusCode = 200)
     }
 
@@ -162,7 +162,7 @@ class KotlinBookstoreService(
     }
 
     fun getBookstoreSimpleList(currentAccount: KotlinAccount, pageable: Pageable?): KotlinBookstorePageResponse {
-        val bookstorePage = kotlinBookstoreRepository.findAllByStatus(Status.VISIBLE, pageable)
+        val bookstorePage = kotlinBookstoreRepository.findAllByStatus(KotlinStatus.VISIBLE, pageable)
             .map { bookstore ->
                 val checkBookmark =
                     kotlinBookmarkService.checkBookmark(currentAccount.id, bookstore.id, BookmarkType.BOOKSTORE.name)
@@ -218,7 +218,7 @@ class KotlinBookstoreService(
     }
 
     fun getBookstoreAddressList(currentAccount: KotlinAccount): KotlinBookStoreAddressListResponse {
-        val bookStoreAddressListResponse = kotlinBookstoreRepository.findAllByStatus(Status.VISIBLE)
+        val bookStoreAddressListResponse = kotlinBookstoreRepository.findAllByStatus(KotlinStatus.VISIBLE)
             .map { bookstore ->
                 val checkBookmark =
                     kotlinBookmarkService.checkBookmark(currentAccount.id, bookstore.id, BookmarkType.BOOKSTORE.name)

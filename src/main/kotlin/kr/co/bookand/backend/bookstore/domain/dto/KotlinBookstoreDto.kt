@@ -4,9 +4,8 @@ import kr.co.bookand.backend.article.domain.dto.KotlinArticleResponse
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstoreType
 import kr.co.bookand.backend.bookstore.domain.KotlinReportBookstore
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.BookStoreAddressResponse
 import kr.co.bookand.backend.common.KotlinPageResponse
-import kr.co.bookand.backend.common.domain.Status
+import kr.co.bookand.backend.common.KotlinStatus
 import org.springframework.data.domain.Page
 import java.time.LocalDateTime
 
@@ -50,7 +49,7 @@ data class KotlinBookstoreResponse(
     val mainImage: String,
     val themeList: MutableList<KotlinBookstoreType>,
     val subImage: List<KotlinBookstoreImageResponse>,
-    val status: Status,
+    val status: KotlinStatus,
     val view: Int,
     val isBookmark: Boolean,
     val createdDate: String,
@@ -102,7 +101,7 @@ data class KotlinWebBookstoreResponse(
     val longitude: String,
     val introduction: String,
     val mainImage: String,
-    val status: Status,
+    val status: KotlinStatus,
     val themeList: List<String>,
     val subImageList: List<String>
 ) {

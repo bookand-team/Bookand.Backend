@@ -1,12 +1,11 @@
 package kr.co.bookand.backend.notice.domain
 
 
-import kr.co.bookand.backend.common.domain.DeviceOSFilter
+import kr.co.bookand.backend.common.KotlinDeviceOSFilter
+import kr.co.bookand.backend.common.KotlinMemberIdFilter
+import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.common.domain.KotlinBaseEntity
-import kr.co.bookand.backend.common.domain.MemberIdFilter
-import kr.co.bookand.backend.common.domain.Status
 import kr.co.bookand.backend.notice.domain.dto.CreateNoticeRequest
-import kr.co.bookand.backend.notice.domain.dto.NoticeDto
 import kr.co.bookand.backend.notice.domain.dto.UpdateNoticeRequest
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
@@ -23,16 +22,16 @@ class KotlinNotice(
     var content: String,
     var image: String,
     @Enumerated(EnumType.STRING)
-    var status: Status,
+    var status: KotlinStatus,
 
     @Enumerated(EnumType.STRING)
     var noticeType: NoticeType,
 
     @Enumerated(EnumType.STRING)
-    var deviceOSFilter: DeviceOSFilter,
+    var deviceOSFilter: KotlinDeviceOSFilter,
 
     @Enumerated(EnumType.STRING)
-    var memberIdFilter: MemberIdFilter,
+    var memberIdFilter: KotlinMemberIdFilter,
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     var displayAt: LocalDateTime? = null
@@ -43,10 +42,10 @@ class KotlinNotice(
         title = createNoticeRequest.title,
         content = createNoticeRequest.content,
         image = createNoticeRequest.image,
-        status = Status.INVISIBLE,
+        status = KotlinStatus.INVISIBLE,
         noticeType = NoticeType.valueOf(createNoticeRequest.noticeType),
-        deviceOSFilter = DeviceOSFilter.ALL,
-        memberIdFilter = MemberIdFilter.ALL
+        deviceOSFilter = KotlinDeviceOSFilter.ALL,
+        memberIdFilter = KotlinMemberIdFilter.ALL
     )
 
     fun updateNoticeData(updateNoticeRequest: UpdateNoticeRequest) {
@@ -54,11 +53,11 @@ class KotlinNotice(
         this.content = updateNoticeRequest.content
         this.image = updateNoticeRequest.image
         this.noticeType = NoticeType.valueOf(updateNoticeRequest.noticeType)
-        this.deviceOSFilter = DeviceOSFilter.valueOf(updateNoticeRequest.targetType)
-        this.memberIdFilter = MemberIdFilter.valueOf(updateNoticeRequest.targetNum)
+        this.deviceOSFilter = KotlinDeviceOSFilter.valueOf(updateNoticeRequest.targetType)
+        this.memberIdFilter = KotlinMemberIdFilter.valueOf(updateNoticeRequest.targetNum)
     }
 
-    fun updateNoticeStatus(status: Status) {
+    fun updateNoticeStatus(status: KotlinStatus) {
         this.status = status
     }
 }

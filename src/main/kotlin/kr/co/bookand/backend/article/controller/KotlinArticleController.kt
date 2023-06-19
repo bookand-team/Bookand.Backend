@@ -87,7 +87,7 @@ class KotlinArticleController(
         ),
         ApiImplicitParam(
             name = "status",
-            value = "상태, INVISIBLE, VISIBLE, REMOVE;",
+            value = "상태, INVISIBLE, VISIBLE, REMOVE",
             required = false,
             dataType = "string",
             paramType = "query"

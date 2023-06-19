@@ -1,10 +1,10 @@
 package kr.co.bookand.backend.article.domain
 
 import kr.co.bookand.backend.article.domain.dto.KotlinArticleRequest
-import kr.co.bookand.backend.common.domain.DeviceOSFilter
+import kr.co.bookand.backend.common.KotlinDeviceOSFilter
+import kr.co.bookand.backend.common.KotlinMemberIdFilter
+import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.common.domain.KotlinBaseEntity
-import kr.co.bookand.backend.common.domain.MemberIdFilter
-import kr.co.bookand.backend.common.domain.Status
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -27,11 +27,11 @@ class KotlinArticle(
     var displayedAt: LocalDateTime? = null,
 
     @Enumerated(EnumType.STRING)
-    var status: Status,
+    var status: KotlinStatus,
     @Enumerated(EnumType.STRING)
-    var deviceOSFilter: DeviceOSFilter,
+    var deviceOSFilter: KotlinDeviceOSFilter,
     @Enumerated(EnumType.STRING)
-    val memberIdFilter: MemberIdFilter,
+    val memberIdFilter: KotlinMemberIdFilter,
 
     @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
     var articleTagList: MutableList<KotlinArticleTag> = mutableListOf(),
@@ -50,9 +50,9 @@ class KotlinArticle(
         viewCount = 0,
         displayedAt = null,
         category = KotlinArticleCategory.valueOf(kotlinArticleRequest.category),
-        status = Status.VISIBLE,
-        deviceOSFilter = DeviceOSFilter.ALL,
-        memberIdFilter = MemberIdFilter.ALL
+        status = KotlinStatus.VISIBLE,
+        deviceOSFilter = KotlinDeviceOSFilter.ALL,
+        memberIdFilter = KotlinMemberIdFilter.ALL
     )
     fun updateIntroducedBookstore(kotlinIntroducedBookstore: KotlinIntroducedBookstore) {
         introducedBookstoreList.add(kotlinIntroducedBookstore)
@@ -61,7 +61,7 @@ class KotlinArticle(
     fun updateArticleTag(articleTag: KotlinArticleTag) {
         articleTagList.add(articleTag)
     }
-    fun updateArticleStatus(status: Status) {
+    fun updateArticleStatus(status: KotlinStatus) {
         this.status = status
     }
 

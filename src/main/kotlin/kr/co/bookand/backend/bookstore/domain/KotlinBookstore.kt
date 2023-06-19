@@ -2,8 +2,8 @@ package kr.co.bookand.backend.bookstore.domain
 
 import kr.co.bookand.backend.article.domain.KotlinIntroducedBookstore
 import kr.co.bookand.backend.bookstore.domain.dto.KotlinBookstoreRequest
+import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.common.domain.KotlinBaseEntity
-import kr.co.bookand.backend.common.domain.Status
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -26,7 +26,7 @@ class KotlinBookstore(
     var introduction: String,
     var mainImage: String,
     @Enumerated(EnumType.STRING)
-    var status: Status,
+    var status: KotlinStatus,
     var view: Int,
     var bookmark: Int,
     var displayedAt: LocalDateTime?,
@@ -40,7 +40,7 @@ class KotlinBookstore(
     @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
     var introducedBookstoreList: MutableList<KotlinIntroducedBookstore> = mutableListOf(),
 
-) : KotlinBaseEntity() {
+    ) : KotlinBaseEntity() {
     constructor(kotlinBookstoreRequest : KotlinBookstoreRequest) : this(
         name = kotlinBookstoreRequest.name,
         address = kotlinBookstoreRequest.address,
@@ -52,13 +52,13 @@ class KotlinBookstore(
         longitude = kotlinBookstoreRequest.longitude,
         introduction = kotlinBookstoreRequest.introduction,
         mainImage = kotlinBookstoreRequest.mainImage,
-        status = Status.VISIBLE,
+        status = KotlinStatus.VISIBLE,
         view = 0,
         bookmark = 0,
         displayedAt = null
     )
 
-    fun updateBookStoreStatus(status: Status) {
+    fun updateBookStoreStatus(status: KotlinStatus) {
         this.status = status
     }
     fun updateDisplayedAt(displayedAt: LocalDateTime) {

@@ -17,7 +17,7 @@ import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreThemeRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinReportBookstoreRepository
 import kr.co.bookand.backend.bookstore.service.KotlinBookstoreService
-import kr.co.bookand.backend.common.domain.Status
+import kr.co.bookand.backend.common.KotlinStatus
 import java.time.LocalDateTime
 import java.util.*
 
@@ -83,7 +83,7 @@ class BookstoreServiceTest : BehaviorSpec({
             "longitude",
             "introduction",
             "mainImage",
-            Status.VISIBLE,
+            KotlinStatus.VISIBLE,
             0,
             0,
             LocalDateTime.now()
@@ -101,7 +101,7 @@ class BookstoreServiceTest : BehaviorSpec({
             "longitude2",
             "introduction2",
             "mainImage2",
-            Status.VISIBLE,
+            KotlinStatus.VISIBLE,
             0,
             0,
             LocalDateTime.now()
@@ -119,7 +119,7 @@ class BookstoreServiceTest : BehaviorSpec({
             "longitude",
             "introduction",
             "mainImage",
-            Status.VISIBLE,
+            KotlinStatus.VISIBLE,
             0,
             0,
             LocalDateTime.now()
@@ -137,7 +137,7 @@ class BookstoreServiceTest : BehaviorSpec({
             "longitude",
             "introduction",
             "mainImage",
-            Status.VISIBLE,
+            KotlinStatus.VISIBLE,
             0,
             0,
             LocalDateTime.now()
@@ -240,7 +240,7 @@ class BookstoreServiceTest : BehaviorSpec({
             "longitude",
             "introduction",
             "mainImage",
-            Status.VISIBLE,
+            KotlinStatus.VISIBLE,
             0,
             0,
             LocalDateTime.now(),
@@ -319,7 +319,7 @@ class BookstoreServiceTest : BehaviorSpec({
                     longitude = bookstoreRequest.longitude,
                     introduction = bookstoreRequest.introduction,
                     mainImage = bookstoreRequest.mainImage,
-                    status = Status.VISIBLE,
+                    status = KotlinStatus.VISIBLE,
                     themeList = bookstoreRequest.themeList,
                     subImageList = bookstoreRequest.subImageList
                 )
@@ -380,10 +380,10 @@ class BookstoreServiceTest : BehaviorSpec({
             bookstoreService.updateBookstoreStatus(bookstoreId)
 
             Then("it should update bookstore status") {
-                if (beforeBookstoreStatus == Status.VISIBLE) {
-                    bookstore.status shouldBe Status.INVISIBLE
+                if (beforeBookstoreStatus == KotlinStatus.VISIBLE) {
+                    bookstore.status shouldBe KotlinStatus.INVISIBLE
                 } else {
-                    bookstore.status shouldBe Status.VISIBLE
+                    bookstore.status shouldBe KotlinStatus.VISIBLE
                 }
             }
         }

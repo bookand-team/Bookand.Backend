@@ -1,7 +1,6 @@
 package kr.co.bookand.backend.article.service
 
 import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.article.domain.KotlinArticle
 import kr.co.bookand.backend.article.domain.KotlinArticleTag
 import kr.co.bookand.backend.article.domain.KotlinIntroducedBookstore
@@ -15,8 +14,8 @@ import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import kr.co.bookand.backend.bookstore.domain.dto.KotlinBookstoreSimpleResponse
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
 import kr.co.bookand.backend.common.KotlinErrorCode
+import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.common.domain.KotlinMessageResponse
-import kr.co.bookand.backend.common.domain.Status
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -74,13 +73,13 @@ class KotlinArticleService(
         var nextCursorId = cursorId ?: 0L
 
         if (cursorId != null && cursorId == 0L) {
-            val firstArticle = kotlinArticleRepository.findFirstByStatusOrderByCreatedAtDesc(Status.VISIBLE)
+            val firstArticle = kotlinArticleRepository.findFirstByStatusOrderByCreatedAtDesc(KotlinStatus.VISIBLE)
                 ?: throw RuntimeException(KotlinErrorCode.NOT_FOUND_ARTICLE.errorMessage)
             nextCursorId = firstArticle.id
         }
         val date: String? = if (cursorId == null) null else getArticle(nextCursorId).createdAt.toString()
         val articlePageResponse: Page<KotlinArticleResponse> = kotlinArticleRepository
-            .findAllByStatus(Status.VISIBLE, pageable, nextCursorId, date)
+            .findAllByStatus(KotlinStatus.VISIBLE, pageable, nextCursorId, date)
             .map { article ->
                 KotlinArticleResponse(
                     id = article.id,
@@ -103,7 +102,7 @@ class KotlinArticleService(
                 )
             }
 
-        val totalElements = kotlinArticleRepository.countAllByStatus(Status.VISIBLE)
+        val totalElements = kotlinArticleRepository.countAllByStatus(KotlinStatus.VISIBLE)
         return KotlinArticlePageResponse.of(articlePageResponse, totalElements)
     }
 
@@ -202,8 +201,8 @@ class KotlinArticleService(
     fun updateArticleStatus(articleId: Long): KotlinMessageResponse {
         val article = getArticle(articleId)
         val status = article.status
-        if (status == Status.VISIBLE) article.updateArticleStatus(Status.INVISIBLE)
-        else article.updateArticleStatus(Status.VISIBLE)
+        if (status == KotlinStatus.VISIBLE) article.updateArticleStatus(KotlinStatus.INVISIBLE)
+        else article.updateArticleStatus(KotlinStatus.VISIBLE)
         return KotlinMessageResponse(message = "SUCCESS", statusCode = 200)
     }
 

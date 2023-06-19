@@ -10,12 +10,10 @@ import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.common.KotlinDeviceOSFilter
 import kr.co.bookand.backend.common.KotlinMemberIdFilter
 import kr.co.bookand.backend.common.KotlinStatus
-import kr.co.bookand.backend.common.domain.DeviceOSFilter
-import kr.co.bookand.backend.common.domain.MemberIdFilter
 import kr.co.bookand.backend.notice.domain.KotlinNotice
-import kr.co.bookand.backend.notice.domain.NoticeType
-import kr.co.bookand.backend.notice.domain.dto.CreateNoticeRequest
-import kr.co.bookand.backend.notice.domain.dto.UpdateNoticeRequest
+import kr.co.bookand.backend.notice.domain.dto.KotlinCreateNoticeRequest
+import kr.co.bookand.backend.notice.domain.dto.KotlinNoticeType
+import kr.co.bookand.backend.notice.domain.dto.KotlinUpdateNoticeRequest
 import kr.co.bookand.backend.notice.repository.KotlinNoticeRepository
 import kr.co.bookand.backend.notice.service.KotlinNoticeService
 import java.time.LocalDateTime
@@ -32,6 +30,20 @@ class NoticeServiceTest : BehaviorSpec({
 
     Given("notice service") {
 
+        val account = KotlinAccount(
+            1L,
+            "email",
+            "password",
+            "name",
+            "provider",
+            "providerEmail",
+            "profileImage",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            KotlinRole.USER,
+            KotlinAccountStatus.NORMAL
+        )
+
         val adminAccount = KotlinAccount(
             2L,
             "admin@email.com",
@@ -46,7 +58,7 @@ class NoticeServiceTest : BehaviorSpec({
             KotlinAccountStatus.NORMAL
         )
 
-        val createNoticeRequest = CreateNoticeRequest(
+        val createNoticeRequest = KotlinCreateNoticeRequest(
             title = "title",
             content = "content",
             image = "image",
@@ -61,12 +73,12 @@ class NoticeServiceTest : BehaviorSpec({
             "content",
             "image",
             KotlinStatus.INVISIBLE,
-            NoticeType.SERVICE,
+            KotlinNoticeType.SERVICE,
             KotlinDeviceOSFilter.ALL,
             KotlinMemberIdFilter.ALL
         )
 
-        val updateNoticeRequest = UpdateNoticeRequest(
+        val updateNoticeRequest = KotlinUpdateNoticeRequest(
             title = "title",
             content = "content",
             image = "image",
@@ -80,7 +92,7 @@ class NoticeServiceTest : BehaviorSpec({
             When("fail - not admin") {
                 every { accountService.checkAccountAdmin(any()) } throws Exception("관리자가 아닙니다.")
                 val exception = shouldThrow<Exception> {
-                    noticeService.createNotice(1L, createNoticeRequest)
+                    noticeService.createNotice(adminAccount, createNoticeRequest)
                 }
 
                 Then("throw exception") {
@@ -91,7 +103,7 @@ class NoticeServiceTest : BehaviorSpec({
             When("success") {
                 every { accountService.checkAccountAdmin(any()) } returns Unit
                 every { noticeRepository.save(any()) } returns notice
-                val noticeIdResponse = noticeService.createNotice(1L, createNoticeRequest)
+                val noticeIdResponse = noticeService.createNotice(adminAccount, createNoticeRequest)
 
                 Then("return notice id") {
                     noticeIdResponse.id shouldBe 1L
@@ -104,7 +116,7 @@ class NoticeServiceTest : BehaviorSpec({
                 When("fail - not admin") {
                     every { accountService.checkAccountAdmin(any()) } throws Exception("관리자가 아닙니다.")
                     val exception = shouldThrow<Exception> {
-                        noticeService.updateNotice(1L, 1L, updateNoticeRequest)
+                        noticeService.updateNotice(account, 1L, updateNoticeRequest)
                     }
 
                     Then("throw exception") {
@@ -115,7 +127,7 @@ class NoticeServiceTest : BehaviorSpec({
                 When("success") {
                     every { accountService.checkAccountAdmin(any()) } returns Unit
                     every { noticeRepository.findById(any()) } returns Optional.of(notice)
-                    val noticeIdResponse = noticeService.updateNotice(1L, 1L, updateNoticeRequest)
+                    val noticeIdResponse = noticeService.updateNotice(adminAccount, 1L, updateNoticeRequest)
 
                     Then("return notice id") {
                         noticeIdResponse.id shouldBe 1L
@@ -128,7 +140,7 @@ class NoticeServiceTest : BehaviorSpec({
                 When("fail - not admin") {
                     every { accountService.checkAccountAdmin(any()) } throws Exception("관리자가 아닙니다.")
                     val exception = shouldThrow<Exception> {
-                        noticeService.updateNoticeStatus(1L, 1L, KotlinStatus.VISIBLE)
+                        noticeService.updateNoticeStatus(account, 1L)
                     }
 
                     Then("throw exception") {
@@ -139,7 +151,7 @@ class NoticeServiceTest : BehaviorSpec({
                 When("success") {
                     every { accountService.checkAccountAdmin(any()) } returns Unit
                     every { noticeRepository.findById(any()) } returns Optional.of(notice)
-                    val noticeMessageResponse = noticeService.updateNoticeStatus(1L, 1L, KotlinStatus.VISIBLE)
+                    val noticeMessageResponse = noticeService.updateNoticeStatus(adminAccount, 1L)
 
                     Then("return notice id") {
                         noticeMessageResponse.message shouldBe "Update Status to Visible."
@@ -152,7 +164,7 @@ class NoticeServiceTest : BehaviorSpec({
             When("fail - not admin") {
                 every { accountService.checkAccountAdmin(any()) } throws Exception("관리자가 아닙니다.")
                 val exception = shouldThrow<Exception> {
-                    noticeService.deleteNotice(1L, 1L)
+                    noticeService.deleteNotice(account, 1L)
                 }
 
                 Then("throw exception") {
@@ -165,10 +177,10 @@ class NoticeServiceTest : BehaviorSpec({
                 every { noticeRepository.findById(any()) } returns Optional.of(notice)
                 every { noticeRepository.deleteById(any()) } returns Unit
 
-                val noticeMessageResponse = noticeService.deleteNotice(1L, 1L)
+                val noticeMessageResponse = noticeService.deleteNotice(adminAccount, 1L)
 
                 Then("return notice id") {
-                    noticeMessageResponse.id shouldBe 1L
+                    noticeMessageResponse.statusCode shouldBe 200
                 }
             }
 

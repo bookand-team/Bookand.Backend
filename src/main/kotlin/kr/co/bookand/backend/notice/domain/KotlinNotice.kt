@@ -5,8 +5,9 @@ import kr.co.bookand.backend.common.KotlinDeviceOSFilter
 import kr.co.bookand.backend.common.KotlinMemberIdFilter
 import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.common.domain.KotlinBaseEntity
-import kr.co.bookand.backend.notice.domain.dto.CreateNoticeRequest
-import kr.co.bookand.backend.notice.domain.dto.UpdateNoticeRequest
+import kr.co.bookand.backend.notice.domain.dto.KotlinCreateNoticeRequest
+import kr.co.bookand.backend.notice.domain.dto.KotlinNoticeType
+import kr.co.bookand.backend.notice.domain.dto.KotlinUpdateNoticeRequest
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -25,7 +26,7 @@ class KotlinNotice(
     var status: KotlinStatus,
 
     @Enumerated(EnumType.STRING)
-    var noticeType: NoticeType,
+    var noticeType: KotlinNoticeType,
 
     @Enumerated(EnumType.STRING)
     var deviceOSFilter: KotlinDeviceOSFilter,
@@ -38,21 +39,21 @@ class KotlinNotice(
 
 ) : KotlinBaseEntity() {
 
-    constructor(createNoticeRequest: CreateNoticeRequest) : this(
+    constructor(createNoticeRequest: KotlinCreateNoticeRequest) : this(
         title = createNoticeRequest.title,
         content = createNoticeRequest.content,
         image = createNoticeRequest.image,
         status = KotlinStatus.INVISIBLE,
-        noticeType = NoticeType.valueOf(createNoticeRequest.noticeType),
+        noticeType = KotlinNoticeType.valueOf(createNoticeRequest.noticeType),
         deviceOSFilter = KotlinDeviceOSFilter.ALL,
         memberIdFilter = KotlinMemberIdFilter.ALL
     )
 
-    fun updateNoticeData(updateNoticeRequest: UpdateNoticeRequest) {
+    fun updateNoticeData(updateNoticeRequest: KotlinUpdateNoticeRequest) {
         this.title = updateNoticeRequest.title
         this.content = updateNoticeRequest.content
         this.image = updateNoticeRequest.image
-        this.noticeType = NoticeType.valueOf(updateNoticeRequest.noticeType)
+        this.noticeType = KotlinNoticeType.valueOf(updateNoticeRequest.noticeType)
         this.deviceOSFilter = KotlinDeviceOSFilter.valueOf(updateNoticeRequest.targetType)
         this.memberIdFilter = KotlinMemberIdFilter.valueOf(updateNoticeRequest.targetNum)
     }

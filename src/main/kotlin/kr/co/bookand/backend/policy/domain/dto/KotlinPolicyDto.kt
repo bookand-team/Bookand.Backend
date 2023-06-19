@@ -22,3 +22,7 @@ data class KotlinPolicyResponse(
         content = kotlinPolicy.content
     )
 }
+
+data class KotlinPolicyIdResponse(
+    val id: Long
+)

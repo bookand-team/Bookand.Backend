@@ -1,9 +1,11 @@
 package kr.co.bookand.backend.policy.service
 
 
+import kr.co.bookand.backend.account.domain.KotlinAccount
 import kr.co.bookand.backend.common.exception.ErrorCode
 import kr.co.bookand.backend.policy.domain.KotlinPolicy
 import kr.co.bookand.backend.policy.domain.Policy
+import kr.co.bookand.backend.policy.domain.dto.KotlinPolicyIdResponse
 import kr.co.bookand.backend.policy.domain.dto.KotlinPolicyRequest
 import kr.co.bookand.backend.policy.domain.dto.KotlinPolicyResponse
 import kr.co.bookand.backend.policy.domain.dto.PolicyDto.PolicyResponse
@@ -23,8 +25,8 @@ class KotlinPolicyService(
     private val kotlinPolicyRepository: KotlinPolicyRepository
 ) {
     @Transactional
-    fun createPolicy(request: KotlinPolicyRequest): KotlinPolicyResponse {
-        // 어드민 권한 체크
+    fun createPolicy(currentAccount: KotlinAccount, request: KotlinPolicyRequest): KotlinPolicyIdResponse {
+        currentAccount.role.checkAdminAndManager()
         val policy = getPolicyByName(request.name)
         if (policy != null) {
             throw IllegalArgumentException("이미 존재하는 정책입니다.")
@@ -34,45 +36,44 @@ class KotlinPolicyService(
             name = request.name,
             content = request.content
         )
-        kotlinPolicyRepository.save(kotlinPolicy)
-        return KotlinPolicyResponse(kotlinPolicy)
+        val savePolicy = kotlinPolicyRepository.save(kotlinPolicy)
+        return KotlinPolicyIdResponse(savePolicy.id)
     }
 
     @Transactional
-    fun updatePolicy(id: Long, request: KotlinPolicyRequest) : KotlinPolicyResponse {
-        // 어드민 권한 체크
+    fun updatePolicy(
+        currentAccount: KotlinAccount,
+        id: Long,
+        request: KotlinPolicyRequest
+    ): KotlinPolicyIdResponse {
+        currentAccount.role.checkAdminAndManager()
         val policy = getPolicyByIdOrThrow(id)
         policy.updateContent(request.content)
-        return KotlinPolicyResponse(policy)
+        return KotlinPolicyIdResponse(policy.id)
     }
 
     fun getTitlePolicy(name: String): KotlinPolicyResponse {
         val kotlinPolicy = getPolicyByNameOrThrow(name)
-        return KotlinPolicyResponse(
-            policyId = kotlinPolicy.id,
-            title = kotlinPolicy.title,
-            name = kotlinPolicy.name,
-            content = kotlinPolicy.content
-        )
+        return KotlinPolicyResponse(kotlinPolicy)
     }
 
-    fun removePolicy(id: Long) {
-        // 어드민 권한 체크
+    fun removePolicy(currentAccount: KotlinAccount, id: Long) {
+        currentAccount.role.checkAdminAndManager()
         val policy = getPolicyByIdOrThrow(id)
         kotlinPolicyRepository.delete(policy)
     }
 
-    private fun getPolicyByIdOrThrow(id: Long) : KotlinPolicy {
+    private fun getPolicyByIdOrThrow(id: Long): KotlinPolicy {
         return kotlinPolicyRepository.findById(id).orElse(null)
             ?: throw IllegalArgumentException("존재하지 않는 정책입니다.")
     }
 
-    private fun getPolicyByNameOrThrow(name: String) : KotlinPolicy {
+    private fun getPolicyByNameOrThrow(name: String): KotlinPolicy {
         return kotlinPolicyRepository.findByName(name)
             ?: throw IllegalArgumentException("존재하지 않는 정책입니다.")
     }
 
-    private fun getPolicyByName(name: String) : KotlinPolicy? {
+    private fun getPolicyByName(name: String): KotlinPolicy? {
         return kotlinPolicyRepository.findByName(name)
     }
 }

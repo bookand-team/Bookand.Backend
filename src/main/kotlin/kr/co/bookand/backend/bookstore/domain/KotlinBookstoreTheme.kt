@@ -14,9 +14,9 @@ class KotlinBookstoreTheme(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kbookstore_id")
-    private var bookStore: KotlinBookstore? = null
+    var bookstore: KotlinBookstore? = null
 ) {
-    fun updateBookStore(bookStore: KotlinBookstore) {
-        this.bookStore = bookStore
+    fun updateBookStore(bookstore: KotlinBookstore) {
+        this.bookstore = bookstore
     }
 }

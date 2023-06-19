@@ -73,7 +73,7 @@ data class KotlinBookstoreResponse(
         mainImage = kotlinBookstore.mainImage,
         themeList = kotlinBookstore.themeList.map { it.theme }.toMutableList(),
         subImage = kotlinBookstore.imageList.map {
-            KotlinBookstoreImageResponse(it.id, it.url, it.bookStore?.name)
+            KotlinBookstoreImageResponse(it.id, it.url, it.bookstore?.name)
         },
         status = kotlinBookstore.status,
         view = kotlinBookstore.view,

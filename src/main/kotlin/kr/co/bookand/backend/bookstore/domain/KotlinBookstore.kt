@@ -31,10 +31,10 @@ class KotlinBookstore(
     var bookmark: Int,
     var displayedAt: LocalDateTime?,
 
-    @OneToMany(mappedBy = "bookStore", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "bookstore", cascade = [CascadeType.ALL], orphanRemoval = true)
     var themeList: MutableList<KotlinBookstoreTheme> = mutableListOf(),
 
-    @OneToMany(mappedBy = "bookStore", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "bookstore", cascade = [CascadeType.ALL], orphanRemoval = true)
     var imageList: MutableList<KotlinBookstoreImage> = mutableListOf(),
 
     @OneToMany(mappedBy = "article", cascade = [CascadeType.ALL], orphanRemoval = true)
@@ -58,34 +58,42 @@ class KotlinBookstore(
         displayedAt = null
     )
 
-    fun updateBookStoreStatus(status: KotlinStatus) {
+    fun updateBookstoreStatus(status: KotlinStatus) {
         this.status = status
     }
     fun updateDisplayedAt(displayedAt: LocalDateTime) {
         this.displayedAt = displayedAt
     }
 
-    fun updateBookStoreTheme(theme: KotlinBookstoreTheme) {
+    fun updateBookstoreTheme(theme: KotlinBookstoreTheme) {
         themeList.add(theme)
     }
 
-    fun updateBookStoreImage(image: KotlinBookstoreImage) {
+    fun updateBookstoreThemeList(themeList: MutableList<KotlinBookstoreTheme>) {
+        this.themeList = themeList
+    }
+
+    fun updateBookstoreImage(image: KotlinBookstoreImage) {
         imageList.add(image)
+    }
+
+    fun updateBookstoreImageList(imageList: MutableList<KotlinBookstoreImage>) {
+        this.imageList = imageList
     }
 
     fun updateIntroducedBookstore(kotlinIntroducedBookstore: KotlinIntroducedBookstore) {
         introducedBookstoreList.add(kotlinIntroducedBookstore)
     }
 
-    fun updateBookStoreData(bookStoreRequest: KotlinBookstoreRequest) {
-        name = bookStoreRequest.name
-        address = bookStoreRequest.address
-        businessHours = bookStoreRequest.businessHours
-        contact = bookStoreRequest.contact
-        facility = bookStoreRequest.facility
-        sns = bookStoreRequest.sns
-        introduction = bookStoreRequest.introduction
-        mainImage = bookStoreRequest.mainImage
+    fun updateBookstoreData(bookstoreRequest: KotlinBookstoreRequest) {
+        name = bookstoreRequest.name
+        address = bookstoreRequest.address
+        businessHours = bookstoreRequest.businessHours
+        contact = bookstoreRequest.contact
+        facility = bookstoreRequest.facility
+        sns = bookstoreRequest.sns
+        introduction = bookstoreRequest.introduction
+        mainImage = bookstoreRequest.mainImage
     }
 
     fun removeIntroducedBookstore(kotlinIntroducedBookstore: KotlinIntroducedBookstore) {

@@ -5,7 +5,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
-open class WebConfig : WebMvcConfigurer {
+class WebConfig : WebMvcConfigurer {
     companion object {
         private const val ALLOWED_METHOD_NAMES = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,PATCH"
         private const val ALLOWED_HEADER_NAMES = "Origin, X-Requested-With, Content-Type, Accept, Authorization"

@@ -76,17 +76,17 @@ class KotlinBookstoreService(
         kotlinBookstoreRequest.subImageList.forEach { image ->
             val bookStoreImage = KotlinBookstoreImage(url = image)
             kotlinBookstoreImageRepository.save(bookStoreImage)
-            bookstore.updateBookStoreImage(bookStoreImage)
+            bookstore.updateBookstoreImage(bookStoreImage)
         }
         val themeList = bookstore.themeList
         kotlinBookstoreThemeRepository.deleteAll(themeList)
         kotlinBookstoreRequest.themeList.forEach { theme ->
             val bookStoreTheme = KotlinBookstoreTheme(theme = KotlinBookstoreType.valueOf(theme))
             kotlinBookstoreThemeRepository.save(bookStoreTheme)
-            bookstore.updateBookStoreTheme(bookStoreTheme)
+            bookstore.updateBookstoreTheme(bookStoreTheme)
         }
         duplicateBookStoreName(kotlinBookstoreRequest.name)
-        bookstore.updateBookStoreData(kotlinBookstoreRequest)
+        bookstore.updateBookstoreData(kotlinBookstoreRequest)
 
         return KotlinWebBookstoreResponse(bookstore)
     }
@@ -113,8 +113,8 @@ class KotlinBookstoreService(
     fun updateBookstoreStatus(bookstoreId: Long): KotlinMessageResponse {
         val bookstore = getBookstore(bookstoreId)
         val status = bookstore.status
-        if (status == KotlinStatus.VISIBLE) bookstore.updateBookStoreStatus(KotlinStatus.INVISIBLE)
-        else bookstore.updateBookStoreStatus(KotlinStatus.VISIBLE)
+        if (status == KotlinStatus.VISIBLE) bookstore.updateBookstoreStatus(KotlinStatus.INVISIBLE)
+        else bookstore.updateBookstoreStatus(KotlinStatus.VISIBLE)
         return KotlinMessageResponse(message = "SUCCESS", statusCode = 200)
     }
 

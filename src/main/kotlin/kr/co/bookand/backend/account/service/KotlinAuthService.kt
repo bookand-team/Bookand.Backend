@@ -205,6 +205,7 @@ class KotlinAuthService(
         return getBookmarks(saveAccount, INIT_BOOKMARK_FOLDER_NAME, kotlinBookmarkRepository)
     }
 
+    @Transactional
     fun getBookmarks(
         saveAccount: KotlinAccount,
         initBookmarkFolderName: String,

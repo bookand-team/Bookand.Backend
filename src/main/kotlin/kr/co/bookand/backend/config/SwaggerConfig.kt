@@ -19,9 +19,9 @@ import springfox.documentation.spi.service.contexts.SecurityContext
 import springfox.documentation.spring.web.plugins.Docket
 
 @Configuration
-open class SwaggerConfig(private val typeResolver: TypeResolver) {
+class SwaggerConfig(private val typeResolver: TypeResolver) {
     @Bean
-    open fun api(): Docket {
+    fun api(): Docket {
         return Docket(DocumentationType.SWAGGER_2)
             .host("dev.bookand.co.kr")
             .consumes(getConsumeContentTypes())

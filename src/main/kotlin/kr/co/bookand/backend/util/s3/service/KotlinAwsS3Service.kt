@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.amazonaws.services.s3.model.DeleteObjectRequest
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
-import kr.co.bookand.backend.util.s3.S3SaveDir
+import kr.co.bookand.backend.util.s3.KotlinS3SaveDir
 import kr.co.bookand.backend.util.s3.dto.FileDto
 import kr.co.bookand.backend.util.s3.dto.FileListDto
 import kr.co.bookand.backend.util.s3.dto.UpdateFileRequest
@@ -21,7 +21,6 @@ import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.text.MessageFormat
 import java.util.*
-import java.util.function.Function
 
 @Slf4j
 @Component
@@ -85,12 +84,12 @@ class KotlinAwsS3Service(
         return MessageFormat.format("{0}_{1}_{2}", owner, UUID.randomUUID(), fileExtension)
     }
 
-    private fun getS3SaveDir(type: String): S3SaveDir {
+    private fun getS3SaveDir(type: String): KotlinS3SaveDir {
         return when (type) {
-            "profile" -> S3SaveDir.ACCOUNT_PROFILE
-            "article" -> S3SaveDir.ARTICLE
-            "reportLog" -> S3SaveDir.REPORT_LOG
-            else -> S3SaveDir.ARTICLE
+            "profile" -> KotlinS3SaveDir.ACCOUNT_PROFILE
+            "article" -> KotlinS3SaveDir.ARTICLE
+            "reportLog" -> KotlinS3SaveDir.REPORT_LOG
+            else -> KotlinS3SaveDir.ARTICLE
         }
     }
 

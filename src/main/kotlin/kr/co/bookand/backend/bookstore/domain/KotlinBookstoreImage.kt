@@ -13,9 +13,9 @@ class KotlinBookstoreImage(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kbookstore_id")
-    var bookStore: KotlinBookstore? = null
+    var bookstore: KotlinBookstore? = null
 ) {
     fun updateBookStore(bookStore: KotlinBookstore) {
-        this.bookStore = bookStore
+        this.bookstore = bookStore
     }
 }

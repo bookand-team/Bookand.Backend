@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.filter.ShallowEtagHeaderFilter
 
 @Configuration
-open class ETagHeaderFilter {
+class ETagHeaderFilter {
     @Bean
-    open fun shallowEtagHeaderFilter(): FilterRegistrationBean<ShallowEtagHeaderFilter> {
+    fun shallowEtagHeaderFilter(): FilterRegistrationBean<ShallowEtagHeaderFilter> {
         val filterRegistrationBean = FilterRegistrationBean<ShallowEtagHeaderFilter>()
         filterRegistrationBean.filter = ShallowEtagHeaderFilter()
         filterRegistrationBean.addUrlPatterns("/api/v1/bookstores/address")

@@ -61,6 +61,11 @@ class KotlinArticle(
     fun updateArticleTag(articleTag: KotlinArticleTag) {
         articleTagList.add(articleTag)
     }
+
+    fun updateArticleTagList(articleTagList: MutableList<KotlinArticleTag>) {
+        this.articleTagList = articleTagList
+    }
+
     fun updateArticleStatus(status: KotlinStatus) {
         this.status = status
     }

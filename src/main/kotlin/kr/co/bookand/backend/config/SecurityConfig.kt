@@ -20,7 +20,7 @@ import org.springframework.web.filter.CorsFilter
 
 @EnableWebSecurity
 @Configuration
-open class SecurityConfig(
+class SecurityConfig(
     private val jwtProvider: JwtProvider,
     private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
     private val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
@@ -28,7 +28,7 @@ open class SecurityConfig(
 ) : WebSecurityConfigurerAdapter() {
 
     @Bean
-    open fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     override fun configure(http: HttpSecurity) {
         http.httpBasic().disable()
@@ -62,7 +62,7 @@ open class SecurityConfig(
     }
 
     @Bean
-    open fun corsConfigurationSource(): CorsConfigurationSource {
+    fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
         configuration.allowCredentials = true
         configuration.allowedOrigins = listOf(

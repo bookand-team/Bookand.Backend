@@ -5,15 +5,15 @@ enum class KotlinBookstoreType {
     TRAVEL, MUSIC, PICTURE, PET, MOVIE, DETECTIVE, HISTORY, NONE;
 
     companion object {
-        fun randomEnum(): List<BookStoreType> {
+        fun randomEnum(): List<KotlinBookstoreType> {
             // 중복되지 않게 랜덤 출력
             val hashSet = HashSet<Int>()
-            val bookStoreTypes: MutableList<BookStoreType> = ArrayList()
+            val bookStoreTypes: MutableList<KotlinBookstoreType> = ArrayList()
             while (hashSet.size < 3) {
                 hashSet.add((Math.random() * 7).toInt())
             }
             for (luckyNum in hashSet) {
-                bookStoreTypes.add(BookStoreType.values()[luckyNum])
+                bookStoreTypes.add(KotlinBookstoreType.values()[luckyNum])
             }
             return bookStoreTypes
         }

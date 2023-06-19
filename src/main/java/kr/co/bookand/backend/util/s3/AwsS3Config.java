@@ -1,3 +1,4 @@
+/*
 package kr.co.bookand.backend.util.s3;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -25,4 +26,4 @@ public class AwsS3Config {
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .build();
     }
-}
+}*/

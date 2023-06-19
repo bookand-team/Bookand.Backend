@@ -1,4 +1,3 @@
-/*
 package kr.co.bookand.backend.util.s3.config
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
@@ -10,7 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class KotlinAwsS3Config {
+class KotlinAwsS3Config {
     @Value("\${cloud.aws.credentials.access-key}")
     private lateinit var accessKey: String
 
@@ -21,11 +20,11 @@ open class KotlinAwsS3Config {
     private lateinit var region: String
 
     @Bean
-    open fun amazonS3Client(): AmazonS3Client? {
+    fun amazonS3Client(): AmazonS3Client? {
         val awsCredentials = BasicAWSCredentials(accessKey, secretKey)
         return AmazonS3ClientBuilder.standard()
             .withRegion(region)
             .withCredentials(AWSStaticCredentialsProvider(awsCredentials))
             .build() as AmazonS3Client
     }
-}*/
+}

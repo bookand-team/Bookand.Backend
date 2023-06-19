@@ -202,12 +202,12 @@ class BookstoreServiceTest : BehaviorSpec({
         )
 
         val existingSubImages = listOf(
-            KotlinBookstoreImage(id = 1L, url = "old_image1.jpg", bookStore = bookstore),
-            KotlinBookstoreImage(id = 2L, url = "old_image2.jpg", bookStore = bookstore2)
+            KotlinBookstoreImage(id = 1L, url = "old_image1.jpg", bookstore = bookstore),
+            KotlinBookstoreImage(id = 2L, url = "old_image2.jpg", bookstore = bookstore2)
         )
         val existingThemes = listOf(
-            KotlinBookstoreTheme(id = 1L, theme = KotlinBookstoreType.TRAVEL, bookStore = bookstore),
-            KotlinBookstoreTheme(id = 2L, theme = KotlinBookstoreType.PICTURE, bookStore = bookstore2)
+            KotlinBookstoreTheme(id = 1L, theme = KotlinBookstoreType.TRAVEL, bookstore = bookstore),
+            KotlinBookstoreTheme(id = 2L, theme = KotlinBookstoreType.PICTURE, bookstore = bookstore2)
         )
 
         val bookstoreListRequest = KotlinBookstoreListRequest(

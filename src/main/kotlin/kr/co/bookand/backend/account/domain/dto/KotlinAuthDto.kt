@@ -1,11 +1,10 @@
 package kr.co.bookand.backend.account.domain.dto
 
 import io.swagger.annotations.ApiModelProperty
-import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.account.domain.KotlinSocialType
-import kr.co.bookand.backend.account.domain.SocialType
+import kr.co.bookand.backend.account.domain.*
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.crypto.password.PasswordEncoder
 
 data class KotlinAuthRequest(
     @ApiModelProperty(value = "소셜 액세스 토큰", example = "ya29.a0Aa4xrXNXkiDBMm7MtSneVejzvupPun8S8EHorgvrt-nlCNy83PA9TI")
@@ -53,7 +52,19 @@ data class KotlinMiddleAccount(
     val email: String,
     val providerEmail: String?,
     val socialType: KotlinSocialType
-)
+){
+    fun toAdminAccount(passwordEncoder: PasswordEncoder, adminPassword: CharSequence) : KotlinAccount{
+       return KotlinAccount(
+            email = email,
+            password = passwordEncoder.encode(adminPassword),
+            nickname = "admin",
+            provider = socialType.socialName,
+            providerEmail = "providerEmail",
+            role = KotlinRole.ADMIN,
+            accountStatus = KotlinAccountStatus.NORMAL
+        )
+    }
+}
 
 data class KotlinLoginRequest(
     @ApiModelProperty(value = "이메일", example = "bookand@example.com")

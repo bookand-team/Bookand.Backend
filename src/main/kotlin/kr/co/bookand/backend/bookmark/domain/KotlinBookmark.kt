@@ -16,7 +16,7 @@ class KotlinBookmark(
     var folderImage: String? = null,
 
     @Enumerated(EnumType.STRING)
-    var bookmarkType: BookmarkType,
+    var bookmarkType: KotlinBookmarkType,
 
     @ManyToOne(fetch = FetchType.LAZY)
     var account: KotlinAccount? = null,
@@ -31,7 +31,7 @@ class KotlinBookmark(
 
     constructor(account: KotlinAccount, kotlinBookmarkFolderRequest: KotlinBookmarkFolderRequest) : this(
         folderName = kotlinBookmarkFolderRequest.folderName,
-        bookmarkType = BookmarkType.valueOf(kotlinBookmarkFolderRequest.bookmarkType),
+        bookmarkType = KotlinBookmarkType.valueOf(kotlinBookmarkFolderRequest.bookmarkType),
         account = account
     )
 

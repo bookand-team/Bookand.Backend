@@ -6,6 +6,7 @@ import kr.co.bookand.backend.article.domain.ArticleCategory
 import kr.co.bookand.backend.article.domain.KotlinArticleCategory
 import kr.co.bookand.backend.article.repository.KotlinArticleRepository
 import kr.co.bookand.backend.bookmark.domain.BookmarkType
+import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkType
 import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
 import kr.co.bookand.backend.bookstore.repository.KotlinReportBookstoreRepository
@@ -75,10 +76,10 @@ class KotlinDashBoardService(
             bookstoreRepository.countAllByVisibility(true),  // api 등록 서점 수
             bookstoreRepository.countAllByVisibilityAndStatus(true, Status.VISIBLE),
             bookmarkRepository.countAllByVisibility(true),
-            bookmarkRepository.countAllByVisibilityAndBookmarkType(true, BookmarkType.BOOKSTORE),
-            bookmarkRepository.countAllByVisibilityAndBookmarkType(true, BookmarkType.BOOKSTORE) / totalAccountNum,
-            bookmarkRepository.countAllByVisibilityAndBookmarkType(true, BookmarkType.ARTICLE),
-            bookmarkRepository.countAllByVisibilityAndBookmarkType(true, BookmarkType.ARTICLE) / totalAccountNum,
+            bookmarkRepository.countAllByVisibilityAndBookmarkType(true, KotlinBookmarkType.BOOKSTORE),
+            bookmarkRepository.countAllByVisibilityAndBookmarkType(true, KotlinBookmarkType.BOOKSTORE) / totalAccountNum,
+            bookmarkRepository.countAllByVisibilityAndBookmarkType(true, KotlinBookmarkType.ARTICLE),
+            bookmarkRepository.countAllByVisibilityAndBookmarkType(true, KotlinBookmarkType.ARTICLE) / totalAccountNum,
 
             //TODO 유저 디바이스 정보
             totalAccountNum,

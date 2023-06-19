@@ -15,8 +15,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/bookmarks")
-@Api(tags = ["북마크 API"])
+@RequestMapping("/api/v3/bookstore")
+@Api(tags = ["서점 API"])
 class KotlinBookstoreController(
     private val bookstoreService: KotlinBookstoreService,
     private val accountService: KotlinAccountService

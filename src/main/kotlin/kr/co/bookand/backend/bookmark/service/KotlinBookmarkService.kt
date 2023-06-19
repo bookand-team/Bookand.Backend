@@ -1,25 +1,25 @@
 package kr.co.bookand.backend.bookmark.service
 
+import kr.co.bookand.backend.account.domain.KotlinAccount
 import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.article.domain.KotlinArticle
 import kr.co.bookand.backend.article.repository.KotlinArticleRepository
 import kr.co.bookand.backend.bookmark.domain.*
-import kr.co.bookand.backend.bookmark.domain.dto.KotlinBookmarkContentListRequest
-import kr.co.bookand.backend.bookmark.domain.dto.KotlinBookmarkFolderRequest
-import kr.co.bookand.backend.bookmark.domain.dto.KotlinBookmarkIdResponse
+import kr.co.bookand.backend.bookmark.domain.dto.*
 import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkRepository
 import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkedArticleRepository
 import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkedBookstoreRepository
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
-import lombok.RequiredArgsConstructor
+import kr.co.bookand.backend.common.KotlinErrorCode
+import kr.co.bookand.backend.common.KotlinPageResponse
+import kr.co.bookand.backend.common.domain.KotlinMessageResponse
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
-
 class KotlinBookmarkService(
     private val kotlinBookmarkRepository: KotlinBookmarkRepository,
     private val kotlinBookmarkedArticleRepository: KotlinBookmarkedArticleRepository,
@@ -29,73 +29,150 @@ class KotlinBookmarkService(
     private val kotlinArticleRepository: KotlinArticleRepository
 ) {
     @Transactional
-    fun createBookmarkedArticle(accountId: Long, articleId: Long) {
-        val myBookmark = getMyInitBookmark(accountId, BookmarkType.ARTICLE)
+    fun createBookmarkedArticle(
+        currentAccount: KotlinAccount,
+        articleId: Long
+    ): KotlinMessageResponse {
+        val myBookmark = getMyInitBookmark(currentAccount.id, KotlinBookmarkType.ARTICLE)
         val article = getArticle(articleId)
-        checkBookmarkedArticle(myBookmark, article, accountId)
+        return checkBookmarkedArticle(myBookmark, article, currentAccount.id)
     }
 
     @Transactional
-    fun createBookmarkedBookstore(accountId: Long, bookstoreId: Long) {
-        val myBookmark = getMyInitBookmark(accountId, BookmarkType.BOOKSTORE)
+    fun createBookmarkedBookstore(
+        currentAccount: KotlinAccount,
+        bookstoreId: Long
+    ): KotlinMessageResponse {
+        val myBookmark = getMyInitBookmark(currentAccount.id, KotlinBookmarkType.BOOKSTORE)
         val bookstore = getBookstore(bookstoreId)
-        checkBookmarkedBookstore(myBookmark, bookstore, accountId)
+        return checkBookmarkedBookstore(myBookmark, bookstore, currentAccount.id)
     }
 
     @Transactional
     fun createBookmarkFolder(
-        accountId: Long,
+        currentAccount: KotlinAccount,
         bookmarkFolderRequest: KotlinBookmarkFolderRequest
     ): KotlinBookmarkIdResponse {
-        val account = kotlinAccountService.getAccountById(accountId)
-        val bookmark = KotlinBookmark(account, bookmarkFolderRequest)
+        val bookmark = KotlinBookmark(currentAccount, bookmarkFolderRequest)
         val saveBookmark = kotlinBookmarkRepository.save(bookmark)
         return KotlinBookmarkIdResponse(saveBookmark.id)
     }
 
+    fun getBookmarkFolderList(
+        currentAccount: KotlinAccount,
+        bookmarkType: String
+    ): KotlinBookmarkFolderListResponse {
+        val bookmarkType = KotlinBookmarkType.valueOf(bookmarkType)
+        val bookmarkFolderResponseList =
+            kotlinBookmarkRepository.findAllByAccountAndBookmarkType(currentAccount, bookmarkType)
+                .map { KotlinBookmarkFolderResponse(it) }
+        return KotlinBookmarkFolderListResponse(bookmarkFolderResponseList)
+    }
+
+    fun getBookmarkFolder(
+        currentAccount: KotlinAccount,
+        bookmarkId: Long,
+        pageable: Pageable?,
+        cursorId: Long?
+    ): KotlinBookmarkResponse {
+        val bookmark = getMyBookmark(currentAccount.id, bookmarkId)
+        return getBookmarkResponse(bookmark, pageable, cursorId)
+    }
+
+    fun getBookmarkResponse(
+        bookmark: KotlinBookmark,
+        pageable: Pageable?,
+        cursorId: Long?
+    ): KotlinBookmarkResponse {
+        if (bookmark.bookmarkType == KotlinBookmarkType.BOOKSTORE) {
+            val firstByBookmarkId = kotlinBookmarkedBookstoreRepository.findFirstByBookmarkId(bookmark.id)
+            val nextCursorId =
+                if (cursorId != null && cursorId == 0L && firstByBookmarkId != null) firstByBookmarkId.bookstore.id
+                else cursorId
+            val createdAt =
+                if (cursorId != null && cursorId == 0L && firstByBookmarkId != null) firstByBookmarkId.bookstore.createdAt.toString()
+                else (if (cursorId == null) null else nextCursorId?.let { getBookmarkedBookstore(it).bookmark.createdAt.toString() })
+            val page = kotlinBookmarkedBookstoreRepository.findAllByBookmarkAndAndVisibilityTrue(bookmark, pageable, cursorId, createdAt)
+                .map { KotlinBookmarkInfo(it.bookstore) }
+            val totalElements = kotlinBookmarkedBookstoreRepository.countAllByBookmark(bookmark)
+            val ofCursor = KotlinPageResponse.ofCursor(page, totalElements)
+
+            return KotlinBookmarkResponse(bookmark = bookmark, bookmarkInfo = ofCursor)
+        } else {
+            val firstByBookmarkId = kotlinBookmarkedArticleRepository.findFirstByBookmarkId(bookmark.id)
+            val nextCursorId =
+                if (cursorId != null && cursorId == 0L && firstByBookmarkId != null) firstByBookmarkId.article.id
+                else cursorId
+            val createdAt =
+                if (cursorId != null && cursorId == 0L && firstByBookmarkId != null) firstByBookmarkId.article.createdAt.toString()
+                else (if (cursorId == null) null else nextCursorId?.let { getBookmarkedArticle(it).bookmark.createdAt.toString() })
+            val page = kotlinBookmarkedArticleRepository.findAllByBookmarkAndAndVisibilityTrue(bookmark, pageable, cursorId, createdAt)
+                .map { KotlinBookmarkInfo(it.article) }
+            val totalElements = kotlinBookmarkedArticleRepository.countAllByBookmark(bookmark)
+            val ofCursor = KotlinPageResponse.ofCursor(page, totalElements)
+
+            return KotlinBookmarkResponse(bookmark = bookmark, bookmarkInfo = ofCursor)
+        }
+    }
+
+    fun getBookmarkCollect(
+        currentAccount: KotlinAccount,
+        bookmarkType: String,
+        pageable: Pageable?,
+        cursorId: Long?
+    ): KotlinBookmarkResponse {
+        val bookmarkType = KotlinBookmarkType.valueOf(bookmarkType)
+        val bookmark = kotlinBookmarkRepository.findByAccountAndFolderNameAndBookmarkType(
+            currentAccount,
+            INIT_BOOKMARK_FOLDER_NAME,
+            bookmarkType
+        ) ?: throw RuntimeException(KotlinErrorCode.NOT_FOUND_BOOKMARK.errorMessage)
+        return getBookmarkResponse(bookmark, pageable, cursorId)
+    }
+
     @Transactional
     fun updateBookmarkFolderName(
-        accountId: Long,
+        currentAccount: KotlinAccount,
         bookmarkId: Long,
-        bookmarkFolderRequest: KotlinBookmarkFolderRequest
+        bookmarkFolderNameRequest: KotlinBookmarkFolderNameRequest
     ): KotlinBookmarkIdResponse {
-        val bookmark = getMyBookmark(accountId, bookmarkId)
+        val bookmark = getMyBookmark(currentAccount.id, bookmarkId)
         checkBookmarkFolderName(bookmark)
-        bookmark.updateFolderName(bookmarkFolderRequest.folderName)
+        bookmark.updateFolderName(bookmarkFolderNameRequest.folderName)
         return KotlinBookmarkIdResponse(bookmark.id)
     }
 
     @Transactional
     fun updateBookmarkFolder(
-        accountId: Long,
+        currentAccount: KotlinAccount,
         bookmarkId: Long,
         request: KotlinBookmarkContentListRequest
     ): KotlinBookmarkIdResponse {
 
-        val myInitBookmark = getMyInitBookmark(accountId, BookmarkType.valueOf(request.bookmarkType))
-        val bookmark = getMyBookmark(accountId, bookmarkId)
+        val myInitBookmark = getMyInitBookmark(currentAccount.id, KotlinBookmarkType.valueOf(request.bookmarkType))
+        val bookmark = getMyBookmark(currentAccount.id, bookmarkId)
         checkUpdateBookmarkRequest(bookmark, request)
         val bookmarkBookStoreList: MutableList<KotlinBookmarkedBookstore> = mutableListOf()
         val bookmarkArticleList: MutableList<KotlinBookmarkedArticle> = mutableListOf()
 
         request.contentIdList.toList().map { contentId ->
             when (bookmark.bookmarkType) {
-                BookmarkType.BOOKSTORE -> {
+                KotlinBookmarkType.BOOKSTORE -> {
                     checkBookmarkedBookstoreInInitBookmark(myInitBookmark.id, contentId)
                     existBookmarkedBookstore(bookmark.id, contentId)
-                    addBookmarkedBookstore(contentId, bookmark, accountId)
+                    addBookmarkedBookstore(contentId, bookmark, currentAccount.id)
                 }
 
                 else -> {
                     checkBookmarkedArticleInInitBookmark(myInitBookmark.id, contentId)
                     existBookmarkedArticle(bookmark.id, contentId)
-                    addBookmarkedArticle(contentId, bookmark, accountId)
+                    addBookmarkedArticle(contentId, bookmark, currentAccount.id)
                 }
             }
         }
 
         when (bookmark.bookmarkType) {
-            BookmarkType.BOOKSTORE -> bookmark.updateBookmarkedBookStore(bookmarkBookStoreList)
+            KotlinBookmarkType.BOOKSTORE -> bookmark.updateBookmarkedBookStore(bookmarkBookStoreList)
             else -> bookmark.updateBookmarkedArticle(bookmarkArticleList)
         }
 
@@ -105,35 +182,67 @@ class KotlinBookmarkService(
 
     @Transactional
     fun deleteBookmarkContent(
-        accountId: Long,
+        currentAccount: KotlinAccount,
         bookmarkId: Long,
         request: KotlinBookmarkContentListRequest
     ) {
-        val bookmark = getMyBookmark(accountId, bookmarkId)
+        val bookmark = getMyBookmark(currentAccount.id, bookmarkId)
         checkUpdateBookmarkRequest(bookmark, request)
         val bookmarkContentIdList = request.contentIdList.toList()
         when (bookmark.bookmarkType) {
-            BookmarkType.BOOKSTORE -> {
+            KotlinBookmarkType.BOOKSTORE -> {
                 bookmarkContentIdList.map { contentId ->
                     checkBookmarkedBookstore(bookmark.id, contentId)
-                    getBookmarkedBookstore(bookmarkId, contentId)
-                    kotlinBookmarkedBookstoreRepository.deleteByBookstoreIdAndBookmarkId(contentId, bookmarkId)
+                    deleteBookmarkBookstore(bookmark.id, contentId)
                 }
             }
 
             else -> {
                 bookmarkContentIdList.map { contentId ->
                     checkBookmarkedArticle(bookmark.id, contentId)
-                    getBookmarkedArticle(bookmarkId, contentId)
-                    kotlinBookmarkedArticleRepository.deleteByArticleIdAndBookmarkId(contentId, bookmarkId)
+                    deleteBookmarkArticle(bookmark.id, contentId)
                 }
             }
         }
     }
 
     @Transactional
-    fun deleteBookmarkFolder(accountId: Long, bookmarkId: Long) {
-        val bookmark = getMyBookmark(accountId, bookmarkId)
+    fun deleteInitBookmarkContent(
+        currentAccount: KotlinAccount,
+        request: KotlinBookmarkContentListRequest
+    ) {
+
+        val initBookmark = getMyInitBookmark(currentAccount.id, KotlinBookmarkType.valueOf(request.bookmarkType))
+        checkUpdateBookmarkRequest(initBookmark, request)
+        val bookmarkContentIdList = request.contentIdList.toList()
+
+        when (initBookmark.bookmarkType) {
+            KotlinBookmarkType.BOOKSTORE -> {
+                bookmarkContentIdList.map { contentId ->
+                    checkBookmarkedBookstoreInInitBookmark(initBookmark.id, contentId)
+                    deleteBookmarkBookstore(initBookmark.id, contentId)
+                    kotlinBookmarkRepository.findAllByAccountId(currentAccount.id)
+                        .map { bookmark -> deleteBookmarkBookstore(bookmark.id, contentId) }
+                }
+            }
+
+            else -> {
+                bookmarkContentIdList.map { contentId ->
+                    checkBookmarkedArticleInInitBookmark(initBookmark.id, contentId)
+                    deleteBookmarkArticle(initBookmark.id, contentId)
+                     kotlinBookmarkRepository.findAllByAccountId(currentAccount.id)
+                        .map { bookmark -> deleteBookmarkArticle(bookmark.id, contentId) }
+                }
+            }
+        }
+    }
+
+    @Transactional
+    fun deleteBookmarkFolder(
+        currentAccount: KotlinAccount,
+        bookmarkId: Long
+    ) {
+        val bookmark = getMyBookmark(currentAccount.id, bookmarkId)
         checkBookmarkFolderName(bookmark)
         bookmark.softDelete()
         bookmark.bookmarkedArticleList.map { bookmarkedArticle ->
@@ -144,49 +253,15 @@ class KotlinBookmarkService(
         }
     }
 
-    @Transactional
-    fun deleteInitBookmarkContent(
-        accountId: Long,
-        request: KotlinBookmarkContentListRequest
-    ) {
-        val initBookmark = getMyInitBookmark(accountId, BookmarkType.valueOf(request.bookmarkType))
-
-        // 모아보기에서 내용 삭제 시 다른 북마크에서도 삭제
-        val bookmarkContentIdList = request.contentIdList.toList()
-        when (initBookmark.bookmarkType) {
-            BookmarkType.BOOKSTORE -> {
-                bookmarkContentIdList.map { contentId ->
-                    checkBookmarkedBookstoreInInitBookmark(initBookmark.id, contentId)
-                    kotlinBookmarkedBookstoreRepository.deleteByBookstoreIdAndBookmarkId(contentId, initBookmark.id)
-                    val bookmarkList = kotlinBookmarkRepository.findAllByAccountId(accountId)
-                    bookmarkList.map { bookmark ->
-                        kotlinBookmarkedBookstoreRepository.deleteByBookstoreIdAndBookmarkId(contentId, bookmark.id)
-                    }
-                }
-            }
-
-            else -> {
-                bookmarkContentIdList.map { contentId ->
-                    checkBookmarkedArticleInInitBookmark(initBookmark.id, contentId)
-                    kotlinBookmarkedArticleRepository.deleteByArticleIdAndBookmarkId(contentId, initBookmark.id)
-                    val bookmarkList = kotlinBookmarkRepository.findAllByAccountId(accountId)
-                    bookmarkList.map { bookmark ->
-                        kotlinBookmarkedArticleRepository.deleteByArticleIdAndBookmarkId(contentId, bookmark.id)
-                    }
-                }
-            }
-        }
-
-    }
 
     fun checkBookmark(accountId: Long, contentId: Long, bookmarkType: String): Boolean {
         val account = kotlinAccountService.getAccountById(accountId)
-        val bookmarkTypeEnum = BookmarkType.valueOf(bookmarkType)
+        val bookmarkTypeEnum = KotlinBookmarkType.valueOf(bookmarkType)
 
         return account.bookmarkList.any { bookmark ->
             bookmark.folderName == INIT_BOOKMARK_FOLDER_NAME && bookmark.bookmarkType == bookmarkTypeEnum &&
                     when (bookmarkTypeEnum) {
-                        BookmarkType.BOOKSTORE -> bookmark.bookmarkedBookstoreList.any { it.bookstore.id == contentId }
+                        KotlinBookmarkType.BOOKSTORE -> bookmark.bookmarkedBookstoreList.any { it.bookstore.id == contentId }
                         else -> bookmark.bookmarkedArticleList.any { it.article.id == contentId }
                     }
         }
@@ -212,7 +287,7 @@ class KotlinBookmarkService(
         return saveBookmarkedArticle
     }
 
-    fun getMyInitBookmark(accountId: Long, bookmarkType: BookmarkType): KotlinBookmark {
+    fun getMyInitBookmark(accountId: Long, bookmarkType: KotlinBookmarkType): KotlinBookmark {
         return kotlinBookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
             accountId,
             INIT_BOOKMARK_FOLDER_NAME,
@@ -230,19 +305,9 @@ class KotlinBookmarkService(
             .orElseThrow { throw RuntimeException("NOT FOUND INIT BOOKMARK BOOKSTORE") }
     }
 
-    fun getBookmarkedBookstore(bookmarkId: Long, bookstoreId: Long): KotlinBookmarkedBookstore {
-        return kotlinBookmarkedBookstoreRepository.findByBookmarkIdAndBookstoreId(bookmarkId, bookstoreId)
-            ?: throw RuntimeException("NOT FOUND INIT BOOKMARK BOOKSTORE")
-    }
-
     fun getBookmarkedArticle(bookmarkedArticleId: Long): KotlinBookmarkedArticle {
         return kotlinBookmarkedArticleRepository.findById(bookmarkedArticleId)
             .orElseThrow { RuntimeException("NOT FOUND INIT BOOKMARK ARTICLE") }
-    }
-
-    fun getBookmarkedArticle(bookmarkId: Long, articleId: Long): KotlinBookmarkedArticle {
-        return kotlinBookmarkedArticleRepository.findByBookmarkIdAndArticleId(bookmarkId, articleId)
-            ?: throw RuntimeException("NOT FOUND INIT BOOKMARK ARTICLE")
     }
 
     fun getArticle(articleId: Long): KotlinArticle {
@@ -255,20 +320,38 @@ class KotlinBookmarkService(
             .orElseThrow { throw RuntimeException("NOT FOUND BOOKSTORE") }
     }
 
-    fun checkBookmarkedArticle(myBookmark: KotlinBookmark, article: KotlinArticle, accountId: Long) {
+    fun checkBookmarkedArticle(
+        myBookmark: KotlinBookmark,
+        article: KotlinArticle,
+        accountId: Long
+    ): KotlinMessageResponse {
         val isBookmarkedArticle = kotlinBookmarkedArticleRepository
             .existsByBookmarkIdAndArticleIdAndAccountId(myBookmark.id, article.id, accountId)
 
-        if (isBookmarkedArticle) deleteBookmarkArticle(myBookmark.id, article.id)
-        else createBookmarkArticle(myBookmark, article, accountId)
+        return if (isBookmarkedArticle) {
+            deleteBookmarkArticle(myBookmark.id, article.id)
+            KotlinMessageResponse(message = "북마크 삭제", statusCode = 200)
+        } else {
+            createBookmarkArticle(myBookmark, article, accountId)
+            KotlinMessageResponse(message = "북마크 추가", statusCode = 200)
+        }
     }
 
-    fun checkBookmarkedBookstore(myBookmark: KotlinBookmark, bookstore: KotlinBookstore, accountId: Long) {
+    fun checkBookmarkedBookstore(
+        myBookmark: KotlinBookmark,
+        bookstore: KotlinBookstore,
+        accountId: Long
+    ): KotlinMessageResponse {
         val isBookmarkedBookstore = kotlinBookmarkedBookstoreRepository
             .existsByBookmarkIdAndBookstoreIdAndAccountId(myBookmark.id, bookstore.id, accountId)
 
-        if (isBookmarkedBookstore) deleteBookmarkBookstore(myBookmark.id, bookstore.id)
-        else createBookmarkBookstore(myBookmark, bookstore, accountId)
+        return if (isBookmarkedBookstore) {
+            deleteBookmarkBookstore(myBookmark.id, bookstore.id)
+            KotlinMessageResponse(message = "북마크 삭제", statusCode = 200)
+        } else {
+            createBookmarkBookstore(myBookmark, bookstore, accountId)
+            KotlinMessageResponse(message = "북마크 추가", statusCode = 200)
+        }
     }
 
     fun checkUpdateBookmarkRequest(bookmark: KotlinBookmark, request: KotlinBookmarkContentListRequest) {

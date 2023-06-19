@@ -10,6 +10,7 @@ import kr.co.bookand.backend.account.repository.KotlinAccountRepository
 import kr.co.bookand.backend.account.repository.KotlinSuspendedAccountRepository
 import kr.co.bookand.backend.bookmark.domain.BookmarkType
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmark
+import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkType
 import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkRepository
 import kr.co.bookand.backend.common.KotlinErrorCode
 import kr.co.bookand.backend.common.KotlinRestTemplateService
@@ -212,12 +213,12 @@ class KotlinAuthService(
         val initBookmarkArticle = KotlinBookmark(
             account = saveAccount,
             folderName = initBookmarkFolderName,
-            bookmarkType = BookmarkType.ARTICLE
+            bookmarkType = KotlinBookmarkType.ARTICLE
         )
         val initBookmarkBookStore = KotlinBookmark(
             account = saveAccount,
             folderName = initBookmarkFolderName,
-            bookmarkType = BookmarkType.BOOKSTORE
+            bookmarkType = KotlinBookmarkType.BOOKSTORE
         )
 
         bookmarkRepository.save(initBookmarkArticle)

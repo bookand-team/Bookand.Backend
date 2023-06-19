@@ -4,11 +4,13 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import kr.co.bookand.backend.account.service.KotlinAccountService
+import kr.co.bookand.backend.account.domain.KotlinAccount
+import kr.co.bookand.backend.account.domain.KotlinAccountStatus
+import kr.co.bookand.backend.account.domain.KotlinRole
 import kr.co.bookand.backend.common.domain.DeviceOSFilter
 import kr.co.bookand.backend.issue.domain.KotlinIssue
 import kr.co.bookand.backend.issue.domain.KotlinIssueImage
-import kr.co.bookand.backend.issue.domain.dto.CreateIssueRequest
+import kr.co.bookand.backend.issue.domain.dto.KotlinCreateIssueRequest
 import kr.co.bookand.backend.issue.repository.KotlinIssueImageRepository
 import kr.co.bookand.backend.issue.repository.KotlinIssueRepository
 import kr.co.bookand.backend.issue.service.KotlinIssueService
@@ -20,16 +22,28 @@ import java.util.*
 class IssueServiceTest : BehaviorSpec({
     val issueRepository = mockk<KotlinIssueRepository>()
     val issueImageRepository = mockk<KotlinIssueImageRepository>()
-    val accountService = mockk<KotlinAccountService>()
     val awsS3Service = mockk<KotlinAwsS3Service>()
     val issueService = KotlinIssueService(
         issueRepository,
         issueImageRepository,
-        accountService,
         awsS3Service
     )
 
     Given("IssueService") {
+
+        val account = KotlinAccount(
+            1L,
+            "email",
+            "password",
+            "name",
+            "provider",
+            "providerEmail",
+            "profileImage",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            KotlinRole.ADMIN,
+            KotlinAccountStatus.NORMAL
+        )
 
         val issue = KotlinIssue(
             1L,
@@ -51,7 +65,7 @@ class IssueServiceTest : BehaviorSpec({
             issue
         )
 
-        val createIssueRequest = CreateIssueRequest(
+        val createIssueRequest = KotlinCreateIssueRequest(
             issuedAt = "2021-01-01T00:00:00",
             issueContent = "issueContent",
             issueReportResponseEmail = "issueReportResponseEmail",
@@ -72,7 +86,7 @@ class IssueServiceTest : BehaviorSpec({
             every { issueRepository.save(any()) } returns issue
             every { awsS3Service.uploadV2(any(), any(), any()) } returns fileDto
 
-            val result = issueService.createIssue(createIssueRequest)
+            val result = issueService.createIssue(account, createIssueRequest)
 
             Then("result") {
                 result.id shouldBe 1L
@@ -85,7 +99,7 @@ class IssueServiceTest : BehaviorSpec({
             val result = issueService.checkConfirmed(1L, true)
 
             Then("result") {
-                result.id shouldBe 1L
+                result.statusCode shouldBe 200
             }
         }
     }

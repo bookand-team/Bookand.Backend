@@ -2,7 +2,7 @@ package kr.co.bookand.backend.issue.domain
 
 import kr.co.bookand.backend.common.domain.DeviceOSFilter
 import kr.co.bookand.backend.common.domain.KotlinBaseEntity
-import kr.co.bookand.backend.issue.domain.dto.CreateIssueRequest
+import kr.co.bookand.backend.issue.domain.dto.KotlinCreateIssueRequest
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.persistence.*
@@ -30,7 +30,7 @@ class KotlinIssue(
 
 ) : KotlinBaseEntity() {
 
-    constructor(createIssueRequest: CreateIssueRequest, accountId: Long) : this(
+    constructor(createIssueRequest: KotlinCreateIssueRequest, accountId: Long) : this(
 
         issuedAt = LocalDateTime.parse(createIssueRequest.issuedAt, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")),
         issueContent = createIssueRequest.issueContent,

@@ -2,7 +2,7 @@ package kr.co.bookand.backend.feedback.domain
 
 import kr.co.bookand.backend.account.domain.KotlinAccount
 import kr.co.bookand.backend.common.domain.KotlinBaseEntity
-import kr.co.bookand.backend.feedback.domain.dto.CreateFeedbackRequest
+import kr.co.bookand.backend.feedback.domain.dto.KotlinCreateFeedbackRequest
 import org.springframework.lang.Nullable
 import javax.persistence.*
 
@@ -14,11 +14,11 @@ class KotlinFeedback(
     var id: Long = 0,
 
     @Enumerated(EnumType.STRING)
-    var feedbackType: FeedbackType,
+    var feedbackType: KotlinFeedbackType,
 
     @Enumerated(EnumType.STRING)
     @Nullable
-    var feedbackTarget: FeedbackTarget,
+    var feedbackTarget: KotlinFeedbackTarget,
 
     @Column(length = 1000)
     var content: String,
@@ -29,9 +29,9 @@ class KotlinFeedback(
 
 ) : KotlinBaseEntity() {
 
-    constructor(createFeedbackRequest: CreateFeedbackRequest) : this(
-        feedbackType = FeedbackType.valueOf(createFeedbackRequest.feedbackType),
-        feedbackTarget = FeedbackTarget.valueOf(createFeedbackRequest.feedbackTarget),
+    constructor(createFeedbackRequest: KotlinCreateFeedbackRequest) : this(
+        feedbackType = KotlinFeedbackType.valueOf(createFeedbackRequest.feedbackType),
+        feedbackTarget = KotlinFeedbackTarget.valueOf(createFeedbackRequest.feedbackTarget),
         content = createFeedbackRequest.content,
     )
 }

@@ -5,21 +5,16 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import kr.co.bookand.backend.account.domain.*
-import kr.co.bookand.backend.account.service.KotlinAccountService
-import kr.co.bookand.backend.feedback.domain.FeedbackTarget
-import kr.co.bookand.backend.feedback.domain.FeedbackType
-import kr.co.bookand.backend.feedback.domain.KotlinFeedback
-import kr.co.bookand.backend.feedback.domain.dto.CreateFeedbackRequest
+import kr.co.bookand.backend.feedback.domain.*
+import kr.co.bookand.backend.feedback.domain.dto.KotlinCreateFeedbackRequest
 import kr.co.bookand.backend.feedback.repository.KotlinFeedbackRepository
 import kr.co.bookand.backend.feedback.service.KotlinFeedbackService
 import java.time.LocalDateTime
 
 class FeedbackServiceTest : BehaviorSpec({
     val feedbackRepository = mockk<KotlinFeedbackRepository>()
-    val accountService = mockk< KotlinAccountService>()
     val feedbackService = KotlinFeedbackService(
-        feedbackRepository,
-        accountService
+        feedbackRepository
     )
 
     Given("feedback service test"){
@@ -40,23 +35,22 @@ class FeedbackServiceTest : BehaviorSpec({
 
         val feedback = KotlinFeedback(
             1L,
-            FeedbackType.PUSH,
-            FeedbackTarget.HOME,
+            KotlinFeedbackType.PUSH,
+            KotlinFeedbackTarget.HOME,
             "content",
             adminAccount
         )
 
-        val createFeedbackRequest = CreateFeedbackRequest(
+        val createFeedbackRequest = KotlinCreateFeedbackRequest(
             feedbackType = FeedbackType.PUSH.name,
             feedbackTarget = FeedbackTarget.HOME.name,
             content = "content"
         )
 
         When("create feedback"){
-            every { accountService.checkAccountAdmin(1L) } returns Unit
             every { feedbackRepository.save(any()) } returns feedback
 
-            val createFeedback = feedbackService.createFeedback(1L, createFeedbackRequest)
+            val createFeedback = feedbackService.createFeedback(adminAccount, createFeedbackRequest)
 
             Then("it should return true"){
                 createFeedback.id shouldBe 1L

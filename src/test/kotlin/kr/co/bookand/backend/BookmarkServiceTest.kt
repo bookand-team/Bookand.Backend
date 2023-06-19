@@ -24,6 +24,8 @@ import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkedBookstoreReposi
 import kr.co.bookand.backend.bookmark.service.KotlinBookmarkService
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
+import kr.co.bookand.backend.common.KotlinDeviceOSFilter
+import kr.co.bookand.backend.common.KotlinMemberIdFilter
 import kr.co.bookand.backend.common.KotlinStatus
 import kr.co.bookand.backend.common.domain.DeviceOSFilter
 import kr.co.bookand.backend.common.domain.MemberIdFilter
@@ -121,8 +123,8 @@ class BookmarkServiceTest : BehaviorSpec({
             viewCount = 0,
             displayedAt = LocalDateTime.now(),
             status = KotlinStatus.VISIBLE,
-            deviceOSFilter = DeviceOSFilter.ALL,
-            memberIdFilter = MemberIdFilter.ALL,
+            deviceOSFilter = KotlinDeviceOSFilter.ALL,
+            memberIdFilter = KotlinMemberIdFilter.ALL,
             articleTagList = mutableListOf(),
             introducedBookstoreList = mutableListOf(),
         )

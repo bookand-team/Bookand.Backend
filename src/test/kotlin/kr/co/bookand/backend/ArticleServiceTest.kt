@@ -8,7 +8,6 @@ import io.mockk.mockk
 import kr.co.bookand.backend.account.domain.KotlinAccount
 import kr.co.bookand.backend.account.domain.KotlinAccountStatus
 import kr.co.bookand.backend.account.domain.KotlinRole
-import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.article.domain.*
 import kr.co.bookand.backend.article.domain.dto.KotlinArticleListRequest
 import kr.co.bookand.backend.article.domain.dto.KotlinArticleRequest
@@ -42,7 +41,6 @@ class ArticleServiceTest : BehaviorSpec({
     )
 
     Given("article test") {
-        val accountId = 1L
         val articleId = 1L
 
         val account = KotlinAccount(
@@ -147,7 +145,7 @@ class ArticleServiceTest : BehaviorSpec({
             subTitle = "subTitle",
             content = "content",
             mainImage = "mainImage",
-            category = ArticleCategory.BOOKSTORE_REVIEW.toString(),
+            category = KotlinArticleCategory.BOOKSTORE_REVIEW.toString(),
             writer = "writer",
             bookStoreList = listOf(1L, 2L),
             tagList = listOf("tag1", "tag2")
@@ -158,7 +156,7 @@ class ArticleServiceTest : BehaviorSpec({
             subTitle = "subTitle2",
             content = "content2",
             mainImage = "mainImage2",
-            category = ArticleCategory.BOOKSTORE_REVIEW.toString(),
+            category = KotlinArticleCategory.BOOKSTORE_REVIEW.toString(),
             writer = "writer",
             bookStoreList = listOf(1L, 2L),
             tagList = listOf("tag1", "tag2")

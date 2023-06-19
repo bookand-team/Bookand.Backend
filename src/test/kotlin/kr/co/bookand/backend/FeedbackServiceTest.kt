@@ -42,8 +42,8 @@ class FeedbackServiceTest : BehaviorSpec({
         )
 
         val createFeedbackRequest = KotlinCreateFeedbackRequest(
-            feedbackType = FeedbackType.PUSH.name,
-            feedbackTarget = FeedbackTarget.HOME.name,
+            feedbackType = KotlinFeedbackType.PUSH.name,
+            feedbackTarget = KotlinFeedbackTarget.HOME.name,
             content = "content"
         )
 

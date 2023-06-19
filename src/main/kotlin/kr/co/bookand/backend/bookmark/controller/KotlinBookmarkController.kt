@@ -6,10 +6,8 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.bookmark.domain.dto.*
-import kr.co.bookand.backend.bookmark.domain.dto.BookmarkDto.*
 import kr.co.bookand.backend.bookmark.service.KotlinBookmarkService
 import kr.co.bookand.backend.common.domain.KotlinMessageResponse
-import kr.co.bookand.backend.common.domain.Message
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault

@@ -1,7 +1,5 @@
 package kr.co.bookand.backend.bookmark.repository
 
-import kr.co.bookand.backend.bookmark.domain.Bookmark
-import kr.co.bookand.backend.bookmark.domain.BookmarkBookStore
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmark
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkedBookstore
 import org.springframework.data.jpa.repository.JpaRepository

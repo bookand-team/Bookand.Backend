@@ -2,8 +2,6 @@ package kr.co.bookand.backend.map.service
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import kr.co.bookand.backend.common.exception.ErrorCode
-import kr.co.bookand.backend.map.exception.MapException
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Pageable

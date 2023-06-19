@@ -8,7 +8,7 @@ import kr.co.bookand.backend.article.domain.dto.*
 import kr.co.bookand.backend.article.repository.KotlinArticleRepository
 import kr.co.bookand.backend.article.repository.KotlinArticleTagRepository
 import kr.co.bookand.backend.article.repository.KotlinIntroducedBookstoreRepository
-import kr.co.bookand.backend.bookmark.domain.BookmarkType
+import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkType
 import kr.co.bookand.backend.bookmark.service.KotlinBookmarkService
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import kr.co.bookand.backend.bookstore.domain.dto.KotlinBookstoreSimpleResponse
@@ -93,7 +93,7 @@ class KotlinArticleService(
                     isBookmark = kotlinBookmarkService.checkBookmark(
                         currentAccount.id,
                         article.id,
-                        BookmarkType.ARTICLE.name
+                        KotlinBookmarkType.ARTICLE.name
                     ),
                     articleTagList = article.articleTagList.map { it.tag },
                     visibility = article.visibility,
@@ -128,8 +128,8 @@ class KotlinArticleService(
     fun getArticleInfo(currentAccount: KotlinAccount, id: Long): KotlinArticleDetailResponse {
         val article = getArticle(id)
 
-        val bookmarkTypeArticle = BookmarkType.ARTICLE.name
-        val bookmarkTypeBookstore = BookmarkType.BOOKSTORE.name
+        val bookmarkTypeArticle = KotlinBookmarkType.ARTICLE.name
+        val bookmarkTypeBookstore = KotlinBookmarkType.BOOKSTORE.name
         val accountId = currentAccount.id
         val articleId = article.id
 

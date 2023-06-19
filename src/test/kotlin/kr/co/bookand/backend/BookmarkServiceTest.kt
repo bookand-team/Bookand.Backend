@@ -7,11 +7,9 @@ import io.mockk.every
 import io.mockk.mockk
 import kr.co.bookand.backend.account.domain.*
 import kr.co.bookand.backend.account.service.KotlinAccountService
-import kr.co.bookand.backend.article.domain.ArticleCategory
 import kr.co.bookand.backend.article.domain.KotlinArticle
 import kr.co.bookand.backend.article.domain.KotlinArticleCategory
 import kr.co.bookand.backend.article.repository.KotlinArticleRepository
-import kr.co.bookand.backend.bookmark.domain.BookmarkType
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmark
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkType
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkedBookstore
@@ -27,8 +25,6 @@ import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
 import kr.co.bookand.backend.common.KotlinDeviceOSFilter
 import kr.co.bookand.backend.common.KotlinMemberIdFilter
 import kr.co.bookand.backend.common.KotlinStatus
-import kr.co.bookand.backend.common.domain.DeviceOSFilter
-import kr.co.bookand.backend.common.domain.MemberIdFilter
 import java.time.LocalDateTime
 import java.util.*
 

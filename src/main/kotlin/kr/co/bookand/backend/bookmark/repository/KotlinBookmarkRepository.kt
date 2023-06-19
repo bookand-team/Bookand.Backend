@@ -1,13 +1,9 @@
 package kr.co.bookand.backend.bookmark.repository
 
-import kr.co.bookand.backend.account.domain.Account
 import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.bookmark.domain.Bookmark
-import kr.co.bookand.backend.bookmark.domain.BookmarkType
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmark
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkType
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.*
 
 interface KotlinBookmarkRepository : JpaRepository<KotlinBookmark, Long> {
     fun findAllByAccountAndBookmarkType(

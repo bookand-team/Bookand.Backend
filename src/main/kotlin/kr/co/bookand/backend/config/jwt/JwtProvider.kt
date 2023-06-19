@@ -3,8 +3,7 @@ package kr.co.bookand.backend.config.jwt
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
-import kr.co.bookand.backend.account.domain.Role
-import kr.co.bookand.backend.account.domain.dto.AuthDto.*
+import kr.co.bookand.backend.account.domain.KotlinRole
 import kr.co.bookand.backend.account.domain.dto.KotlinMiddleAccount
 import kr.co.bookand.backend.account.domain.dto.KotlinSigningAccount
 import kr.co.bookand.backend.config.security.PrincipalDetailService
@@ -36,7 +35,7 @@ class JwtProvider(
         val accessTokenExpiresIn: Date = Date(now + accessTokenExpireTime)
         val signToken = Jwts.builder()
             .setSubject(middleAccount.email + "_" + middleAccount.providerEmail + "_" + middleAccount.socialType)
-            .claim("sign", Role.USER)
+            .claim("sign", KotlinRole.USER)
             .setExpiration(accessTokenExpiresIn)
             .signWith(key, SignatureAlgorithm.HS512)
             .compact()

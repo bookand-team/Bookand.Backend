@@ -19,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 @Slf4j
 class KotlinNoticeService(
-    private val noticeRepository: KotlinNoticeRepository,
-    private val accountService: KotlinAccountService
+    private val noticeRepository: KotlinNoticeRepository
 ) {
 
     @Transactional

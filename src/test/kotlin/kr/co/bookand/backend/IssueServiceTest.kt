@@ -7,7 +7,7 @@ import io.mockk.mockk
 import kr.co.bookand.backend.account.domain.KotlinAccount
 import kr.co.bookand.backend.account.domain.KotlinAccountStatus
 import kr.co.bookand.backend.account.domain.KotlinRole
-import kr.co.bookand.backend.common.domain.DeviceOSFilter
+import kr.co.bookand.backend.common.KotlinDeviceOSFilter
 import kr.co.bookand.backend.issue.domain.KotlinIssue
 import kr.co.bookand.backend.issue.domain.KotlinIssueImage
 import kr.co.bookand.backend.issue.domain.dto.KotlinCreateIssueRequest
@@ -55,7 +55,7 @@ class IssueServiceTest : BehaviorSpec({
             "deviceOS",
             1L,
             false,
-            DeviceOSFilter.ALL,
+            KotlinDeviceOSFilter.ALL,
             mutableListOf()
         )
 
@@ -72,7 +72,7 @@ class IssueServiceTest : BehaviorSpec({
             issueImages = mutableListOf(),
             sendLogs = true,
             logFile = null,
-            deviceOS = DeviceOSFilter.ALL
+            deviceOS = KotlinDeviceOSFilter.ALL
         )
 
         val fileDto = FileDto(

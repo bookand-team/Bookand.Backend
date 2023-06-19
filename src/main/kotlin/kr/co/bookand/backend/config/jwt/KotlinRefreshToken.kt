@@ -1,6 +1,5 @@
 package kr.co.bookand.backend.config.jwt
 
-import kr.co.bookand.backend.account.domain.Account
 import kr.co.bookand.backend.account.domain.KotlinAccount
 import javax.persistence.*
 

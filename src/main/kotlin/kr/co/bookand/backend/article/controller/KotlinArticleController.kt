@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.article.domain.dto.*
-import kr.co.bookand.backend.article.domain.dto.ArticleDto.*
 import kr.co.bookand.backend.article.service.KotlinArticleService
 import kr.co.bookand.backend.common.domain.KotlinMessageResponse
 import org.springframework.data.domain.Pageable

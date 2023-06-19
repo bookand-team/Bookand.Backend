@@ -89,24 +89,6 @@ class BookstoreServiceTest : BehaviorSpec({
             LocalDateTime.now()
         )
 
-        val bookstore2 = KotlinBookstore(
-            2L,
-            "name2",
-            "address2",
-            "businessHours2",
-            "contact2",
-            "facility2",
-            "sns2",
-            "latitude2",
-            "longitude2",
-            "introduction2",
-            "mainImage2",
-            KotlinStatus.VISIBLE,
-            0,
-            0,
-            LocalDateTime.now()
-        )
-
         val bookstore3 = KotlinBookstore(
             3L,
             "name",
@@ -201,15 +183,6 @@ class BookstoreServiceTest : BehaviorSpec({
             subImageList = listOf("imageUrl", "imageUrl2")
         )
 
-        val existingSubImages = listOf(
-            KotlinBookstoreImage(id = 1L, url = "old_image1.jpg", bookstore = bookstore),
-            KotlinBookstoreImage(id = 2L, url = "old_image2.jpg", bookstore = bookstore2)
-        )
-        val existingThemes = listOf(
-            KotlinBookstoreTheme(id = 1L, theme = KotlinBookstoreType.TRAVEL, bookstore = bookstore),
-            KotlinBookstoreTheme(id = 2L, theme = KotlinBookstoreType.PICTURE, bookstore = bookstore2)
-        )
-
         val bookstoreListRequest = KotlinBookstoreListRequest(
             listOf(1L, 2L)
         )
@@ -253,7 +226,7 @@ class BookstoreServiceTest : BehaviorSpec({
             every { accountService.checkAccountAdmin(2L) } throws RuntimeException("Not admin")
 
             val exception = shouldThrow<RuntimeException> {
-                bookstoreService.createBookStore(account, bookstoreRequest)
+                bookstoreService.createBookstore(account, bookstoreRequest)
             }
 
             Then("it should throw exception") {
@@ -267,13 +240,13 @@ class BookstoreServiceTest : BehaviorSpec({
             every { bookstoreRepository.existsByName("Book Store") } returns false
 
             val exception = shouldThrow<RuntimeException> {
-                val createBookStore = bookstoreService.createBookStore(adminAccount, bookstoreRequest2)
+                val createBookStore = bookstoreService.createBookstore(adminAccount, bookstoreRequest2)
                 println("createBookStore = $createBookStore")
             }
 
             Then("it should throw an exception") {
 
-                exception.message shouldBe "TOO MANY BOOKSTORE THEME"
+                exception.message shouldBe "서점 테마 선택은 최대 3개까지 가능합니다."
             }
         }
 
@@ -286,10 +259,10 @@ class BookstoreServiceTest : BehaviorSpec({
             every { bookstoreThemeRepository.save(match { it.theme == KotlinBookstoreType.MUSIC }) } returns bookstoreTheme2
             every { bookstoreRepository.existsByName("Book Store") } returns false
 
-            val createBookstore = bookstoreService.createBookStore(adminAccount, bookstoreRequest)
+            val saveBookstore = bookstoreService.createBookstore(adminAccount, bookstoreRequest)
 
                 Then("it should return created book store") {
-                    createBookstore.id shouldBe 1L
+                    saveBookstore.id shouldBe 1L
                 }
         }
 
@@ -304,7 +277,7 @@ class BookstoreServiceTest : BehaviorSpec({
             every { bookstoreRepository.existsByName("Book Store") } returns false
 
             // When
-            val response = bookstoreService.updateBookStore(bookstoreId, bookstoreRequest)
+            val response = bookstoreService.updateBookstore(bookstoreId, bookstoreRequest)
 
             Then("it should return updated book store") {
                 response shouldBe KotlinWebBookstoreResponse(
@@ -330,7 +303,7 @@ class BookstoreServiceTest : BehaviorSpec({
             every { accountService.checkAccountAdmin(accountId) } returns Unit
             every { bookstoreRepository.findById(bookstoreId) } returns Optional.of(bookstore)
 
-            bookstoreService.deleteBookStore(bookstoreId)
+            bookstoreService.deleteBookstore(bookstoreId)
 
             Then("it should delete book store") {
                 bookstore.visibility shouldBe false
@@ -338,7 +311,7 @@ class BookstoreServiceTest : BehaviorSpec({
 
             Then("throw exception") {
                 val exception = shouldThrow<RuntimeException> {
-                    bookstoreService.deleteBookStore(bookstoreId)
+                    bookstoreService.deleteBookstore(bookstoreId)
                 }
                 exception.message shouldBe "Bookstore already deleted"
             }
@@ -349,7 +322,7 @@ class BookstoreServiceTest : BehaviorSpec({
             every { bookstoreRepository.findById(3L) } returns Optional.of(bookstore3)
             every { bookstoreRepository.findById(4L) } returns Optional.of(bookstore4)
 
-            bookstoreService.deleteBookStoreList(bookstoreListRequest2)
+            bookstoreService.deleteBookstoreList(bookstoreListRequest2)
 
             Then("it should delete book store") {
                 bookstore3.visibility shouldBe false
@@ -358,7 +331,7 @@ class BookstoreServiceTest : BehaviorSpec({
 
             Then("throw exception") {
                 val exception = shouldThrow<RuntimeException> {
-                    bookstoreService.deleteBookStoreList(bookstoreListRequest)
+                    bookstoreService.deleteBookstoreList(bookstoreListRequest)
                 }
                 exception.message shouldBe "Bookstore already deleted"
             }

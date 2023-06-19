@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.issue.domain
 
-import kr.co.bookand.backend.common.domain.DeviceOSFilter
+import kr.co.bookand.backend.common.KotlinDeviceOSFilter
 import kr.co.bookand.backend.common.domain.KotlinBaseEntity
 import kr.co.bookand.backend.issue.domain.dto.KotlinCreateIssueRequest
 import java.time.LocalDateTime
@@ -23,7 +23,7 @@ class KotlinIssue(
     var accountId: Long,
     var checkConfirmed: Boolean,
     @Enumerated(EnumType.STRING)
-    var deviceOS: DeviceOSFilter,
+    var deviceOS: KotlinDeviceOSFilter,
 
     @OneToMany(mappedBy = "issue", cascade = [CascadeType.ALL], orphanRemoval = true)
     var issueImageList: MutableList<KotlinIssueImage> = mutableListOf()

@@ -15,7 +15,7 @@ class KotlinBookstoreImage(
     @JoinColumn(name = "kbookstore_id")
     var bookstore: KotlinBookstore? = null
 ) {
-    fun updateBookStore(bookStore: KotlinBookstore) {
-        this.bookstore = bookStore
+    fun updateBookStore(bookstore: KotlinBookstore) {
+        this.bookstore = bookstore
     }
 }

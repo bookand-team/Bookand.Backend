@@ -23,8 +23,7 @@ class NoticeServiceTest : BehaviorSpec({
     val noticeRepository = mockk<KotlinNoticeRepository>()
     val accountService = mockk<KotlinAccountService>()
     val noticeService = KotlinNoticeService(
-        noticeRepository = noticeRepository,
-        accountService = accountService
+        noticeRepository = noticeRepository
     )
 
 
@@ -90,13 +89,12 @@ class NoticeServiceTest : BehaviorSpec({
 
         When("create notice") {
             When("fail - not admin") {
-                every { accountService.checkAccountAdmin(any()) } throws Exception("관리자가 아닙니다.")
                 val exception = shouldThrow<Exception> {
-                    noticeService.createNotice(adminAccount, createNoticeRequest)
+                    noticeService.createNotice(account, createNoticeRequest)
                 }
 
                 Then("throw exception") {
-                    exception.message shouldBe "관리자가 아닙니다."
+                    exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
                 }
             }
 
@@ -120,7 +118,7 @@ class NoticeServiceTest : BehaviorSpec({
                     }
 
                     Then("throw exception") {
-                        exception.message shouldBe "관리자가 아닙니다."
+                        exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
                     }
                 }
 
@@ -144,7 +142,7 @@ class NoticeServiceTest : BehaviorSpec({
                     }
 
                     Then("throw exception") {
-                        exception.message shouldBe "관리자가 아닙니다."
+                        exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
                     }
                 }
 
@@ -168,7 +166,7 @@ class NoticeServiceTest : BehaviorSpec({
                 }
 
                 Then("throw exception") {
-                    exception.message shouldBe "관리자가 아닙니다."
+                    exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
                 }
             }
 

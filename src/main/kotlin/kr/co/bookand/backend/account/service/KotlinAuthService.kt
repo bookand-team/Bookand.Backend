@@ -8,7 +8,6 @@ import kr.co.bookand.backend.account.domain.*
 import kr.co.bookand.backend.account.domain.dto.*
 import kr.co.bookand.backend.account.repository.KotlinAccountRepository
 import kr.co.bookand.backend.account.repository.KotlinSuspendedAccountRepository
-import kr.co.bookand.backend.bookmark.domain.BookmarkType
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmark
 import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkType
 import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkRepository
@@ -16,7 +15,6 @@ import kr.co.bookand.backend.common.KotlinErrorCode
 import kr.co.bookand.backend.common.KotlinRestTemplateService
 import kr.co.bookand.backend.common.domain.KotlinMessageResponse
 import kr.co.bookand.backend.config.jwt.*
-import kr.co.bookand.backend.config.security.KotlinSecurityUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
@@ -146,7 +144,7 @@ class KotlinAuthService(
         }
     }
 
-    fun basicLogin(loginRequest: KotlinLoginRequest, requiredRole: Role): TokenResponse {
+    fun basicLogin(loginRequest: KotlinLoginRequest, requiredRole: KotlinRole): TokenResponse {
         val authenticationToken = loginRequest.toAuthentication()
         val authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken)
         for (grantedAuthority in authentication.authorities) {
@@ -157,11 +155,11 @@ class KotlinAuthService(
     }
 
     fun adminLogin(loginRequestDto: KotlinLoginRequest): TokenResponse {
-        return basicLogin(loginRequestDto, Role.ADMIN)
+        return basicLogin(loginRequestDto, KotlinRole.ADMIN)
     }
 
     fun managerLogin(loginRequestDto: KotlinLoginRequest): TokenResponse {
-        return basicLogin(loginRequestDto, Role.MANAGER)
+        return basicLogin(loginRequestDto, KotlinRole.MANAGER)
     }
 
 

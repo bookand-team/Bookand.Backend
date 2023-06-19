@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation
 import kr.co.bookand.backend.account.service.KotlinAccountService
 import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
 import kr.co.bookand.backend.bookstore.domain.dto.*
-import kr.co.bookand.backend.bookstore.domain.dto.BookStoreDto.*
 import kr.co.bookand.backend.bookstore.service.KotlinBookstoreService
 import kr.co.bookand.backend.common.domain.KotlinMessageResponse
 import org.springframework.data.domain.Pageable
@@ -23,16 +22,16 @@ class KotlinBookstoreController(
 ) {
     @ApiOperation(value = "서점 등록")
     @PostMapping("")
-    fun createBookStore(
+    fun createBookstore(
         @RequestBody bookstoreRequest: KotlinBookstoreRequest
     ): ResponseEntity<KotlinBookstoreIdResponse> {
         val account = accountService.getCurrentAccount()
-        return ResponseEntity.ok(bookstoreService.createBookStore(account, bookstoreRequest))
+        return ResponseEntity.ok(bookstoreService.createBookstore(account, bookstoreRequest))
     }
 
     @ApiOperation(value = "서점 상세 조회 (APP)")
     @GetMapping("/{id}")
-    fun findBookStore(
+    fun findBookstore(
         @PathVariable id: Long
     ): ResponseEntity<KotlinBookstore> {
         return ResponseEntity.ok(bookstoreService.getBookstore(id))
@@ -40,7 +39,7 @@ class KotlinBookstoreController(
 
     @ApiOperation(value = "서점 전체 조회 (APP)")
     @GetMapping("")
-    fun getBookStoreListApp(
+    fun getBookstoreListApp(
         @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable?
     ): ResponseEntity<KotlinBookstorePageResponse> {
         val account = accountService.getCurrentAccount()
@@ -49,7 +48,7 @@ class KotlinBookstoreController(
 
     @ApiOperation(value = "서점 조건 조회")
     @GetMapping("/search")
-    fun searchBookStoreList(
+    fun searchBookstoreList(
         @RequestParam("search") search: String?,
         @RequestParam("theme") theme: String?,
         @RequestParam("status") status: String?,
@@ -61,8 +60,8 @@ class KotlinBookstoreController(
 
     @ApiOperation(value = "서점 전체 조회 (WEB)")
     @GetMapping("/web")
-    fun getBookStoreList(
-        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable?
+    fun getBookstoreList(
+        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable
     ): ResponseEntity<KotlinWebBookstorePageResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(bookstoreService.getWebBookstoreList(account, pageable))
@@ -70,32 +69,32 @@ class KotlinBookstoreController(
 
     @ApiOperation(value = "서점 수정")
     @PutMapping("/{id}")
-    fun updateBookStore(
+    fun updateBookstore(
         @PathVariable id: Long,
         @RequestBody bookStoreRequest: KotlinBookstoreRequest
     ): ResponseEntity<KotlinWebBookstoreResponse> {
-        return ResponseEntity.ok(bookstoreService.updateBookStore(id, bookStoreRequest))
+        return ResponseEntity.ok(bookstoreService.updateBookstore(id, bookStoreRequest))
     }
 
     @ApiOperation(value = "서점 삭제")
     @DeleteMapping("/{id}")
-    fun deleteBookStore(
+    fun deleteBookstore(
         @PathVariable id: Long
     ): ResponseEntity<KotlinMessageResponse> {
-        return ResponseEntity.ok(bookstoreService.deleteBookStore(id))
+        return ResponseEntity.ok(bookstoreService.deleteBookstore(id))
     }
 
     @ApiOperation(value = "선택된 서점 삭제")
     @DeleteMapping("/list")
-    fun deleteBookStoreList(
+    fun deleteBookstoreList(
         @RequestBody list: KotlinBookstoreListRequest
     ): ResponseEntity<KotlinMessageResponse> {
-        return ResponseEntity.ok(bookstoreService.deleteBookStoreList(list))
+        return ResponseEntity.ok(bookstoreService.deleteBookstoreList(list))
     }
 
     @ApiOperation(value = "서점 보기 변경")
     @PutMapping("/{id}/status")
-    fun updateBookStoreStatus(
+    fun updateBookstoreStatus(
         @PathVariable id: Long
     ): ResponseEntity<KotlinMessageResponse> {
         return ResponseEntity.ok(bookstoreService.updateBookstoreStatus(id))
@@ -103,15 +102,15 @@ class KotlinBookstoreController(
 
     @ApiOperation(value = "새로운 서점 제보")
     @PostMapping("/report")
-    fun reportBookStore(
-        @RequestBody reportBookStoreRequest: KotlinReportBookstoreRequest
+    fun reportBookstore(
+        @RequestBody reportBookstoreRequest: KotlinReportBookstoreRequest
     ): ResponseEntity<KotlinReportBookstoreIdResponse> {
-        return ResponseEntity.ok(bookstoreService.createReportBookstore(reportBookStoreRequest))
+        return ResponseEntity.ok(bookstoreService.createReportBookstore(reportBookstoreRequest))
     }
 
     @ApiOperation(value = "서점 제보 답변")
     @PutMapping("/report/{reportId}/answer")
-    fun answerReportBookStore(
+    fun answerReportBookstore(
         @PathVariable reportId: Long,
         @RequestBody answerReportRequest:KotlinAnswerReportRequest
     ): ResponseEntity<KotlinMessageResponse> {
@@ -120,16 +119,16 @@ class KotlinBookstoreController(
 
     @ApiOperation(value = "서점 제보 전체 조회")
     @GetMapping("/report")
-    fun getBookStoreReportList(
-        @PageableDefault pageable: Pageable?
+    fun getBookstoreReportList(
+        @PageableDefault pageable: Pageable
     ): ResponseEntity<KotlinReportBookstoreListResponse> {
         val account = accountService.getCurrentAccount()
-        return ResponseEntity.ok(bookstoreService.getBookStoreReportList(pageable, account))
+        return ResponseEntity.ok(bookstoreService.getBookstoreReportList(pageable, account))
     }
 
     @ApiOperation(value = "서점 지도 정보 조회")
     @GetMapping("/address")
-    fun getBookStoreAddress(): ResponseEntity<KotlinBookStoreAddressListResponse> {
+    fun getBookstoreAddress(): ResponseEntity<KotlinBookStoreAddressListResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(bookstoreService.getBookstoreAddressList(account))
     }

@@ -2,14 +2,12 @@ package kr.co.bookand.backend.account.service
 
 import kr.co.bookand.backend.account.domain.*
 import kr.co.bookand.backend.account.domain.dto.*
-import kr.co.bookand.backend.account.exception.AccountException
 import kr.co.bookand.backend.account.repository.KotlinAccountRepository
 import kr.co.bookand.backend.account.repository.KotlinRevokeAccountRepository
 import kr.co.bookand.backend.account.repository.KotlinSuspendedAccountRepository
 import kr.co.bookand.backend.common.KotlinErrorCode
 import kr.co.bookand.backend.common.KotlinPageResponse
 import kr.co.bookand.backend.common.domain.KotlinMessageResponse
-import kr.co.bookand.backend.common.exception.ErrorCode
 import kr.co.bookand.backend.config.jwt.KotlinRefreshTokenRepository
 import kr.co.bookand.backend.config.security.KotlinSecurityUtils.getCurrentAccountEmail
 import org.springframework.data.domain.Pageable
@@ -180,7 +178,7 @@ class KotlinAccountService(
         val socialEmail =
             socialIdWithAccessToken.userId + "@" + account.provider.lowercase(Locale.getDefault()) + ".com"
         if (account.email != socialEmail) {
-            throw AccountException(ErrorCode.NOT_MATCH_MEMBER, socialEmail)
+            throw RuntimeException(KotlinErrorCode.NOT_MATCH_MEMBER.errorMessage)
         }
     }
 

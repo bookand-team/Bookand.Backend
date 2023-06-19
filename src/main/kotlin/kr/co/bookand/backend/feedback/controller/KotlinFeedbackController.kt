@@ -3,8 +3,6 @@ package kr.co.bookand.backend.feedback.controller
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import kr.co.bookand.backend.account.service.KotlinAccountService
-import kr.co.bookand.backend.common.domain.dto.PageResponse
-import kr.co.bookand.backend.feedback.domain.dto.FeedbackDto.*
 import kr.co.bookand.backend.feedback.domain.dto.KotlinCreateFeedbackRequest
 import kr.co.bookand.backend.feedback.domain.dto.KotlinFeedbackIdResponse
 import kr.co.bookand.backend.feedback.domain.dto.KotlinFeedbackListResponse

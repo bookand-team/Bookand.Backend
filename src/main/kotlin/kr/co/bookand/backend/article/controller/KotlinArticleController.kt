@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v2/articles")
+@RequestMapping("/api/v1/articles")
 @Api(tags = ["아티클 API"])
 class KotlinArticleController(
     private val articleService: KotlinArticleService,
@@ -49,7 +49,7 @@ class KotlinArticleController(
     )
     @GetMapping("")
     fun getSimpleArticleList(
-        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable?,
+        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable,
         @RequestParam(required = false) cursorId: Long?
     ): ResponseEntity<KotlinArticlePageResponse> {
         val account = accountService.getCurrentAccount()
@@ -96,7 +96,7 @@ class KotlinArticleController(
         @RequestParam("search") search: String?,
         @RequestParam("category") category: String?,
         @RequestParam("status") status: String?,
-        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable?
+        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable
     ): ResponseEntity<KotlinWebArticlePageResponse> {
         return ResponseEntity.ok(articleService.searchArticleList(search, category, status, pageable))
     }

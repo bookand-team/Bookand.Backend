@@ -32,7 +32,7 @@ class KotlinIssueService(
             .orElseThrow { throw RuntimeException("ErrorCode.ISSUE_NOT_FOUND") }
     }
 
-    fun getIssueList(currentAccount: KotlinAccount, pageable: Pageable?): KotlinIssueSimpleListResponse {
+    fun getIssueList(currentAccount: KotlinAccount, pageable: Pageable): KotlinIssueSimpleListResponse {
         currentAccount.role.checkAdminAndManager()
         val map = kotlinIssueRepository.findAll(pageable)
             .map { KotlinIssueSimpleResponse(it) }

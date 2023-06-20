@@ -2,6 +2,7 @@ package kr.co.bookand.backend.bookmark.domain
 
 import kr.co.bookand.backend.account.domain.KotlinAccount
 import kr.co.bookand.backend.article.domain.KotlinArticle
+import kr.co.bookand.backend.common.domain.KotlinBaseEntity
 import javax.persistence.*
 
 @Entity
@@ -21,5 +22,5 @@ class KotlinBookmarkedArticle(
 
     @ManyToOne(fetch = FetchType.LAZY)
     var account: KotlinAccount? = null,
-) {
+) : KotlinBaseEntity() {
 }

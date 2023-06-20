@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v3/policys")
+@RequestMapping("/api/v1/policys")
 @Api(tags = ["정책 API"])
 class KotlinController(
     private val policyService: KotlinPolicyService,

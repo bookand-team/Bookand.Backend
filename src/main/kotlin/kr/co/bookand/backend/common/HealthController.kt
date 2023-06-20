@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class HealthController {
-    @GetMapping("/v3")
+    @GetMapping("/")
     fun hello(): String {
         return "BOOKAND REST API Server is running!"
     }

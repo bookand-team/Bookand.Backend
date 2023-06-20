@@ -11,7 +11,7 @@ interface KotlinBookstoreRepository: JpaRepository<KotlinBookstore, Long>, Kotli
     fun existsByName(name: String): Boolean
     fun countAllByVisibility(visibility: Boolean): Long
     fun countAllByVisibilityAndStatus(visibility: Boolean, status: KotlinStatus): Long
-    fun findAllByStatus(status: KotlinStatus?, pageable: Pageable?): Page<KotlinBookstore>
+    fun findAllByStatus(status: KotlinStatus?, pageable: Pageable): Page<KotlinBookstore>
 
     fun findAllByStatus(status: KotlinStatus): List<KotlinBookstore>
 

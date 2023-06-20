@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v3/bookstore")
+@RequestMapping("/api/v1/bookstore")
 @Api(tags = ["서점 API"])
 class KotlinBookstoreController(
     private val bookstoreService: KotlinBookstoreService,
@@ -40,7 +40,7 @@ class KotlinBookstoreController(
     @ApiOperation(value = "서점 전체 조회 (APP)")
     @GetMapping("")
     fun getBookstoreListApp(
-        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable?
+        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable
     ): ResponseEntity<KotlinBookstorePageResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(bookstoreService.getBookstoreSimpleList(account, pageable))
@@ -52,7 +52,7 @@ class KotlinBookstoreController(
         @RequestParam("search") search: String?,
         @RequestParam("theme") theme: String?,
         @RequestParam("status") status: String?,
-        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable?
+        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable
     ): ResponseEntity<KotlinWebBookstorePageResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(bookstoreService.searchBookstoreList(account, search, theme, status, pageable))

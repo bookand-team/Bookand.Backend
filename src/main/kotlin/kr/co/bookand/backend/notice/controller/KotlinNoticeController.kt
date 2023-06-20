@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v3/notifications")
+@RequestMapping("/api/v1/notifications")
 @Api(tags = ["공지사항 API"])
 class KotlinNoticeController(
     private val noticeService: KotlinNoticeService,
@@ -35,7 +35,7 @@ class KotlinNoticeController(
     )
     @GetMapping
     fun getNoticeSimpleList(
-        @PageableDefault pageable: Pageable?,
+        @PageableDefault pageable: Pageable,
         @RequestParam(required = false) cursorId: Long?
     ): ResponseEntity<KotlinNoticeListResponse> {
         return ResponseEntity.ok(noticeService.getNoticeSimpleList(pageable, cursorId))
@@ -44,7 +44,7 @@ class KotlinNoticeController(
     @ApiOperation(value = "공지사항 목록 조회")
     @GetMapping("/web")
     fun getNoticeList(
-        @PageableDefault pageable: Pageable?
+        @PageableDefault pageable: Pageable
     ): ResponseEntity<KotlinNoticeListResponse> {
         return ResponseEntity.ok(noticeService.getNoticeList(pageable))
     }

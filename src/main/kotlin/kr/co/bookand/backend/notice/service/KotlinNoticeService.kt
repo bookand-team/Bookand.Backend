@@ -34,7 +34,7 @@ class KotlinNoticeService(
     }
 
     fun getNoticeSimpleList(
-        pageable: Pageable?,
+        pageable: Pageable,
         cursorId: Long?
     ): KotlinNoticeListResponse {
         val nextCursorId = cursorId ?: 0L
@@ -86,7 +86,7 @@ class KotlinNoticeService(
     }
 
     fun getNoticeList(
-        pageable: Pageable?
+        pageable: Pageable
     ): KotlinNoticeListResponse {
         val list = noticeRepository.findAllByStatusAndVisibility(pageable, KotlinStatus.VISIBLE, true)
             .map { KotlinNoticeResponse(it) }

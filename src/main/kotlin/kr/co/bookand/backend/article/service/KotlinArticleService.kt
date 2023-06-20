@@ -69,7 +69,11 @@ class KotlinArticleService(
         return KotlinArticleIdResponse(article.id)
     }
 
-    fun getArticleList(currentAccount: KotlinAccount, pageable: Pageable?, cursorId: Long?): KotlinArticlePageResponse {
+    fun getArticleList(
+        currentAccount: KotlinAccount,
+        pageable: Pageable,
+        cursorId: Long?
+    ): KotlinArticlePageResponse {
         var nextCursorId = cursorId ?: 0L
 
         if (cursorId != null && cursorId == 0L) {
@@ -117,7 +121,7 @@ class KotlinArticleService(
         search: String?,
         category: String?,
         status: String?,
-        pageable: Pageable?
+        pageable: Pageable
     ): KotlinWebArticlePageResponse {
         val articlePage = kotlinArticleRepository.findAllBySearch(search, category, status, pageable)
             .map(::KotlinWebArticleResponse)

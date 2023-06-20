@@ -9,7 +9,7 @@ interface KotlinBookmarkedArticleRepositoryCustom {
 
     fun findAllByBookmarkAndAndVisibilityTrue(
         bookmark: KotlinBookmark,
-        pageable: Pageable?,
+        pageable: Pageable,
         cursorId: Long?,
         createdAt: String?
     ): Page<KotlinBookmarkedArticle>

@@ -11,6 +11,6 @@ interface KotlinBookstoreRepositoryCustom {
         search: String?,
         theme: String?,
         status: String?,
-        pageable: Pageable?
+        pageable: Pageable
     ): Page<KotlinBookstore>
 }

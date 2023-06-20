@@ -7,7 +7,7 @@ import springfox.documentation.annotations.ApiIgnore
 @Controller
 @ApiIgnore
 class KotlinSwaggerController {
-    @GetMapping("/v3/docs")
+    @GetMapping("/docs")
     fun redirect(): String {
         return "redirect:/swagger-ui/index.html"
     }

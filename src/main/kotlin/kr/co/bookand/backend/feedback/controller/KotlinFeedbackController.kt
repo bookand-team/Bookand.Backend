@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 
 
 @RestController
-@RequestMapping("/api/v3/feedbacks")
+@RequestMapping("/api/v1/feedbacks")
 @Api(tags = ["피드백 API"])
 class KotlinFeedbackController(
     private val feedbackService: KotlinFeedbackService,
@@ -33,7 +33,7 @@ class KotlinFeedbackController(
     @ApiOperation(value = "피드백 리스트 조회 (WEB)")
     @GetMapping
     fun getFeedbackList(
-        @PageableDefault pageable: Pageable?
+        @PageableDefault pageable: Pageable
     ): ResponseEntity<KotlinFeedbackListResponse> {
         return ResponseEntity.ok(feedbackService.getFeedbackList(pageable))
     }

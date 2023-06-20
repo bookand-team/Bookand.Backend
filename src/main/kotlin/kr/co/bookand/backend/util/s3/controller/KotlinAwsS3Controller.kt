@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v2/files")
+@RequestMapping("/api/v1/files")
 @RequiredArgsConstructor
 class KotlinAwsS3Controller(
     val kotlinAwsS3Service: KotlinAwsS3Service

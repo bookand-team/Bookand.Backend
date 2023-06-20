@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable
 interface KotlinBookmarkedBookstoreRepositoryCustom {
     fun findAllByBookmarkAndAndVisibilityTrue(
         bookmark: KotlinBookmark,
-        pageable: Pageable?,
+        pageable: Pageable,
         cursorId: Long?,
         createdAt: String?
     ): Page<KotlinBookmarkedBookstore>

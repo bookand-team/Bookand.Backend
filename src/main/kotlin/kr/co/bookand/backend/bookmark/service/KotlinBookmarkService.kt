@@ -72,7 +72,7 @@ class KotlinBookmarkService(
     fun getBookmarkFolder(
         currentAccount: KotlinAccount,
         bookmarkId: Long,
-        pageable: Pageable?,
+        pageable: Pageable,
         cursorId: Long?
     ): KotlinBookmarkResponse {
         val bookmark = getMyBookmark(currentAccount.id, bookmarkId)
@@ -81,7 +81,7 @@ class KotlinBookmarkService(
 
     fun getBookmarkResponse(
         bookmark: KotlinBookmark,
-        pageable: Pageable?,
+        pageable: Pageable,
         cursorId: Long?
     ): KotlinBookmarkResponse {
         if (bookmark.bookmarkType == KotlinBookmarkType.BOOKSTORE) {
@@ -118,7 +118,7 @@ class KotlinBookmarkService(
     fun getBookmarkCollect(
         currentAccount: KotlinAccount,
         bookmarkType: String,
-        pageable: Pageable?,
+        pageable: Pageable,
         cursorId: Long?
     ): KotlinBookmarkResponse {
         val bookmarkType = KotlinBookmarkType.valueOf(bookmarkType)

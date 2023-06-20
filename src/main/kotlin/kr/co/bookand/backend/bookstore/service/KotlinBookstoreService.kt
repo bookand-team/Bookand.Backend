@@ -160,7 +160,7 @@ class KotlinBookstoreService(
             .orElseThrow { IllegalArgumentException("존재하지 않는 신고입니다.") }
     }
 
-    fun getBookstoreSimpleList(currentAccount: KotlinAccount, pageable: Pageable?): KotlinBookstorePageResponse {
+    fun getBookstoreSimpleList(currentAccount: KotlinAccount, pageable: Pageable): KotlinBookstorePageResponse {
         val bookstorePage = kotlinBookstoreRepository.findAllByStatus(KotlinStatus.VISIBLE, pageable)
             .map { bookstore ->
                 val checkBookmark =
@@ -175,7 +175,7 @@ class KotlinBookstoreService(
         searchKeyword: String?,
         theme: String?,
         status: String?,
-        pageable: Pageable?
+        pageable: Pageable
     ): KotlinWebBookstorePageResponse {
         val bookstorePage = kotlinBookstoreRepository
             .findAllBySearch(

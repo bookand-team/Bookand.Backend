@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("api/v3/dashboard")
+@RequestMapping("api/v1/dashboard")
 @RequiredArgsConstructor
 @Api(tags = ["대시보드 API"])
 class KotlinDashBoardController(

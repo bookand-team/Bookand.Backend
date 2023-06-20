@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v3/bookmarks")
+@RequestMapping("/api/v1/bookmarks")
 @Api(tags = ["북마크 API"])
 class KotlinBookmarkController(
     private val bookmarkService: KotlinBookmarkService,
@@ -58,7 +58,7 @@ class KotlinBookmarkController(
     @GetMapping("/folders/{bookmarkFolderId}")
     fun getBookmarkFolder(
         @PathVariable bookmarkFolderId: Long,
-        @PageableDefault(size = 10, sort = ["id"], direction = Sort.Direction.DESC) pageable: Pageable?,
+        @PageableDefault(size = 10, sort = ["id"], direction = Sort.Direction.DESC) pageable: Pageable,
         @RequestParam(required = false) cursorId: Long?
     ): ResponseEntity<KotlinBookmarkResponse> {
         val account = accountService.getCurrentAccount()
@@ -103,7 +103,7 @@ class KotlinBookmarkController(
     @GetMapping("/collections")
     fun getBookmarkCollect(
         @RequestParam bookmarkType: String,
-        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable?,
+        @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable,
         @RequestParam(required = false) cursorId: Long?
     ): ResponseEntity<KotlinBookmarkResponse> {
         val account = accountService.getCurrentAccount()

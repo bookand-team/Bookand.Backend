@@ -33,7 +33,7 @@ class KotlinFeedbackService(
             .orElseThrow { IllegalArgumentException("해당 피드백이 존재하지 않습니다.") }
     }
 
-    fun getFeedbackList(pageable: Pageable?): KotlinFeedbackListResponse {
+    fun getFeedbackList(pageable: Pageable): KotlinFeedbackListResponse {
         val feedbackList = feedbackRepository.findAll(pageable)
             .map { KotlinFeedbackResponse(it) }
         return KotlinFeedbackListResponse(KotlinPageResponse.of(feedbackList))

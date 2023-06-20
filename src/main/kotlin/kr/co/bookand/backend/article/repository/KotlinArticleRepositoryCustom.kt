@@ -7,6 +7,6 @@ import org.springframework.data.domain.Pageable
 
 interface KotlinArticleRepositoryCustom {
 
-    fun findAllBySearch(search: String?, category: String?, status: String?, pageable: Pageable?): Page<KotlinArticle>
-    fun findAllByStatus(status: KotlinStatus?, pageable: Pageable?, cursorId: Long?, date: String?): Page<KotlinArticle>
+    fun findAllBySearch(search: String?, category: String?, status: String?, pageable: Pageable): Page<KotlinArticle>
+    fun findAllByStatus(status: KotlinStatus?, pageable: Pageable, cursorId: Long?, date: String?): Page<KotlinArticle>
 }

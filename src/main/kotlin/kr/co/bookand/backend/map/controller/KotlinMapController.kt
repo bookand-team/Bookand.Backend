@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v3/maps")
+@RequestMapping("/api/v1/maps")
 @RequiredArgsConstructor
 @Api(tags = ["지도 API"])
 class KotlinMapController(

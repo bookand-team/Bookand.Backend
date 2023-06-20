@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface KotlinNoticeRepository : JpaRepository<KotlinNotice, Long>, KotlinNoticeRepositoryCustom {
     fun findAllByStatusAndVisibility(
-        pageable: Pageable?,
+        pageable: Pageable,
         status: KotlinStatus,
         visibility: Boolean
     ): Page<KotlinNotice>

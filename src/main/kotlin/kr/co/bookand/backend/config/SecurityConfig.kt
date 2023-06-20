@@ -51,7 +51,7 @@ class SecurityConfig(
             .antMatchers("/api/v1/policys/**").permitAll()
             .antMatchers("/").permitAll()
             .antMatchers(
-                "/v3/docs/", "/docs/**", "/favicon.ico", "/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
+                "/docs/**", "/favicon.ico", "/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
                 "/configuration/security", "/swagger-ui.html", "/swagger-ui/#", "/webjars/**", "/swagger/**", "/swagger-ui/**", "/", "/csrf", "/error").permitAll()
             .anyRequest().authenticated()
 

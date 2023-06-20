@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v3/issues")
+@RequestMapping("/api/v1/issues")
 @Api(tags = ["오류 및 버그 API"])
 class KotlinIssueController(
     private val issueService: KotlinIssueService,
@@ -33,7 +33,7 @@ class KotlinIssueController(
     @ApiOperation(value = "오류 및 버그 신고 조회 (WEB)")
     @GetMapping("")
     fun getIssueList(
-        @PageableDefault pageable: Pageable?
+        @PageableDefault pageable: Pageable
     ): ResponseEntity<KotlinIssueSimpleListResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(issueService.getIssueList(account, pageable))

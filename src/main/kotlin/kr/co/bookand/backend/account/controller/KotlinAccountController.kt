@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/api/v2/members")
+@RequestMapping("/api/v1/members")
 @Api(tags = ["회원 API"], hidden = true)
 class KotlinAccountController(
     private val kotlinAccountService: KotlinAccountService,

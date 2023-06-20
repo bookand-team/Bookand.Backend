@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable
 
 interface KotlinNoticeRepositoryCustom {
     fun findAllByVisibilityAndStatus(
-        pageable: Pageable?,
+        pageable: Pageable,
         visibility: Boolean,
         status: KotlinStatus,
         cursorId: Long?

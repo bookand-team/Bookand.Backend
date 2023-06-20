@@ -72,8 +72,7 @@ data class LoginRequest(
     @ApiModelProperty(value = "비밀번호", example = "비밀번호")
     var password: String
 ){
-
-    fun toAuthentication(): UsernamePasswordAuthenticationToken {
+    fun toAuthenticationToken(): UsernamePasswordAuthenticationToken {
         return UsernamePasswordAuthenticationToken(email, password)
     }
 }
@@ -86,11 +85,4 @@ data class LoginResponse(
 data class AccountLoginRequest(
     val account : Account,
     val suffix : String
-){
-    fun toLoginRequest() : LoginRequest {
-        return LoginRequest(
-            email = account.email,
-            password = account.password + suffix
-        )
-    }
-}
+)

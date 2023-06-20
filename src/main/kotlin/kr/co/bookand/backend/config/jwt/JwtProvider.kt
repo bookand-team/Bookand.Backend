@@ -5,7 +5,9 @@ import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import kr.co.bookand.backend.account.domain.Role
 import kr.co.bookand.backend.account.domain.dto.MiddleAccount
+import kr.co.bookand.backend.account.domain.dto.SignTokenRequest
 import kr.co.bookand.backend.account.domain.dto.SigningAccount
+import kr.co.bookand.backend.account.domain.dto.TokenResponse
 import kr.co.bookand.backend.config.security.PrincipalDetailService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -29,11 +31,12 @@ class JwtProvider(
     @Value("\${jwt.refreshTokenExpireTime}")
     private val refreshTokenExpireTime: Long
 ) {
+    private lateinit var signToken: String
     private val key: Key = Keys.hmacShaKeyFor(secretKey.toByteArray())
     fun createSignTokenDto(middleAccount: MiddleAccount): SignTokenRequest {
         val now = Date().time
-        val accessTokenExpiresIn: Date = Date(now + accessTokenExpireTime)
-        val signToken = Jwts.builder()
+        val accessTokenExpiresIn = Date(now + accessTokenExpireTime)
+        signToken = Jwts.builder()
             .setSubject(middleAccount.email + "_" + middleAccount.providerEmail + "_" + middleAccount.socialType)
             .claim("sign", Role.USER)
             .setExpiration(accessTokenExpiresIn)
@@ -44,11 +47,11 @@ class JwtProvider(
         )
     }
 
-    fun getSignKey(signToken: String): SigningAccount {
+    fun getSignKey(signTokenRequest: SignTokenRequest): SigningAccount {
         val body = Jwts.parserBuilder()
             .setSigningKey(key)
             .build()
-            .parseClaimsJws(signToken)
+            .parseClaimsJws(signTokenRequest.signToken)
             .body
         val email = body.subject
         val split = email.split("_")

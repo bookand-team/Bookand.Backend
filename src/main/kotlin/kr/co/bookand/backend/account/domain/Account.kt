@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.account.domain
 
+import kr.co.bookand.backend.account.domain.dto.LoginRequest
 import kr.co.bookand.backend.bookmark.domain.Bookmark
 import kr.co.bookand.backend.bookstore.domain.ReportBookstore
 import kr.co.bookand.backend.common.domain.BaseEntity

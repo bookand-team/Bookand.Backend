@@ -18,6 +18,7 @@ import kr.co.bookand.backend.config.jwt.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -63,7 +64,7 @@ class AuthService(
         if (existAccount != null) {
             // 로그인
             val tokenResponse =
-                login(AccountLoginRequest(account = existAccount, suffix = suffix).toLoginRequest())
+                login(AccountInfoResponse(account = existAccount).toLoginRequest(suffix))
             return LoginResponse(
                 tokenResponse = tokenResponse,
                 httpStatus = HttpStatus.OK
@@ -85,7 +86,7 @@ class AuthService(
 
     @Transactional
     fun socialSignUp(signTokenRequest: SignTokenRequest): TokenResponse {
-        val signKey = jwtProvider.getSignKey(signTokenRequest.signToken)
+        val signKey = jwtProvider.getSignKey(signTokenRequest)
         checkSignUp(signKey)
         val nickname = nicknameRandom()
         duplicateEmailAndNickName(signKey.email, nickname)
@@ -104,7 +105,7 @@ class AuthService(
         val initBookmark = createInitBookmark(saveAccount)
         saveAccount.updateBookmarks(initBookmark)
 
-        val tokenResponse = login(AccountLoginRequest(account = saveAccount, suffix = suffix).toLoginRequest())
+        val tokenResponse = login(AccountInfoResponse(account = saveAccount).toLoginRequest(suffix))
 
         return TokenResponse(
             accessToken = tokenResponse.accessToken,
@@ -145,7 +146,7 @@ class AuthService(
     }
 
     fun basicLogin(loginRequest: LoginRequest, requiredRole: Role): TokenResponse {
-        val authenticationToken = loginRequest.toAuthentication()
+        val authenticationToken = loginRequest.toAuthenticationToken()
         val authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken)
         for (grantedAuthority in authentication.authorities) {
             val authority = grantedAuthority.authority
@@ -187,11 +188,9 @@ class AuthService(
     fun logout(): MessageResponse {
         val authentication = SecurityContextHolder.getContext().authentication
         val loginAccount = authentication.name
-        if (accountRepository.existsByEmail(loginAccount) || refreshTokenRepository.existsByKey(
-                authentication.name
-            )
-        ) {
+        if (accountRepository.existsByEmail(loginAccount) || refreshTokenRepository.existsByKey(authentication.name)) {
             val refreshToken = refreshTokenRepository.findByKey(authentication.name)
+                ?: throw RuntimeException(ErrorCode.NOT_FOUND_REFRESH_TOKEN.errorMessage)
             refreshTokenRepository.delete(refreshToken)
         } else {
             throw RuntimeException(ErrorCode.NOT_FOUND_MEMBER.errorMessage)
@@ -248,7 +247,10 @@ class AuthService(
             throw JwtException(ErrorCode.JWT_ERROR.errorMessage)
         }
         val authentication = jwtProvider.getAuthentication(tokenRequestDto.refreshToken)
-        val refreshToken = refreshTokenRepository.findByKey(authentication!!.name)
+        if (authentication != null) {
+            println("authentication.name = ${authentication.name}")
+        }
+        val refreshToken = authentication?.let { refreshTokenRepository.findByKey(it.name) }
             ?: throw RuntimeException(ErrorCode.NOT_FOUND_REFRESH_TOKEN.errorMessage)
 
         checkSuspended(refreshToken.account)
@@ -291,13 +293,12 @@ class AuthService(
 
 
     fun getTokenDto(loginRequest: LoginRequest): TokenResponse {
-        val authenticationToken = loginRequest.toAuthentication()
-        val authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken)
+        val authentication = authenticationManagerBuilder.getObject().authenticate(loginRequest.toAuthenticationToken())
         val tokenDto = jwtProvider.generateToken(authentication)
         val account = getAccountByEmail(loginRequest.email)
         val refreshToken = RefreshToken(
-            key = tokenDto.refreshToken,
-            value = loginRequest.email,
+            key = loginRequest.email,
+            value = tokenDto.refreshToken,
             account = account
         )
         refreshTokenRepository.save(refreshToken)

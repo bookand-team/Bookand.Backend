@@ -30,6 +30,10 @@ data class AccountInfoResponse(
         signUpDate = account.signUpDate.toString(),
         accountStatus = account.accountStatus.name
     )
+
+    fun toLoginRequest(suffix : String) : LoginRequest {
+        return LoginRequest(email = email, password = email + suffix)
+    }
 }
 
 data class AccountListResponse(

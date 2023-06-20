@@ -1,4 +1,4 @@
-package kr.co.bookand.backend.config.jwt
+package kr.co.bookand.backend.account.domain.dto
 
 data class TokenResponse(
     val accessToken: String,
@@ -6,7 +6,7 @@ data class TokenResponse(
 )
 
 data class SignTokenRequest(
-    val signToken: String
+    var signToken: String
 )
 
 data class TokenRequest(

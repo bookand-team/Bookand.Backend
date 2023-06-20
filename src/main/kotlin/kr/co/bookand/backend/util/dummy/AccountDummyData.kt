@@ -37,7 +37,7 @@ class AccountDummyData(
         }
 
         val middleAccount = MiddleAccount(
-            email = "email",
+            email = "admin",
             providerEmail = "providerEmail",
             socialType = SocialType.GOOGLE,
         )

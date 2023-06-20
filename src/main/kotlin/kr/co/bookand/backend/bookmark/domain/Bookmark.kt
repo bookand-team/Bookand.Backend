@@ -49,23 +49,8 @@ class Bookmark(
         this.folderImage = folderImage
     }
 
-    fun updateBookmarkedBookStore(bookmarkedBookstoreList: MutableList<BookmarkedBookstore>) {
-        this.bookmarkedBookstoreList = bookmarkedBookstoreList
-    }
-
-    fun updateBookmarkedArticle(bookmarkedArticleList: MutableList<BookmarkedArticle>) {
-        this.bookmarkedArticleList = bookmarkedArticleList
-    }
-
     fun updateFolderName(folderName: String) {
         this.folderName = folderName
     }
 
-    fun deleteBookmarkedBookstore(bookmarkedBookstore: BookmarkedBookstore) {
-        bookmarkedBookstoreList.remove(bookmarkedBookstore)
-    }
-
-    fun deleteBookmarkedArticle(bookmarkedArticle: BookmarkedArticle) {
-        bookmarkedArticleList.remove(bookmarkedArticle)
-    }
 }

@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/bookstore")
+@RequestMapping("/api/v1/bookstores")
 @Api(tags = ["서점 API"])
 class BookstoreController(
     private val bookstoreService: BookstoreService,
@@ -33,8 +33,8 @@ class BookstoreController(
     @GetMapping("/{id}")
     fun findBookstore(
         @PathVariable id: Long
-    ): ResponseEntity<Bookstore> {
-        return ResponseEntity.ok(bookstoreService.getBookstore(id))
+    ): ResponseEntity<BookstoreResponse> {
+        return ResponseEntity.ok(bookstoreService.getBookstoreResponse(id))
     }
 
     @ApiOperation(value = "서점 전체 조회 (APP)")

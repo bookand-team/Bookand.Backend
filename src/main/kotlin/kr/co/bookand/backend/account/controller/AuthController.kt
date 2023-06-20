@@ -7,9 +7,9 @@ import kr.co.bookand.backend.account.domain.dto.LoginRequest
 import kr.co.bookand.backend.account.domain.dto.ManagerInfoRequest
 import kr.co.bookand.backend.account.service.AuthService
 import kr.co.bookand.backend.common.domain.MessageResponse
-import kr.co.bookand.backend.config.jwt.SignTokenRequest
-import kr.co.bookand.backend.config.jwt.TokenRequest
-import kr.co.bookand.backend.config.jwt.TokenResponse
+import kr.co.bookand.backend.account.domain.dto.SignTokenRequest
+import kr.co.bookand.backend.account.domain.dto.TokenRequest
+import kr.co.bookand.backend.account.domain.dto.TokenResponse
 import kr.co.bookand.backend.config.security.SecurityUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

@@ -150,6 +150,11 @@ class BookstoreService(
         }
     }
 
+    fun getBookstoreResponse(bookstoreId: Long): BookstoreResponse {
+        val bookstore = getBookstore(bookstoreId)
+        return BookstoreResponse(bookstore)
+    }
+
     fun getBookstore(id: Long): Bookstore {
         return bookstoreRepository.findById(id)
             .orElseThrow { IllegalArgumentException("존재하지 않는 서점입니다.") }
@@ -207,7 +212,7 @@ class BookstoreService(
         pageable: Pageable,
         currentAccount: Account
     ): ReportBookstoreListResponse {
-
+        currentAccount.role.checkAdminAndManager()
         val reportBookstorePage = reportBookstoreRepository.findAll(pageable)
             .map { reportBookstore ->
                 return@map ReportBookstoreResponse(reportBookstore)

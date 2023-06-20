@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/bookmarks")
 @Api(tags = ["북마크 API"])
-class KotlinBookmarkController(
+class BookmarkController(
     private val bookmarkService: BookmarkService,
     private val accountService: AccountService
 ) {
@@ -110,7 +110,7 @@ class KotlinBookmarkController(
         return ResponseEntity.ok(bookmarkService.getBookmarkCollect(account, bookmarkType, pageable, cursorId))
     }
 
-    @ApiOperation(value = "모아보기 북마크 삭제")
+    @ApiOperation(value = "모아보기 폴더 내용 삭제")
     @Operation(
         description = "북마크 폴더 삭제종류는 BOOKSTORE/ARTICLE 삭제할 북마크들은 리스트로 넘겨주시면 됩니다."
     )
@@ -134,7 +134,7 @@ class KotlinBookmarkController(
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         bookmarkService.deleteBookmarkContent(account, bookmarkFolderId, bookmarkRequest)
-        return ResponseEntity.ok(MessageResponse(message = "북마크 삭제 완료", statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(message = "북마크 내용 삭제 완료", statusCode = 200))
     }
 
     @ApiOperation(value = "북마크 폴더 삭제")

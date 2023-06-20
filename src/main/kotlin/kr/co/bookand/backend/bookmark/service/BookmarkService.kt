@@ -64,7 +64,7 @@ class BookmarkService(
     ): BookmarkFolderListResponse {
         val bookmarkType = BookmarkType.valueOf(bookmarkType)
         val bookmarkFolderResponseList =
-            bookmarkRepository.findAllByAccountAndBookmarkType(currentAccount, bookmarkType)
+            bookmarkRepository.findAllByAccountAndBookmarkTypeAndVisibilityTrue(currentAccount, bookmarkType)
                 .map { BookmarkFolderResponse(it) }
         return BookmarkFolderListResponse(bookmarkFolderResponseList)
     }
@@ -87,12 +87,12 @@ class BookmarkService(
         if (bookmark.bookmarkType == BookmarkType.BOOKSTORE) {
             val firstByBookmarkId = bookmarkedBookstoreRepository.findFirstByBookmarkId(bookmark.id)
             val nextCursorId =
-                if (cursorId != null && cursorId == 0L && firstByBookmarkId != null) firstByBookmarkId.bookstore.id
+                if (cursorId != null && cursorId != 0L && firstByBookmarkId != null) firstByBookmarkId.bookstore.id
                 else cursorId
             val createdAt =
-                if (cursorId != null && cursorId == 0L && firstByBookmarkId != null) firstByBookmarkId.bookstore.createdAt.toString()
-                else (if (cursorId == null) null else nextCursorId?.let { getBookmarkedBookstore(it).bookmark.createdAt.toString() })
-            val page = bookmarkedBookstoreRepository.findAllByBookmarkAndAndVisibilityTrue(bookmark, pageable, cursorId, createdAt)
+                if (cursorId != null && cursorId != 0L && firstByBookmarkId != null) firstByBookmarkId.bookstore.createdAt.toString()
+                else null
+            val page = bookmarkedBookstoreRepository.findAllByBookmarkAndAndVisibilityTrue(bookmark, pageable, nextCursorId, createdAt)
                 .map { BookmarkInfo(it.bookstore) }
             val totalElements = bookmarkedBookstoreRepository.countAllByBookmark(bookmark)
             val ofCursor = PageResponse.ofCursor(page, totalElements)
@@ -101,12 +101,12 @@ class BookmarkService(
         } else {
             val firstByBookmarkId = bookmarkedArticleRepository.findFirstByBookmarkId(bookmark.id)
             val nextCursorId =
-                if (cursorId != null && cursorId == 0L && firstByBookmarkId != null) firstByBookmarkId.article.id
+                if (cursorId != null && cursorId != 0L && firstByBookmarkId != null) firstByBookmarkId.article.id
                 else cursorId
             val createdAt =
-                if (cursorId != null && cursorId == 0L && firstByBookmarkId != null) firstByBookmarkId.article.createdAt.toString()
-                else (if (cursorId == null) null else nextCursorId?.let { getBookmarkedArticle(it).bookmark.createdAt.toString() })
-            val page = bookmarkedArticleRepository.findAllByBookmarkAndAndVisibilityTrue(bookmark, pageable, cursorId, createdAt)
+                if (cursorId != null && cursorId != 0L && firstByBookmarkId != null) firstByBookmarkId.article.createdAt.toString()
+                else null
+            val page = bookmarkedArticleRepository.findAllByBookmarkAndAndVisibilityTrue(bookmark, pageable, nextCursorId, createdAt)
                 .map { BookmarkInfo(it.article) }
             val totalElements = bookmarkedArticleRepository.countAllByBookmark(bookmark)
             val ofCursor = PageResponse.ofCursor(page, totalElements)
@@ -122,7 +122,7 @@ class BookmarkService(
         cursorId: Long?
     ): BookmarkResponse {
         val bookmarkType = BookmarkType.valueOf(bookmarkType)
-        val bookmark = bookmarkRepository.findByAccountAndFolderNameAndBookmarkType(
+        val bookmark = bookmarkRepository.findByAccountAndFolderNameAndBookmarkTypeAndVisibilityTrue(
             currentAccount,
             INIT_BOOKMARK_FOLDER_NAME,
             bookmarkType
@@ -160,22 +160,16 @@ class BookmarkService(
                 BookmarkType.BOOKSTORE -> {
                     checkBookmarkedBookstoreInInitBookmark(myInitBookmark.id, contentId)
                     existBookmarkedBookstore(bookmark.id, contentId)
-                    addBookmarkedBookstore(contentId, bookmark, currentAccount.id)
+                    bookmarkBookStoreList.add(addBookmarkedBookstore(contentId, bookmark, currentAccount.id))
                 }
 
                 else -> {
                     checkBookmarkedArticleInInitBookmark(myInitBookmark.id, contentId)
                     existBookmarkedArticle(bookmark.id, contentId)
-                    addBookmarkedArticle(contentId, bookmark, currentAccount.id)
+                    bookmarkArticleList.add(addBookmarkedArticle(contentId, bookmark, currentAccount.id))
                 }
             }
         }
-
-        when (bookmark.bookmarkType) {
-            BookmarkType.BOOKSTORE -> bookmark.updateBookmarkedBookStore(bookmarkBookStoreList)
-            else -> bookmark.updateBookmarkedArticle(bookmarkArticleList)
-        }
-
         return BookmarkIdResponse(bookmark.id)
     }
 
@@ -246,10 +240,10 @@ class BookmarkService(
         checkBookmarkFolderName(bookmark)
         bookmark.softDelete()
         bookmark.bookmarkedArticleList.map { bookmarkedArticle ->
-            bookmarkedArticleRepository.delete(bookmarkedArticle)
+            bookmarkedArticle.softDelete()
         }
         bookmark.bookmarkedBookstoreList.map { bookmarkedBookstore ->
-            bookmarkedBookstoreRepository.delete(bookmarkedBookstore)
+            bookmarkedBookstore.softDelete()
         }
     }
 
@@ -288,7 +282,7 @@ class BookmarkService(
     }
 
     fun getMyInitBookmark(accountId: Long, bookmarkType: BookmarkType): Bookmark {
-        return bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
+        return bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkTypeAndVisibilityTrue(
             accountId,
             INIT_BOOKMARK_FOLDER_NAME,
             bookmarkType
@@ -296,18 +290,8 @@ class BookmarkService(
     }
 
     fun getMyBookmark(accountId: Long, bookmarkId: Long): Bookmark {
-        return bookmarkRepository.findByIdAndAccountId(bookmarkId, accountId)
-            ?: throw RuntimeException("NOT FOUND INIT BOOKMARK")
-    }
-
-    fun getBookmarkedBookstore(bookmarkedBookstoreId: Long): BookmarkedBookstore {
-        return bookmarkedBookstoreRepository.findById(bookmarkedBookstoreId)
-            .orElseThrow { throw RuntimeException("NOT FOUND INIT BOOKMARK BOOKSTORE") }
-    }
-
-    fun getBookmarkedArticle(bookmarkedArticleId: Long): BookmarkedArticle {
-        return bookmarkedArticleRepository.findById(bookmarkedArticleId)
-            .orElseThrow { RuntimeException("NOT FOUND INIT BOOKMARK ARTICLE") }
+        return bookmarkRepository.findByIdAndAccountIdAndVisibilityTrue(bookmarkId, accountId)
+            ?: throw RuntimeException("NOT FOUND BOOKMARK")
     }
 
     fun getArticle(articleId: Long): Article {
@@ -411,6 +395,7 @@ class BookmarkService(
             article = article,
             account = account
         )
+        bookmarkedArticleRepository.save(bookmarkArticle)
         myBookmark.addBookmarkedArticle(bookmarkArticle)
     }
 
@@ -421,6 +406,7 @@ class BookmarkService(
             bookstore = bookstore,
             account = account
         )
+        bookmarkedBookstoreRepository.save(bookmarkBookstore)
         myBookmark.addBookmarkedBookstore(bookmarkBookstore)
     }
 

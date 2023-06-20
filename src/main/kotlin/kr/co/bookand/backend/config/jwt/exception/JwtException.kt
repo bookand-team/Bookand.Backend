@@ -6,7 +6,7 @@ import kr.co.bookand.backend.common.ErrorCode
 class JwtException(
     val errorCode: ErrorCode,
     exception: Any
-) : RuntimeException(exception.let { errorCode.errorLog } ?: exception.toString()) {
+) : RuntimeException(exception.let { errorCode.errorLog }) {
 
     fun convertToJson(ex: String): String {
         return "{" +

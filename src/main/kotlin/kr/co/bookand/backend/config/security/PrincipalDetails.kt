@@ -1,10 +1,10 @@
 package kr.co.bookand.backend.config.security
 
-import kr.co.bookand.backend.account.domain.KotlinAccount
+import kr.co.bookand.backend.account.domain.Account
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class PrincipalDetails(private val account: KotlinAccount) : UserDetails {
+class PrincipalDetails(private val account: Account) : UserDetails {
     override fun getAuthorities(): Collection<GrantedAuthority> {
         val authorities: MutableCollection<GrantedAuthority> = ArrayList()
         authorities.add(GrantedAuthority { account.role.toString() })

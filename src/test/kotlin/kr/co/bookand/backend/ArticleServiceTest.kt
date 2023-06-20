@@ -5,34 +5,34 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.account.domain.KotlinAccountStatus
-import kr.co.bookand.backend.account.domain.KotlinRole
+import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.domain.AccountStatus
+import kr.co.bookand.backend.account.domain.Role
 import kr.co.bookand.backend.article.domain.*
-import kr.co.bookand.backend.article.domain.dto.KotlinArticleListRequest
-import kr.co.bookand.backend.article.domain.dto.KotlinArticleRequest
-import kr.co.bookand.backend.article.domain.dto.KotlinIntroducedBookstoreRequest
-import kr.co.bookand.backend.article.repository.KotlinArticleRepository
-import kr.co.bookand.backend.article.repository.KotlinArticleTagRepository
-import kr.co.bookand.backend.article.repository.KotlinIntroducedBookstoreRepository
-import kr.co.bookand.backend.article.service.KotlinArticleService
-import kr.co.bookand.backend.bookmark.service.KotlinBookmarkService
-import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
-import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
-import kr.co.bookand.backend.common.KotlinDeviceOSFilter
-import kr.co.bookand.backend.common.KotlinMemberIdFilter
-import kr.co.bookand.backend.common.KotlinStatus
+import kr.co.bookand.backend.article.domain.dto.ArticleListRequest
+import kr.co.bookand.backend.article.domain.dto.ArticleRequest
+import kr.co.bookand.backend.article.domain.dto.IntroducedBookstoreRequest
+import kr.co.bookand.backend.article.repository.ArticleRepository
+import kr.co.bookand.backend.article.repository.ArticleTagRepository
+import kr.co.bookand.backend.article.repository.IntroducedBookstoreRepository
+import kr.co.bookand.backend.article.service.ArticleService
+import kr.co.bookand.backend.bookmark.service.BookmarkService
+import kr.co.bookand.backend.bookstore.domain.Bookstore
+import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
+import kr.co.bookand.backend.common.DeviceOSFilter
+import kr.co.bookand.backend.common.MemberIdFilter
+import kr.co.bookand.backend.common.Status
 import java.time.LocalDateTime
 import java.util.*
 
 class ArticleServiceTest : BehaviorSpec({
-    val articleRepository = mockk<KotlinArticleRepository>()
-    val bookstoreRepository = mockk<KotlinBookstoreRepository>()
-    val introducedBookstoreRepository = mockk<KotlinIntroducedBookstoreRepository>()
-    val articleTagRepository = mockk<KotlinArticleTagRepository>()
-    val bookmarkService = mockk<KotlinBookmarkService>()
+    val articleRepository = mockk<ArticleRepository>()
+    val bookstoreRepository = mockk<BookstoreRepository>()
+    val introducedBookstoreRepository = mockk<IntroducedBookstoreRepository>()
+    val articleTagRepository = mockk<ArticleTagRepository>()
+    val bookmarkService = mockk<BookmarkService>()
 
-    val articleService = KotlinArticleService(
+    val articleService = ArticleService(
         articleRepository,
         bookstoreRepository,
         introducedBookstoreRepository,
@@ -43,7 +43,7 @@ class ArticleServiceTest : BehaviorSpec({
     Given("article test") {
         val articleId = 1L
 
-        val account = KotlinAccount(
+        val account = Account(
             1L,
             "email@email.com",
             "password",
@@ -53,11 +53,11 @@ class ArticleServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.USER,
-            KotlinAccountStatus.NORMAL
+            Role.USER,
+            AccountStatus.NORMAL
         )
 
-        val adminAccount = KotlinAccount(
+        val adminAccount = Account(
             2L,
             "admin@email.com",
             "password",
@@ -67,28 +67,28 @@ class ArticleServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.ADMIN,
-            KotlinAccountStatus.NORMAL
+            Role.ADMIN,
+            AccountStatus.NORMAL
         )
 
-        val article = KotlinArticle(
+        val article = Article(
             id = articleId,
             title = "title",
             subTitle = "subTitle",
             content = "content",
             mainImage = "mainImage",
-            category = KotlinArticleCategory.BOOKSTORE_REVIEW,
+            category = ArticleCategory.BOOKSTORE_REVIEW,
             writer = "writer",
             viewCount = 0,
             displayedAt = LocalDateTime.now(),
-            status = KotlinStatus.VISIBLE,
-            deviceOSFilter = KotlinDeviceOSFilter.ALL,
-            memberIdFilter = KotlinMemberIdFilter.ALL,
+            status = Status.VISIBLE,
+            deviceOSFilter = DeviceOSFilter.ALL,
+            memberIdFilter = MemberIdFilter.ALL,
             articleTagList = mutableListOf(),
             introducedBookstoreList = mutableListOf(),
         )
 
-        val bookstore = KotlinBookstore(
+        val bookstore = Bookstore(
             id = 1L,
             name = "name",
             address = "address",
@@ -100,7 +100,7 @@ class ArticleServiceTest : BehaviorSpec({
             longitude = "longitude",
             introduction = "introduction",
             mainImage = "mainImage",
-            status = KotlinStatus.VISIBLE,
+            status = Status.VISIBLE,
             view = 0,
             bookmark = 0,
             displayedAt = LocalDateTime.now(),
@@ -108,7 +108,7 @@ class ArticleServiceTest : BehaviorSpec({
             imageList = mutableListOf()
         )
 
-        val bookstore2 = KotlinBookstore(
+        val bookstore2 = Bookstore(
             id = 2L,
             name = "name2",
             address = "address2",
@@ -120,7 +120,7 @@ class ArticleServiceTest : BehaviorSpec({
             longitude = "longitude",
             introduction = "introduction",
             mainImage = "mainImage",
-            status = KotlinStatus.VISIBLE,
+            status = Status.VISIBLE,
             view = 0,
             bookmark = 0,
             displayedAt = LocalDateTime.now(),
@@ -128,55 +128,55 @@ class ArticleServiceTest : BehaviorSpec({
             imageList = mutableListOf()
         )
 
-        val articleTag1 = KotlinArticleTag(
+        val articleTag1 = ArticleTag(
             id = 1L,
             article = article,
             tag = "tag1"
         )
 
-        val articleTag2 = KotlinArticleTag(
+        val articleTag2 = ArticleTag(
             id = 2L,
             article = article,
             tag = "tag2"
         )
 
-        val articleRequest = KotlinArticleRequest(
+        val articleRequest = ArticleRequest(
             title = "title",
             subTitle = "subTitle",
             content = "content",
             mainImage = "mainImage",
-            category = KotlinArticleCategory.BOOKSTORE_REVIEW.toString(),
+            category = ArticleCategory.BOOKSTORE_REVIEW.toString(),
             writer = "writer",
             bookStoreList = listOf(1L, 2L),
             tagList = listOf("tag1", "tag2")
         )
 
-        val updateArticleRequest = KotlinArticleRequest(
+        val updateArticleRequest = ArticleRequest(
             title = "title2",
             subTitle = "subTitle2",
             content = "content2",
             mainImage = "mainImage2",
-            category = KotlinArticleCategory.BOOKSTORE_REVIEW.toString(),
+            category = ArticleCategory.BOOKSTORE_REVIEW.toString(),
             writer = "writer",
             bookStoreList = listOf(1L, 2L),
             tagList = listOf("tag1", "tag2")
         )
 
-        val introducedBookstore = KotlinIntroducedBookstore(
-            KotlinIntroducedBookstoreRequest(
+        val introducedBookstore = IntroducedBookstore(
+            IntroducedBookstoreRequest(
                 article = article,
                 bookstore = bookstore
             )
         )
 
-        val introducedBookstore2 = KotlinIntroducedBookstore(
-            KotlinIntroducedBookstoreRequest(
+        val introducedBookstore2 = IntroducedBookstore(
+            IntroducedBookstoreRequest(
                 article = article,
                 bookstore = bookstore2
             )
         )
 
-        val articleIdList = KotlinArticleListRequest(
+        val articleIdList = ArticleListRequest(
             articleIdList = listOf(1L, 2L)
         )
 
@@ -191,7 +191,7 @@ class ArticleServiceTest : BehaviorSpec({
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
+                    exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
                 }
             }
 
@@ -237,12 +237,12 @@ class ArticleServiceTest : BehaviorSpec({
                 article.subTitle shouldBe "subTitle"
                 article.content shouldBe "content"
                 article.mainImage shouldBe "mainImage"
-                article.category shouldBe KotlinArticleCategory.BOOKSTORE_REVIEW
+                article.category shouldBe ArticleCategory.BOOKSTORE_REVIEW
                 article.writer shouldBe "writer"
                 article.viewCount shouldBe 0
-                article.status shouldBe KotlinStatus.VISIBLE
-                article.deviceOSFilter shouldBe KotlinDeviceOSFilter.ALL
-                article.memberIdFilter shouldBe KotlinMemberIdFilter.ALL
+                article.status shouldBe Status.VISIBLE
+                article.deviceOSFilter shouldBe DeviceOSFilter.ALL
+                article.memberIdFilter shouldBe MemberIdFilter.ALL
                 article.articleTagList[0].tag shouldBe articleTag1.tag
                 article.articleTagList[1].tag shouldBe articleTag2.tag
                 article.introducedBookstoreList[0].bookstore.id shouldBe bookstore.id
@@ -260,7 +260,7 @@ class ArticleServiceTest : BehaviorSpec({
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
+                    exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
                 }
             }
 
@@ -308,12 +308,12 @@ class ArticleServiceTest : BehaviorSpec({
                     article.subTitle shouldBe "subTitle2"
                     article.content shouldBe "content2"
                     article.mainImage shouldBe "mainImage2"
-                    article.category shouldBe KotlinArticleCategory.BOOKSTORE_REVIEW
+                    article.category shouldBe ArticleCategory.BOOKSTORE_REVIEW
                     article.writer shouldBe "writer"
                     article.viewCount shouldBe 0
-                    article.status shouldBe KotlinStatus.VISIBLE
-                    article.deviceOSFilter shouldBe KotlinDeviceOSFilter.ALL
-                    article.memberIdFilter shouldBe KotlinMemberIdFilter.ALL
+                    article.status shouldBe Status.VISIBLE
+                    article.deviceOSFilter shouldBe DeviceOSFilter.ALL
+                    article.memberIdFilter shouldBe MemberIdFilter.ALL
                     article.articleTagList[0].tag shouldBe articleTag1.tag
                     article.articleTagList[1].tag shouldBe articleTag2.tag
                     article.introducedBookstoreList[0].bookstore.name shouldBe bookstore.name
@@ -328,7 +328,7 @@ class ArticleServiceTest : BehaviorSpec({
                 articleService.updateArticleStatus(articleId)
 
                 Then("it should return article") {
-                    article.status shouldBe KotlinStatus.INVISIBLE
+                    article.status shouldBe Status.INVISIBLE
                 }
             }
         }

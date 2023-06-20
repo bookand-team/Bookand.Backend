@@ -1,10 +1,10 @@
 package kr.co.bookand.backend.config.jwt.exception
 
-import kr.co.bookand.backend.common.KotlinErrorCode
+import kr.co.bookand.backend.common.ErrorCode
 
 
 class JwtException(
-    val errorCode: KotlinErrorCode,
+    val errorCode: ErrorCode,
     exception: Any
 ) : RuntimeException(exception.let { errorCode.errorLog } ?: exception.toString()) {
 

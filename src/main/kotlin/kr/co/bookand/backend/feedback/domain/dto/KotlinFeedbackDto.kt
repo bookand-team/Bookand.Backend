@@ -1,11 +1,10 @@
 package kr.co.bookand.backend.feedback.domain.dto
 
 import io.swagger.annotations.ApiModelProperty
-import kr.co.bookand.backend.common.KotlinPageResponse
-import kr.co.bookand.backend.feedback.domain.KotlinFeedback
-import org.springframework.data.domain.Page
+import kr.co.bookand.backend.common.PageResponse
+import kr.co.bookand.backend.feedback.domain.Feedback
 
-data class KotlinCreateFeedbackRequest(
+data class CreateFeedbackRequest(
     @ApiModelProperty(value = "피드백 유형 (PUSH, INFORMATION_ERROR, INCONVENIENCE, ETC)")
     val feedbackType: String,
 
@@ -14,18 +13,18 @@ data class KotlinCreateFeedbackRequest(
     val content: String
 )
 
-data class KotlinFeedbackIdResponse(
+data class FeedbackIdResponse(
     val id: Long
 )
 
-data class KotlinFeedbackResponse(
+data class FeedbackResponse(
     val id: Long,
     val providerEmail: String?,
     val feedbackType: String,
     val feedbackTarget: String,
     val content: String
 ){
-    constructor(feedback: KotlinFeedback) : this(
+    constructor(feedback: Feedback) : this(
         id = feedback.id,
         providerEmail = feedback.account?.providerEmail,
         feedbackType = feedback.feedbackType.toDetail(),
@@ -34,6 +33,6 @@ data class KotlinFeedbackResponse(
     )
 }
 
-data class KotlinFeedbackListResponse(
-    val data : KotlinPageResponse<KotlinFeedbackResponse>,
+data class FeedbackListResponse(
+    val data : PageResponse<FeedbackResponse>,
 )

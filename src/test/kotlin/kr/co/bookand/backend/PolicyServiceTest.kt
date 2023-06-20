@@ -4,23 +4,23 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.account.domain.KotlinAccountStatus
-import kr.co.bookand.backend.account.domain.KotlinRole
-import kr.co.bookand.backend.policy.domain.KotlinPolicy
-import kr.co.bookand.backend.policy.domain.dto.KotlinPolicyRequest
-import kr.co.bookand.backend.policy.repository.KotlinPolicyRepository
-import kr.co.bookand.backend.policy.service.KotlinPolicyService
+import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.domain.AccountStatus
+import kr.co.bookand.backend.account.domain.Role
+import kr.co.bookand.backend.policy.domain.Policy
+import kr.co.bookand.backend.policy.domain.dto.CreatePolicyRequest
+import kr.co.bookand.backend.policy.repository.PolicyRepository
+import kr.co.bookand.backend.policy.service.PolicyService
 import java.time.LocalDateTime
 import java.util.*
 
 class PolicyServiceTest : BehaviorSpec({
-    val policyRepository = mockk<KotlinPolicyRepository>()
-    val policyService = KotlinPolicyService(policyRepository)
+    val policyRepository = mockk<PolicyRepository>()
+    val policyService = PolicyService(policyRepository)
 
     Given("policy Test") {
 
-        val account = KotlinAccount(
+        val account = Account(
             1L,
             "email",
             "password",
@@ -30,11 +30,11 @@ class PolicyServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.USER,
-            KotlinAccountStatus.NORMAL
+            Role.USER,
+            AccountStatus.NORMAL
         )
 
-        val adminAccount = KotlinAccount(
+        val adminAccount = Account(
             2L,
             "admin@email.com",
             "password",
@@ -44,19 +44,19 @@ class PolicyServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.ADMIN,
-            KotlinAccountStatus.NORMAL
+            Role.ADMIN,
+            AccountStatus.NORMAL
         )
 
         val policyId = 1L
-        val policy = KotlinPolicy(
+        val policy = Policy(
             1L,
             "Privacy Policy",
             "This is privacy policy",
             "This is privacy policy content"
         )
 
-        val policy2 = KotlinPolicy(
+        val policy2 = Policy(
             2L,
             "Privacy Policy2",
             "This is privacy policy2",
@@ -64,7 +64,7 @@ class PolicyServiceTest : BehaviorSpec({
         )
         every { policyRepository.findById(1) } returns Optional.of(policy)
         When("policy 업데이트") {
-            val request = KotlinPolicyRequest(
+            val request = CreatePolicyRequest(
                 1L,
                 "Privacy Policy",
                 "This is privacy policy",
@@ -95,7 +95,7 @@ class PolicyServiceTest : BehaviorSpec({
             }
         }
         When("policy 생성") {
-            val request = KotlinPolicyRequest(
+            val request = CreatePolicyRequest(
                 2L,
                 "This is privacy policy2",
                 "Privacy Policy2",

@@ -5,39 +5,35 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
 import kr.co.bookand.backend.account.domain.*
-import kr.co.bookand.backend.account.domain.dto.KotlinAccountRequest
-import kr.co.bookand.backend.account.repository.KotlinAccountRepository
-import kr.co.bookand.backend.account.repository.KotlinRevokeAccountRepository
-import kr.co.bookand.backend.account.repository.KotlinSuspendedAccountRepository
-import kr.co.bookand.backend.account.service.KotlinAccountService
-import kr.co.bookand.backend.account.service.KotlinAuthService
-import kr.co.bookand.backend.config.jwt.KotlinRefreshTokenRepository
-import kr.co.bookand.backend.config.security.KotlinSecurityUtils
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
+import kr.co.bookand.backend.account.domain.dto.AccountRequest
+import kr.co.bookand.backend.account.repository.AccountRepository
+import kr.co.bookand.backend.account.repository.RevokeAccountRepository
+import kr.co.bookand.backend.account.repository.SuspendedAccountRepository
+import kr.co.bookand.backend.account.service.AccountService
+import kr.co.bookand.backend.account.service.AuthService
+import kr.co.bookand.backend.config.jwt.RefreshTokenRepository
 import java.time.LocalDateTime
 import java.util.*
 
 class AccountServiceTest : BehaviorSpec({
-    val accountRepository = mockk<KotlinAccountRepository>()
-    val authService = mockk<KotlinAuthService>()
-    val suspendedAccountRepository = mockk<KotlinSuspendedAccountRepository>()
-    val revokeAccountRepository = mockk<KotlinRevokeAccountRepository>()
-    val refreshTokenRepository = mockk<KotlinRefreshTokenRepository>()
+    val accountRepository = mockk<AccountRepository>()
+    val authService = mockk<AuthService>()
+    val suspendedAccountRepository = mockk<SuspendedAccountRepository>()
+    val revokeAccountRepository = mockk<RevokeAccountRepository>()
+    val refreshTokenRepository = mockk<RefreshTokenRepository>()
 
-    val accountService = KotlinAccountService(
-        kotlinAccountRepository = accountRepository,
-        kotlinAuthService = authService,
-        kotlinSuspendedAccountRepository = suspendedAccountRepository,
-        kotlinRefreshTokenRepository = refreshTokenRepository,
-        kotlinRevokeAccountRepository = revokeAccountRepository
+    val accountService = AccountService(
+        accountRepository = accountRepository,
+        authService = authService,
+        suspendedAccountRepository = suspendedAccountRepository,
+        refreshTokenRepository = refreshTokenRepository,
+        revokeAccountRepository = revokeAccountRepository
     )
 
     Given("account Test") {
 
-        val account = KotlinAccount(
+        val account = Account(
             1L,
             "email@email.com",
             "password",
@@ -47,11 +43,11 @@ class AccountServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.USER,
-            KotlinAccountStatus.NORMAL
+            Role.USER,
+            AccountStatus.NORMAL
         )
 
-        val adminAccount = KotlinAccount(
+        val adminAccount = Account(
             2L,
             "admin@email.com",
             "password",
@@ -61,8 +57,8 @@ class AccountServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.ADMIN,
-            KotlinAccountStatus.NORMAL
+            Role.ADMIN,
+            AccountStatus.NORMAL
         )
 
         When("Admin 체크") {
@@ -82,12 +78,12 @@ class AccountServiceTest : BehaviorSpec({
         }
 
         When("account 프로필 업데이트") {
-            val request = KotlinAccountRequest(
+            val request = AccountRequest(
                 "nickname",
                 "profileImage"
             )
 
-            val request2 = KotlinAccountRequest(
+            val request2 = AccountRequest(
                 "nickname22",
                 "profileImage"
             )

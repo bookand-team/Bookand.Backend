@@ -4,10 +4,10 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
-import kr.co.bookand.backend.account.service.KotlinAccountService
+import kr.co.bookand.backend.account.service.AccountService
 import kr.co.bookand.backend.bookmark.domain.dto.*
-import kr.co.bookand.backend.bookmark.service.KotlinBookmarkService
-import kr.co.bookand.backend.common.domain.KotlinMessageResponse
+import kr.co.bookand.backend.bookmark.service.BookmarkService
+import kr.co.bookand.backend.common.domain.MessageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/bookmarks")
 @Api(tags = ["북마크 API"])
 class KotlinBookmarkController(
-    private val bookmarkService: KotlinBookmarkService,
-    private val accountService: KotlinAccountService
+    private val bookmarkService: BookmarkService,
+    private val accountService: AccountService
 ) {
 
     @ApiOperation(value = "북마크 폴더 생성")
@@ -28,8 +28,8 @@ class KotlinBookmarkController(
     )
     @PostMapping("")
     fun createBookmarkFolder(
-        @RequestBody bookmarkRequest: KotlinBookmarkFolderRequest
-    ): ResponseEntity<KotlinBookmarkIdResponse> {
+        @RequestBody bookmarkRequest: BookmarkFolderRequest
+    ): ResponseEntity<BookmarkIdResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(bookmarkService.createBookmarkFolder(account, bookmarkRequest))
     }
@@ -45,7 +45,7 @@ class KotlinBookmarkController(
     @GetMapping("")
     fun getBookmarkFolderList(
         @RequestParam bookmarkType: String
-    ): ResponseEntity<KotlinBookmarkFolderListResponse> {
+    ): ResponseEntity<BookmarkFolderListResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(bookmarkService.getBookmarkFolderList(account, bookmarkType))
     }
@@ -60,7 +60,7 @@ class KotlinBookmarkController(
         @PathVariable bookmarkFolderId: Long,
         @PageableDefault(size = 10, sort = ["id"], direction = Sort.Direction.DESC) pageable: Pageable,
         @RequestParam(required = false) cursorId: Long?
-    ): ResponseEntity<KotlinBookmarkResponse> {
+    ): ResponseEntity<BookmarkResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(bookmarkService.getBookmarkFolder(account, bookmarkFolderId, pageable, cursorId)
         )
@@ -70,8 +70,8 @@ class KotlinBookmarkController(
     @PutMapping("/folders/{bookmarkFolderId}")
     fun updateBookmarkFolderName(
         @PathVariable bookmarkFolderId: Long,
-        @RequestBody bookmarkRequest: KotlinBookmarkFolderNameRequest
-    ): ResponseEntity<KotlinBookmarkIdResponse> {
+        @RequestBody bookmarkRequest: BookmarkFolderNameRequest
+    ): ResponseEntity<BookmarkIdResponse> {
         val account = accountService.getCurrentAccount()
         val updateBookmarkFolder = bookmarkService.updateBookmarkFolderName(account, bookmarkFolderId, bookmarkRequest)
         return ResponseEntity.ok(updateBookmarkFolder)
@@ -81,8 +81,8 @@ class KotlinBookmarkController(
     @PostMapping("/folders/{bookmarkFolderId}")
     fun addBookmark(
         @PathVariable bookmarkFolderId: Long,
-        @RequestBody bookmarkRequest: KotlinBookmarkContentListRequest
-    ): ResponseEntity<KotlinBookmarkIdResponse> {
+        @RequestBody bookmarkRequest: BookmarkContentListRequest
+    ): ResponseEntity<BookmarkIdResponse> {
         val account = accountService.getCurrentAccount()
         val updateBookmarkFolder = bookmarkService.updateBookmarkFolder(account, bookmarkFolderId, bookmarkRequest)
         return ResponseEntity.ok(updateBookmarkFolder)
@@ -105,7 +105,7 @@ class KotlinBookmarkController(
         @RequestParam bookmarkType: String,
         @PageableDefault(sort = ["modifiedAt"], direction = Sort.Direction.DESC) pageable: Pageable,
         @RequestParam(required = false) cursorId: Long?
-    ): ResponseEntity<KotlinBookmarkResponse> {
+    ): ResponseEntity<BookmarkResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(bookmarkService.getBookmarkCollect(account, bookmarkType, pageable, cursorId))
     }
@@ -116,11 +116,11 @@ class KotlinBookmarkController(
     )
     @DeleteMapping("/collections")
     fun deleteBookmark(
-        @RequestBody bookmarkRequest: KotlinBookmarkContentListRequest
-    ): ResponseEntity<KotlinMessageResponse> {
+        @RequestBody bookmarkRequest: BookmarkContentListRequest
+    ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         bookmarkService.deleteInitBookmarkContent(account, bookmarkRequest)
-        return ResponseEntity.ok(KotlinMessageResponse(message = "북마크 삭제 완료", statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(message = "북마크 삭제 완료", statusCode = 200))
     }
 
     @ApiOperation(value = "북마크 폴더 내용 삭제")
@@ -130,11 +130,11 @@ class KotlinBookmarkController(
     @DeleteMapping("/folders/{bookmarkFolderId}/contents")
     fun deleteBookmarkFolder(
         @PathVariable bookmarkFolderId: Long,
-        @RequestBody bookmarkRequest: KotlinBookmarkContentListRequest
-    ): ResponseEntity<KotlinMessageResponse> {
+        @RequestBody bookmarkRequest: BookmarkContentListRequest
+    ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         bookmarkService.deleteBookmarkContent(account, bookmarkFolderId, bookmarkRequest)
-        return ResponseEntity.ok(KotlinMessageResponse(message = "북마크 삭제 완료", statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(message = "북마크 삭제 완료", statusCode = 200))
     }
 
     @ApiOperation(value = "북마크 폴더 삭제")
@@ -145,10 +145,10 @@ class KotlinBookmarkController(
     @DeleteMapping("/folders/{bookmarkFolderId}")
     fun deleteBookmarkFolder(
         @PathVariable bookmarkFolderId: Long
-    ): ResponseEntity<KotlinMessageResponse> {
+    ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         bookmarkService.deleteBookmarkFolder(account, bookmarkFolderId)
-        return ResponseEntity.ok(KotlinMessageResponse(message = "북마크 폴더 삭제 완료", statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(message = "북마크 폴더 삭제 완료", statusCode = 200))
     }
 
 
@@ -156,7 +156,7 @@ class KotlinBookmarkController(
     @PostMapping("/articles/{articleId}")
     fun createArticleBookmark(
         @PathVariable articleId: Long
-    ): ResponseEntity<KotlinMessageResponse> {
+    ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(bookmarkService.createBookmarkedArticle(account, articleId))
     }
@@ -165,7 +165,7 @@ class KotlinBookmarkController(
     @PostMapping("/bookstores/{bookstoreId}")
     fun createStoreBookmark(
         @PathVariable bookstoreId: Long)
-    : ResponseEntity<KotlinMessageResponse> {
+    : ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(bookmarkService.createBookmarkedBookstore(account, bookstoreId))
     }

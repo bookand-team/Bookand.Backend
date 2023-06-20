@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.config.jwt.exception
 
-import kr.co.bookand.backend.common.KotlinErrorCode
+import kr.co.bookand.backend.common.ErrorCode
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -21,14 +21,14 @@ class ExceptionHandlerFilter : OncePerRequestFilter() {
         } catch (ex: JwtException) {
             setErrorResponse(HttpStatus.UNAUTHORIZED, response, ex.errorCode)
         } catch (ex: RuntimeException) {
-            setErrorResponse(HttpStatus.BAD_REQUEST, response, KotlinErrorCode.INTER_SERVER_ERROR)
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, ErrorCode.INTER_SERVER_ERROR)
         }
     }
 
     private fun setErrorResponse(
         status: HttpStatus,
         response: HttpServletResponse,
-        ex: KotlinErrorCode
+        ex: ErrorCode
     ) {
         response.status = status.value()
         response.contentType = "application/json"

@@ -6,30 +6,30 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import kr.co.bookand.backend.account.domain.*
-import kr.co.bookand.backend.account.service.KotlinAccountService
-import kr.co.bookand.backend.common.KotlinDeviceOSFilter
-import kr.co.bookand.backend.common.KotlinMemberIdFilter
-import kr.co.bookand.backend.common.KotlinStatus
-import kr.co.bookand.backend.notice.domain.KotlinNotice
-import kr.co.bookand.backend.notice.domain.dto.KotlinCreateNoticeRequest
-import kr.co.bookand.backend.notice.domain.dto.KotlinNoticeType
-import kr.co.bookand.backend.notice.domain.dto.KotlinUpdateNoticeRequest
-import kr.co.bookand.backend.notice.repository.KotlinNoticeRepository
-import kr.co.bookand.backend.notice.service.KotlinNoticeService
+import kr.co.bookand.backend.account.service.AccountService
+import kr.co.bookand.backend.common.DeviceOSFilter
+import kr.co.bookand.backend.common.MemberIdFilter
+import kr.co.bookand.backend.common.Status
+import kr.co.bookand.backend.notice.domain.Notice
+import kr.co.bookand.backend.notice.domain.dto.CreateNoticeRequest
+import kr.co.bookand.backend.notice.domain.NoticeType
+import kr.co.bookand.backend.notice.domain.dto.UpdateNoticeRequest
+import kr.co.bookand.backend.notice.repository.NoticeRepository
+import kr.co.bookand.backend.notice.service.NoticeService
 import java.time.LocalDateTime
 import java.util.*
 
 class NoticeServiceTest : BehaviorSpec({
-    val noticeRepository = mockk<KotlinNoticeRepository>()
-    val accountService = mockk<KotlinAccountService>()
-    val noticeService = KotlinNoticeService(
+    val noticeRepository = mockk<NoticeRepository>()
+    val accountService = mockk<AccountService>()
+    val noticeService = NoticeService(
         noticeRepository = noticeRepository
     )
 
 
     Given("notice service") {
 
-        val account = KotlinAccount(
+        val account = Account(
             1L,
             "email",
             "password",
@@ -39,11 +39,11 @@ class NoticeServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.USER,
-            KotlinAccountStatus.NORMAL
+            Role.USER,
+            AccountStatus.NORMAL
         )
 
-        val adminAccount = KotlinAccount(
+        val adminAccount = Account(
             2L,
             "admin@email.com",
             "password",
@@ -53,11 +53,11 @@ class NoticeServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.ADMIN,
-            KotlinAccountStatus.NORMAL
+            Role.ADMIN,
+            AccountStatus.NORMAL
         )
 
-        val createNoticeRequest = KotlinCreateNoticeRequest(
+        val createNoticeRequest = CreateNoticeRequest(
             title = "title",
             content = "content",
             image = "image",
@@ -66,18 +66,18 @@ class NoticeServiceTest : BehaviorSpec({
             targetNum = "ALL"
         )
 
-        val notice = KotlinNotice(
+        val notice = Notice(
             1L,
             "title",
             "content",
             "image",
-            KotlinStatus.INVISIBLE,
-            KotlinNoticeType.SERVICE,
-            KotlinDeviceOSFilter.ALL,
-            KotlinMemberIdFilter.ALL
+            Status.INVISIBLE,
+            NoticeType.SERVICE,
+            DeviceOSFilter.ALL,
+            MemberIdFilter.ALL
         )
 
-        val updateNoticeRequest = KotlinUpdateNoticeRequest(
+        val updateNoticeRequest = UpdateNoticeRequest(
             title = "title",
             content = "content",
             image = "image",
@@ -94,7 +94,7 @@ class NoticeServiceTest : BehaviorSpec({
                 }
 
                 Then("throw exception") {
-                    exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
+                    exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
                 }
             }
 
@@ -118,7 +118,7 @@ class NoticeServiceTest : BehaviorSpec({
                     }
 
                     Then("throw exception") {
-                        exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
+                        exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
                     }
                 }
 
@@ -142,7 +142,7 @@ class NoticeServiceTest : BehaviorSpec({
                     }
 
                     Then("throw exception") {
-                        exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
+                        exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
                     }
                 }
 
@@ -166,7 +166,7 @@ class NoticeServiceTest : BehaviorSpec({
                 }
 
                 Then("throw exception") {
-                    exception.message shouldBe "KotlinErrorCode.ROLE_ACCESS_ERROR"
+                    exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
                 }
             }
 

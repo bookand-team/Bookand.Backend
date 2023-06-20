@@ -6,37 +6,37 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import kr.co.bookand.backend.account.domain.*
-import kr.co.bookand.backend.account.service.KotlinAccountService
-import kr.co.bookand.backend.article.domain.KotlinArticle
-import kr.co.bookand.backend.article.domain.KotlinArticleCategory
-import kr.co.bookand.backend.article.repository.KotlinArticleRepository
-import kr.co.bookand.backend.bookmark.domain.KotlinBookmark
-import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkType
-import kr.co.bookand.backend.bookmark.domain.KotlinBookmarkedBookstore
-import kr.co.bookand.backend.bookmark.domain.dto.KotlinBookmarkContentListRequest
-import kr.co.bookand.backend.bookmark.domain.dto.KotlinBookmarkFolderNameRequest
-import kr.co.bookand.backend.bookmark.domain.dto.KotlinBookmarkFolderRequest
-import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkRepository
-import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkedArticleRepository
-import kr.co.bookand.backend.bookmark.repository.KotlinBookmarkedBookstoreRepository
-import kr.co.bookand.backend.bookmark.service.KotlinBookmarkService
-import kr.co.bookand.backend.bookstore.domain.KotlinBookstore
-import kr.co.bookand.backend.bookstore.repository.KotlinBookstoreRepository
-import kr.co.bookand.backend.common.KotlinDeviceOSFilter
-import kr.co.bookand.backend.common.KotlinMemberIdFilter
-import kr.co.bookand.backend.common.KotlinStatus
+import kr.co.bookand.backend.account.service.AccountService
+import kr.co.bookand.backend.article.domain.Article
+import kr.co.bookand.backend.article.domain.ArticleCategory
+import kr.co.bookand.backend.article.repository.ArticleRepository
+import kr.co.bookand.backend.bookmark.domain.Bookmark
+import kr.co.bookand.backend.bookmark.domain.BookmarkType
+import kr.co.bookand.backend.bookmark.domain.BookmarkedBookstore
+import kr.co.bookand.backend.bookmark.domain.dto.BookmarkContentListRequest
+import kr.co.bookand.backend.bookmark.domain.dto.BookmarkFolderNameRequest
+import kr.co.bookand.backend.bookmark.domain.dto.BookmarkFolderRequest
+import kr.co.bookand.backend.bookmark.repository.BookmarkRepository
+import kr.co.bookand.backend.bookmark.repository.BookmarkedArticleRepository
+import kr.co.bookand.backend.bookmark.repository.BookmarkedBookstoreRepository
+import kr.co.bookand.backend.bookmark.service.BookmarkService
+import kr.co.bookand.backend.bookstore.domain.Bookstore
+import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
+import kr.co.bookand.backend.common.DeviceOSFilter
+import kr.co.bookand.backend.common.MemberIdFilter
+import kr.co.bookand.backend.common.Status
 import java.time.LocalDateTime
 import java.util.*
 
 class BookmarkServiceTest : BehaviorSpec({
-    val bookmarkRepository = mockk<KotlinBookmarkRepository>()
-    val bookmarkedArticleRepository = mockk<KotlinBookmarkedArticleRepository>()
-    val bookmarkedBookstoreRepository = mockk<KotlinBookmarkedBookstoreRepository>()
-    val accountService = mockk<KotlinAccountService>()
-    val bookstoreRepository = mockk<KotlinBookstoreRepository>()
-    val articleRepository = mockk<KotlinArticleRepository>()
+    val bookmarkRepository = mockk<BookmarkRepository>()
+    val bookmarkedArticleRepository = mockk<BookmarkedArticleRepository>()
+    val bookmarkedBookstoreRepository = mockk<BookmarkedBookstoreRepository>()
+    val accountService = mockk<AccountService>()
+    val bookstoreRepository = mockk<BookstoreRepository>()
+    val articleRepository = mockk<ArticleRepository>()
 
-    val bookmarkService = KotlinBookmarkService(
+    val bookmarkService = BookmarkService(
         bookmarkRepository,
         bookmarkedArticleRepository,
         bookmarkedBookstoreRepository,
@@ -48,7 +48,7 @@ class BookmarkServiceTest : BehaviorSpec({
 
     Given("BookmarkService Test") {
 
-        val account = KotlinAccount(
+        val account = Account(
             1L,
             "email@email.com",
             "password",
@@ -58,11 +58,11 @@ class BookmarkServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.USER,
-            KotlinAccountStatus.NORMAL
+            Role.USER,
+            AccountStatus.NORMAL
         )
 
-        val adminAccount = KotlinAccount(
+        val adminAccount = Account(
             2L,
             "admin@email.com",
             "password",
@@ -72,60 +72,60 @@ class BookmarkServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.ADMIN,
-            KotlinAccountStatus.NORMAL
+            Role.ADMIN,
+            AccountStatus.NORMAL
         )
 
-        val bookmark = KotlinBookmark(
+        val bookmark = Bookmark(
             id = 1L,
             folderName = "folderName",
             folderImage = "folderImage",
-            bookmarkType = KotlinBookmarkType.BOOKSTORE,
+            bookmarkType = BookmarkType.BOOKSTORE,
             account = adminAccount,
             bookmarkedArticleList = mutableListOf(),
             bookmarkedBookstoreList = mutableListOf(),
         )
 
 
-        val initBookmarkArticle = KotlinBookmark(
+        val initBookmarkArticle = Bookmark(
             id = 2L,
             folderName = "모아보기",
             folderImage = "folderImage",
-            bookmarkType = KotlinBookmarkType.ARTICLE,
+            bookmarkType = BookmarkType.ARTICLE,
             account = adminAccount,
             bookmarkedArticleList = mutableListOf(),
             bookmarkedBookstoreList = mutableListOf(),
         )
 
-        val initBookmarkBookstore = KotlinBookmark(
+        val initBookmarkBookstore = Bookmark(
             id = 3L,
             folderName = "모아보기",
             folderImage = "folderImage",
-            bookmarkType = KotlinBookmarkType.BOOKSTORE,
+            bookmarkType = BookmarkType.BOOKSTORE,
             account = adminAccount,
             bookmarkedArticleList = mutableListOf(),
             bookmarkedBookstoreList = mutableListOf(),
         )
 
 
-        val article = KotlinArticle(
+        val article = Article(
             id = 1L,
             title = "title",
             subTitle = "subTitle",
             content = "content",
             mainImage = "mainImage",
-            category = KotlinArticleCategory.BOOKSTORE_REVIEW,
+            category = ArticleCategory.BOOKSTORE_REVIEW,
             writer = "writer",
             viewCount = 0,
             displayedAt = LocalDateTime.now(),
-            status = KotlinStatus.VISIBLE,
-            deviceOSFilter = KotlinDeviceOSFilter.ALL,
-            memberIdFilter = KotlinMemberIdFilter.ALL,
+            status = Status.VISIBLE,
+            deviceOSFilter = DeviceOSFilter.ALL,
+            memberIdFilter = MemberIdFilter.ALL,
             articleTagList = mutableListOf(),
             introducedBookstoreList = mutableListOf(),
         )
 
-        val bookstore = KotlinBookstore(
+        val bookstore = Bookstore(
             id = 1L,
             name = "name",
             address = "address",
@@ -137,7 +137,7 @@ class BookmarkServiceTest : BehaviorSpec({
             longitude = "longitude",
             introduction = "introduction",
             mainImage = "mainImage",
-            status = KotlinStatus.VISIBLE,
+            status = Status.VISIBLE,
             view = 0,
             bookmark = 0,
             displayedAt = LocalDateTime.now(),
@@ -145,7 +145,7 @@ class BookmarkServiceTest : BehaviorSpec({
             imageList = mutableListOf()
         )
 
-        val bookstore2 = KotlinBookstore(
+        val bookstore2 = Bookstore(
             id = 2L,
             name = "name2",
             address = "address2",
@@ -157,7 +157,7 @@ class BookmarkServiceTest : BehaviorSpec({
             longitude = "longitude2",
             introduction = "introduction2",
             mainImage = "mainImage2",
-            status = KotlinStatus.VISIBLE,
+            status = Status.VISIBLE,
             view = 0,
             bookmark = 0,
             displayedAt = LocalDateTime.now(),
@@ -165,32 +165,32 @@ class BookmarkServiceTest : BehaviorSpec({
             imageList = mutableListOf()
         )
 
-        val bookmarkedBookstore = KotlinBookmarkedBookstore(
+        val bookmarkedBookstore = BookmarkedBookstore(
             id = 4L,
             bookmark = bookmark,
             bookstore = bookstore,
         )
 
-        val kotlinBookmarkFolderRequest = KotlinBookmarkFolderRequest(
+        val bookmarkFolderRequest = BookmarkFolderRequest(
             folderName = "folderName1",
             bookmarkType = "BOOKSTORE"
         )
 
-        val kotlinBookmarkNameRequest = KotlinBookmarkFolderNameRequest(
+        val kotlinBookmarkNameRequest = BookmarkFolderNameRequest(
             folderName = "folderName1"
         )
 
-        val kotlinBookmarkContentListRequest = KotlinBookmarkContentListRequest(
+        val bookmarkContentListRequest = BookmarkContentListRequest(
             bookmarkType = "BOOKSTORE",
             contentIdList = listOf(1L, 2L)
         )
 
 
-        val bookmark2 = KotlinBookmark(
+        val bookmark2 = Bookmark(
             id = 2L,
             folderName = "folderName",
             folderImage = "folderImage",
-            bookmarkType = KotlinBookmarkType.BOOKSTORE,
+            bookmarkType = BookmarkType.BOOKSTORE,
             account = adminAccount,
             bookmarkedArticleList = mutableListOf(),
             bookmarkedBookstoreList = mutableListOf(bookmarkedBookstore),
@@ -391,7 +391,7 @@ class BookmarkServiceTest : BehaviorSpec({
                 every { accountService.getAccountById(any()) } returns adminAccount
                 every { bookmarkRepository.save(any()) } returns bookmark
 
-                val createBookmarkFolder = bookmarkService.createBookmarkFolder(adminAccount, kotlinBookmarkFolderRequest)
+                val createBookmarkFolder = bookmarkService.createBookmarkFolder(adminAccount, bookmarkFolderRequest)
 
                 Then("it should be success") {
                     createBookmarkFolder.bookmarkId shouldBe 1L
@@ -432,7 +432,7 @@ class BookmarkServiceTest : BehaviorSpec({
                 every { bookmarkedBookstoreRepository.findByBookmarkIdAndBookstoreId(any(), any()) } returns null
 
                 val exception = shouldThrow<RuntimeException> {
-                    bookmarkService.updateBookmarkFolder(adminAccount, 1L, kotlinBookmarkContentListRequest)
+                    bookmarkService.updateBookmarkFolder(adminAccount, 1L, bookmarkContentListRequest)
                 }
 
                 Then("it should throw exception") {
@@ -445,7 +445,7 @@ class BookmarkServiceTest : BehaviorSpec({
                 every { bookmarkedBookstoreRepository.existsByBookmarkIdAndBookstoreId(any(), any()) } returns true
 
                 val exception = shouldThrow<RuntimeException> {
-                    bookmarkService.updateBookmarkFolder(adminAccount, 1L, kotlinBookmarkContentListRequest)
+                    bookmarkService.updateBookmarkFolder(adminAccount, 1L, bookmarkContentListRequest)
                 }
 
                 Then("it should throw exception") {
@@ -466,7 +466,7 @@ class BookmarkServiceTest : BehaviorSpec({
                 every { bookmarkedBookstoreRepository.save(any()) } returns bookmarkedBookstore
                 every { bookmarkRepository.findByIdAndAccountId(any(), any()) } returns bookmark
 
-                bookmarkService.updateBookmarkFolder(adminAccount, 1L, kotlinBookmarkContentListRequest)
+                bookmarkService.updateBookmarkFolder(adminAccount, 1L, bookmarkContentListRequest)
 
                 Then("it should be success") {
                     bookmarkedBookstore.bookstore shouldBe bookstore
@@ -507,7 +507,7 @@ class BookmarkServiceTest : BehaviorSpec({
                     every { bookmarkRepository.findByIdAndAccountId(any(), any()) } returns null
 
                     val exception = shouldThrow<RuntimeException> {
-                        bookmarkService.deleteBookmarkContent(adminAccount, 1L, kotlinBookmarkContentListRequest)
+                        bookmarkService.deleteBookmarkContent(adminAccount, 1L, bookmarkContentListRequest)
                     }
 
                     Then("it should throw exception") {
@@ -520,7 +520,7 @@ class BookmarkServiceTest : BehaviorSpec({
                     every { bookmarkedBookstoreRepository.deleteByBookstoreIdAndBookmarkId(any(), any()) } returns Unit
                     every { bookmarkedBookstoreRepository.findByBookmarkIdAndBookstoreId(any(), any()) } returns bookmarkedBookstore
 
-                    bookmarkService.deleteBookmarkContent(adminAccount, 1L, kotlinBookmarkContentListRequest)
+                    bookmarkService.deleteBookmarkContent(adminAccount, 1L, bookmarkContentListRequest)
 
                     Then("it should be success") {
                         bookmark.bookmarkedBookstoreList.size shouldBe 0
@@ -534,7 +534,7 @@ class BookmarkServiceTest : BehaviorSpec({
                     every { bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(any(), any(), any()) } returns null
 
                     val exception = shouldThrow<RuntimeException> {
-                        bookmarkService.deleteInitBookmarkContent(adminAccount,  kotlinBookmarkContentListRequest)
+                        bookmarkService.deleteInitBookmarkContent(adminAccount,  bookmarkContentListRequest)
                     }
 
                     Then("it should throw exception") {
@@ -555,7 +555,7 @@ class BookmarkServiceTest : BehaviorSpec({
                     every { bookmarkRepository.findAllByAccountId(any()) } returns List(1) { bookmark }
                     every { bookmarkedBookstoreRepository.deleteByBookstoreIdAndBookmarkId(any(), any()) } returns Unit
 
-                    bookmarkService.deleteInitBookmarkContent(adminAccount, kotlinBookmarkContentListRequest)
+                    bookmarkService.deleteInitBookmarkContent(adminAccount, bookmarkContentListRequest)
 
                     Then("it should be success") {
                         bookmark.bookmarkedBookstoreList.size shouldBe 0

@@ -6,20 +6,20 @@ import io.mockk.every
 import io.mockk.mockk
 import kr.co.bookand.backend.account.domain.*
 import kr.co.bookand.backend.feedback.domain.*
-import kr.co.bookand.backend.feedback.domain.dto.KotlinCreateFeedbackRequest
-import kr.co.bookand.backend.feedback.repository.KotlinFeedbackRepository
-import kr.co.bookand.backend.feedback.service.KotlinFeedbackService
+import kr.co.bookand.backend.feedback.domain.dto.CreateFeedbackRequest
+import kr.co.bookand.backend.feedback.repository.FeedbackRepository
+import kr.co.bookand.backend.feedback.service.FeedbackService
 import java.time.LocalDateTime
 
 class FeedbackServiceTest : BehaviorSpec({
-    val feedbackRepository = mockk<KotlinFeedbackRepository>()
-    val feedbackService = KotlinFeedbackService(
+    val feedbackRepository = mockk<FeedbackRepository>()
+    val feedbackService = FeedbackService(
         feedbackRepository
     )
 
     Given("feedback service test"){
 
-        val adminAccount = KotlinAccount(
+        val adminAccount = Account(
             1L,
             "admin@email.com",
             "password",
@@ -29,21 +29,21 @@ class FeedbackServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.ADMIN,
-            KotlinAccountStatus.NORMAL
+            Role.ADMIN,
+            AccountStatus.NORMAL
         )
 
-        val feedback = KotlinFeedback(
+        val feedback = Feedback(
             1L,
-            KotlinFeedbackType.PUSH,
-            KotlinFeedbackTarget.HOME,
+            FeedbackType.PUSH,
+            FeedbackTarget.HOME,
             "content",
             adminAccount
         )
 
-        val createFeedbackRequest = KotlinCreateFeedbackRequest(
-            feedbackType = KotlinFeedbackType.PUSH.name,
-            feedbackTarget = KotlinFeedbackTarget.HOME.name,
+        val createFeedbackRequest = CreateFeedbackRequest(
+            feedbackType = FeedbackType.PUSH.name,
+            feedbackTarget = FeedbackTarget.HOME.name,
             content = "content"
         )
 

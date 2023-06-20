@@ -1,15 +1,15 @@
 package kr.co.bookand.backend.config.security
 
-import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.account.repository.KotlinAccountRepository
+import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.repository.AccountRepository
 import org.springframework.security.core.context.SecurityContextHolder
 
-object KotlinSecurityUtils {
+object SecurityUtils {
     fun getCurrentAccountEmail(): String =
         SecurityContextHolder.getContext().authentication?.name
             ?: throw RuntimeException("ErrorCode.NOT_FOUND_MEMBER")
 
-    fun getCurrentAccount(accountRepository: KotlinAccountRepository): KotlinAccount =
+    fun getCurrentAccount(accountRepository: AccountRepository): Account =
         accountRepository.findByEmail(getCurrentAccountEmail())
             ?: throw RuntimeException("ErrorCode.NOT_FOUND_MEMBER")
 }

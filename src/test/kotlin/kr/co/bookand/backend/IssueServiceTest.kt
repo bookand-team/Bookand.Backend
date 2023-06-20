@@ -4,26 +4,26 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import kr.co.bookand.backend.account.domain.KotlinAccount
-import kr.co.bookand.backend.account.domain.KotlinAccountStatus
-import kr.co.bookand.backend.account.domain.KotlinRole
-import kr.co.bookand.backend.common.KotlinDeviceOSFilter
-import kr.co.bookand.backend.issue.domain.KotlinIssue
-import kr.co.bookand.backend.issue.domain.KotlinIssueImage
-import kr.co.bookand.backend.issue.domain.dto.KotlinCreateIssueRequest
-import kr.co.bookand.backend.issue.repository.KotlinIssueImageRepository
-import kr.co.bookand.backend.issue.repository.KotlinIssueRepository
-import kr.co.bookand.backend.issue.service.KotlinIssueService
+import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.domain.AccountStatus
+import kr.co.bookand.backend.account.domain.Role
+import kr.co.bookand.backend.common.DeviceOSFilter
+import kr.co.bookand.backend.issue.domain.Issue
+import kr.co.bookand.backend.issue.domain.IssueImage
+import kr.co.bookand.backend.issue.domain.dto.CreateIssueRequest
+import kr.co.bookand.backend.issue.repository.IssueImageRepository
+import kr.co.bookand.backend.issue.repository.IssueRepository
+import kr.co.bookand.backend.issue.service.IssueService
 import kr.co.bookand.backend.util.s3.dto.FileDto
-import kr.co.bookand.backend.util.s3.service.KotlinAwsS3Service
+import kr.co.bookand.backend.util.s3.service.AwsS3Service
 import java.time.LocalDateTime
 import java.util.*
 
 class IssueServiceTest : BehaviorSpec({
-    val issueRepository = mockk<KotlinIssueRepository>()
-    val issueImageRepository = mockk<KotlinIssueImageRepository>()
-    val awsS3Service = mockk<KotlinAwsS3Service>()
-    val issueService = KotlinIssueService(
+    val issueRepository = mockk<IssueRepository>()
+    val issueImageRepository = mockk<IssueImageRepository>()
+    val awsS3Service = mockk<AwsS3Service>()
+    val issueService = IssueService(
         issueRepository,
         issueImageRepository,
         awsS3Service
@@ -31,7 +31,7 @@ class IssueServiceTest : BehaviorSpec({
 
     Given("IssueService") {
 
-        val account = KotlinAccount(
+        val account = Account(
             1L,
             "email",
             "password",
@@ -41,11 +41,11 @@ class IssueServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            KotlinRole.ADMIN,
-            KotlinAccountStatus.NORMAL
+            Role.ADMIN,
+            AccountStatus.NORMAL
         )
 
-        val issue = KotlinIssue(
+        val issue = Issue(
             1L,
             LocalDateTime.parse("2021-01-01T00:00:00"),
             "issueContent",
@@ -55,24 +55,24 @@ class IssueServiceTest : BehaviorSpec({
             "deviceOS",
             1L,
             false,
-            KotlinDeviceOSFilter.ALL,
+            DeviceOSFilter.ALL,
             mutableListOf()
         )
 
-        val issueImage = KotlinIssueImage(
+        val issueImage = IssueImage(
             1L,
             "issueImage",
             issue
         )
 
-        val createIssueRequest = KotlinCreateIssueRequest(
+        val createIssueRequest = CreateIssueRequest(
             issuedAt = "2021-01-01T00:00:00",
             issueContent = "issueContent",
             issueReportResponseEmail = "issueReportResponseEmail",
             issueImages = mutableListOf(),
             sendLogs = true,
             logFile = null,
-            deviceOS = KotlinDeviceOSFilter.ALL
+            deviceOS = DeviceOSFilter.ALL
         )
 
         val fileDto = FileDto(

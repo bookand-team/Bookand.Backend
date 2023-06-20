@@ -3,9 +3,9 @@ package kr.co.bookand.backend.config.jwt
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
-import kr.co.bookand.backend.account.domain.KotlinRole
-import kr.co.bookand.backend.account.domain.dto.KotlinMiddleAccount
-import kr.co.bookand.backend.account.domain.dto.KotlinSigningAccount
+import kr.co.bookand.backend.account.domain.Role
+import kr.co.bookand.backend.account.domain.dto.MiddleAccount
+import kr.co.bookand.backend.account.domain.dto.SigningAccount
 import kr.co.bookand.backend.config.security.PrincipalDetailService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -30,12 +30,12 @@ class JwtProvider(
     private val refreshTokenExpireTime: Long
 ) {
     private val key: Key = Keys.hmacShaKeyFor(secretKey.toByteArray())
-    fun createSignTokenDto(middleAccount: KotlinMiddleAccount): SignTokenRequest {
+    fun createSignTokenDto(middleAccount: MiddleAccount): SignTokenRequest {
         val now = Date().time
         val accessTokenExpiresIn: Date = Date(now + accessTokenExpireTime)
         val signToken = Jwts.builder()
             .setSubject(middleAccount.email + "_" + middleAccount.providerEmail + "_" + middleAccount.socialType)
-            .claim("sign", KotlinRole.USER)
+            .claim("sign", Role.USER)
             .setExpiration(accessTokenExpiresIn)
             .signWith(key, SignatureAlgorithm.HS512)
             .compact()
@@ -44,7 +44,7 @@ class JwtProvider(
         )
     }
 
-    fun getSignKey(signToken: String): KotlinSigningAccount {
+    fun getSignKey(signToken: String): SigningAccount {
         val body = Jwts.parserBuilder()
             .setSigningKey(key)
             .build()
@@ -52,7 +52,7 @@ class JwtProvider(
             .body
         val email = body.subject
         val split = email.split("_")
-        return KotlinSigningAccount(split[0], split[1], split[2])
+        return SigningAccount(split[0], split[1], split[2])
     }
 
     fun generateToken(authentication: Authentication): TokenResponse {

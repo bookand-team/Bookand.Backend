@@ -1,7 +1,7 @@
 package kr.co.bookand.backend.config.jwt.exception
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import kr.co.bookand.backend.common.KotlinErrorCode
+import kr.co.bookand.backend.common.ErrorCode
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.access.AccessDeniedException
@@ -25,9 +25,9 @@ class JwtAccessDeniedHandler(
 
         val body = objectMapper.writeValueAsString(
             ApiErrorResponse(
-                code = KotlinErrorCode.NOT_ROLE_MEMBER.errorCode,
-                message = KotlinErrorCode.NOT_ROLE_MEMBER.errorMessage,
-                log = KotlinErrorCode.NOT_ROLE_MEMBER.errorLog
+                code = ErrorCode.NOT_ROLE_MEMBER.errorCode,
+                message = ErrorCode.NOT_ROLE_MEMBER.errorMessage,
+                log = ErrorCode.NOT_ROLE_MEMBER.errorLog
             )
         )
         response.writer.write(body)

@@ -2,6 +2,8 @@ package kr.co.bookand.backend.map.service
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
+import kr.co.bookand.backend.common.ErrorCode
+import kr.co.bookand.backend.common.exception.BookandException
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Pageable
@@ -29,7 +31,7 @@ class MapService {
         val json = try {
             objectMapper.readValue(restTemplate.exchange(url, HttpMethod.GET, http, String::class.java).body, Any::class.java)
         } catch (e: JsonProcessingException) {
-            throw RuntimeException(e.message)
+            throw BookandException(ErrorCode.JSON_PROCESSING_ERROR)
         }
         return json
     }

@@ -17,7 +17,9 @@ import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
 import kr.co.bookand.backend.bookstore.repository.BookstoreThemeRepository
 import kr.co.bookand.backend.bookstore.repository.ReportBookstoreRepository
 import kr.co.bookand.backend.bookstore.service.BookstoreService
+import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.Status
+import kr.co.bookand.backend.common.exception.BookandException
 import java.time.LocalDateTime
 import java.util.*
 
@@ -223,14 +225,14 @@ class BookstoreServiceTest : BehaviorSpec({
 
 
         When("account is not Admin") {
-            every { accountService.checkAccountAdmin(2L) } throws RuntimeException("Not admin")
+            every { accountService.checkAccountAdmin(2L) } throws BookandException(ErrorCode.ROLE_ACCESS_ERROR)
 
-            val exception = shouldThrow<RuntimeException> {
+            val exception = shouldThrow<BookandException> {
                 bookstoreService.createBookstore(account, bookstoreRequest)
             }
 
             Then("it should throw exception") {
-                exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
+                exception.message shouldBe ErrorCode.ROLE_ACCESS_ERROR.errorLog
             }
         }
 
@@ -246,7 +248,7 @@ class BookstoreServiceTest : BehaviorSpec({
 
             Then("it should throw an exception") {
 
-                exception.message shouldBe "서점 테마 선택은 최대 3개까지 가능합니다."
+                exception.message shouldBe ErrorCode.TOO_MANY_BOOKSTORE_THEME.errorLog
             }
         }
 
@@ -313,7 +315,7 @@ class BookstoreServiceTest : BehaviorSpec({
                 val exception = shouldThrow<RuntimeException> {
                     bookstoreService.deleteBookstore(bookstoreId)
                 }
-                exception.message shouldBe "Bookstore already deleted"
+                exception.message shouldBe ErrorCode.ALREADY_DELETE_BOOKSTORE.errorLog
             }
         }
 
@@ -333,7 +335,7 @@ class BookstoreServiceTest : BehaviorSpec({
                 val exception = shouldThrow<RuntimeException> {
                     bookstoreService.deleteBookstoreList(bookstoreListRequest)
                 }
-                exception.message shouldBe "Bookstore already deleted"
+                exception.message shouldBe ErrorCode.ALREADY_DELETE_BOOKSTORE.errorLog
             }
         }
 

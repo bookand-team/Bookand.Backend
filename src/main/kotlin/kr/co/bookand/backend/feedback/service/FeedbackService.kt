@@ -1,7 +1,9 @@
 package kr.co.bookand.backend.feedback.service
 
 import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.PageResponse
+import kr.co.bookand.backend.common.exception.BookandException
 import kr.co.bookand.backend.feedback.domain.Feedback
 import kr.co.bookand.backend.feedback.domain.dto.CreateFeedbackRequest
 import kr.co.bookand.backend.feedback.domain.dto.FeedbackIdResponse
@@ -30,7 +32,7 @@ class FeedbackService(
     fun getFeedback(id: Long): FeedbackResponse {
         return feedbackRepository.findById(id)
             .map { FeedbackResponse(it) }
-            .orElseThrow { IllegalArgumentException("해당 피드백이 존재하지 않습니다.") }
+            .orElseThrow { BookandException(ErrorCode.NOT_FOUND_FEEDBACK) }
     }
 
     fun getFeedbackList(pageable: Pageable): FeedbackListResponse {

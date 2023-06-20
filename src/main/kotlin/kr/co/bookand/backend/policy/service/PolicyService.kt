@@ -2,6 +2,8 @@ package kr.co.bookand.backend.policy.service
 
 
 import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.common.ErrorCode
+import kr.co.bookand.backend.common.exception.BookandException
 import kr.co.bookand.backend.policy.domain.Policy
 import kr.co.bookand.backend.policy.domain.dto.PolicyIdResponse
 import kr.co.bookand.backend.policy.domain.dto.CreatePolicyRequest
@@ -22,7 +24,7 @@ class PolicyService(
         currentAccount.role.checkAdminAndManager()
         val policy = getPolicyByName(request.name)
         if (policy != null) {
-            throw IllegalArgumentException("이미 존재하는 정책입니다.")
+            throw BookandException(ErrorCode.ALREADY_EXIST_POLICY)
         }
         val newPolicy = Policy(
             title = request.title,
@@ -58,12 +60,12 @@ class PolicyService(
 
     private fun getPolicyByIdOrThrow(id: Long): Policy {
         return policyRepository.findById(id).orElse(null)
-            ?: throw IllegalArgumentException("존재하지 않는 정책입니다.")
+            ?: throw BookandException(ErrorCode.NOT_FOUND_POLICY)
     }
 
     private fun getPolicyByNameOrThrow(name: String): Policy {
         return policyRepository.findByName(name)
-            ?: throw IllegalArgumentException("존재하지 않는 정책입니다.")
+            ?: throw BookandException(ErrorCode.NOT_FOUND_POLICY)
     }
 
     private fun getPolicyByName(name: String): Policy? {

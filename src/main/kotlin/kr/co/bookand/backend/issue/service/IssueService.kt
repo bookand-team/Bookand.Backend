@@ -1,8 +1,10 @@
 package kr.co.bookand.backend.issue.service
 
 import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.PageResponse
 import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.exception.BookandException
 import kr.co.bookand.backend.issue.domain.Issue
 import kr.co.bookand.backend.issue.domain.IssueImage
 import kr.co.bookand.backend.issue.domain.dto.*
@@ -29,7 +31,7 @@ class IssueService(
     fun getIssue(issueId: Long): IssueResponse {
         return issueRepository.findById(issueId)
             .map { IssueResponse(it) }
-            .orElseThrow { throw RuntimeException("ErrorCode.ISSUE_NOT_FOUND") }
+            .orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_ISSUE) }
     }
 
     fun getIssueList(currentAccount: Account, pageable: Pageable): IssueSimpleListResponse {
@@ -73,7 +75,7 @@ class IssueService(
     @Transactional
     fun checkConfirmed(issueId: Long, checkConfirmed: Boolean): MessageResponse {
         val issue: Issue = issueRepository.findById(issueId)
-            .orElseThrow { throw RuntimeException("ErrorCode.ISSUE_NOT_FOUND") }
+            .orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_ISSUE) }
         issue.checkConfirmed(checkConfirmed)
         return MessageResponse(message = "성공적으로 처리되었습니다.", statusCode = 200)
     }

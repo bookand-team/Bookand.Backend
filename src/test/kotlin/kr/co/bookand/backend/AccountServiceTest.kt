@@ -12,6 +12,7 @@ import kr.co.bookand.backend.account.repository.RevokeAccountRepository
 import kr.co.bookand.backend.account.repository.SuspendedAccountRepository
 import kr.co.bookand.backend.account.service.AccountService
 import kr.co.bookand.backend.account.service.AuthService
+import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.config.jwt.RefreshTokenRepository
 import java.time.LocalDateTime
 import java.util.*
@@ -97,7 +98,7 @@ class AccountServiceTest : BehaviorSpec({
                 }
 
                 Then("Nickname update") {
-                    exception.message shouldBe "중복된 닉네임입니다."
+                    exception.message shouldBe ErrorCode.NICKNAME_DUPLICATION.errorLog
                 }
             }
 

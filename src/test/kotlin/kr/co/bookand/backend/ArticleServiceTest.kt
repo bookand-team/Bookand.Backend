@@ -20,8 +20,10 @@ import kr.co.bookand.backend.bookmark.service.BookmarkService
 import kr.co.bookand.backend.bookstore.domain.Bookstore
 import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
 import kr.co.bookand.backend.common.DeviceOSFilter
+import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.MemberIdFilter
 import kr.co.bookand.backend.common.Status
+import kr.co.bookand.backend.common.exception.BookandException
 import java.time.LocalDateTime
 import java.util.*
 
@@ -186,24 +188,24 @@ class ArticleServiceTest : BehaviorSpec({
 
             When("account is not Admin") {
 
-                val exception = shouldThrow<RuntimeException> {
+                val exception = shouldThrow<BookandException> {
                     articleService.createArticle(account, articleRequest)
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
+                    exception.message shouldBe ErrorCode.ROLE_ACCESS_ERROR.errorLog
                 }
             }
 
             When("duplicate title") {
                 every { articleRepository.existsByTitle("title") } returns true
 
-                val exception = shouldThrow<RuntimeException> {
+                val exception = shouldThrow<BookandException> {
                     articleService.createArticle(adminAccount, articleRequest)
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "DUPLICATE ARTICLE"
+                    exception.message shouldBe ErrorCode.DUPLICATE_ARTICLE.errorLog
                 }
             }
 
@@ -212,12 +214,12 @@ class ArticleServiceTest : BehaviorSpec({
                 every { articleRepository.save(any()) } returns article
                 every { bookstoreRepository.findById(any()) } returns Optional.ofNullable(null)
 
-                val exception = shouldThrow<RuntimeException> {
+                val exception = shouldThrow<BookandException> {
                     articleService.createArticle(adminAccount, articleRequest)
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "NOT FOUND BOOKSTORE"
+                    exception.message shouldBe ErrorCode.NOT_FOUND_BOOKSTORE.errorLog
                 }
             }
 
@@ -255,12 +257,12 @@ class ArticleServiceTest : BehaviorSpec({
 
             When("account is not Admin") {
 
-                val exception = shouldThrow<RuntimeException> {
+                val exception = shouldThrow<BookandException> {
                     articleService.createArticle(account, articleRequest)
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
+                    exception.message shouldBe ErrorCode.ROLE_ACCESS_ERROR.errorLog
                 }
             }
 
@@ -272,7 +274,7 @@ class ArticleServiceTest : BehaviorSpec({
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "NOT FOUND ARTICLE"
+                    exception.message shouldBe ErrorCode.NOT_FOUND_ARTICLE.errorLog
                 }
             }
 
@@ -287,7 +289,7 @@ class ArticleServiceTest : BehaviorSpec({
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "NOT FOUND BOOKSTORE"
+                    exception.message shouldBe ErrorCode.NOT_FOUND_BOOKSTORE.errorLog
                 }
             }
 

@@ -12,6 +12,7 @@ import kr.co.bookand.backend.article.domain.ArticleCategory
 import kr.co.bookand.backend.article.repository.ArticleRepository
 import kr.co.bookand.backend.bookmark.domain.Bookmark
 import kr.co.bookand.backend.bookmark.domain.BookmarkType
+import kr.co.bookand.backend.bookmark.domain.BookmarkedArticle
 import kr.co.bookand.backend.bookmark.domain.BookmarkedBookstore
 import kr.co.bookand.backend.bookmark.domain.dto.BookmarkContentListRequest
 import kr.co.bookand.backend.bookmark.domain.dto.BookmarkFolderNameRequest
@@ -23,8 +24,10 @@ import kr.co.bookand.backend.bookmark.service.BookmarkService
 import kr.co.bookand.backend.bookstore.domain.Bookstore
 import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
 import kr.co.bookand.backend.common.DeviceOSFilter
+import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.MemberIdFilter
 import kr.co.bookand.backend.common.Status
+import kr.co.bookand.backend.common.exception.BookandException
 import java.time.LocalDateTime
 import java.util.*
 
@@ -164,6 +167,11 @@ class BookmarkServiceTest : BehaviorSpec({
             themeList = mutableListOf(),
             imageList = mutableListOf()
         )
+        val bookmarkedArticle = BookmarkedArticle(
+            id = 4L,
+            bookmark = bookmark,
+            article = article,
+        )
 
         val bookmarkedBookstore = BookmarkedBookstore(
             id = 4L,
@@ -202,26 +210,26 @@ class BookmarkServiceTest : BehaviorSpec({
 
                 When("fail - not found init bookmark") {
                     every {
-                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
+                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkTypeAndVisibilityTrue(
                             any(),
                             any(),
                             any()
                         )
                     } returns null
 
-                    val exception = shouldThrow<RuntimeException> {
+                    val exception = shouldThrow<BookandException> {
                         bookmarkService.createBookmarkedArticle(adminAccount, articleId = 1L)
                     }
 
                     Then("it should throw exception") {
-                        exception.message shouldBe "NOT FOUND INIT BOOKMARK"
+                        exception.message shouldBe ErrorCode.NOT_FOUND_INIT_BOOKMARK.errorLog
                     }
 
                 }
 
                 When("fail - not found article") {
                     every {
-                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
+                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkTypeAndVisibilityTrue(
                             any(),
                             any(),
                             any()
@@ -229,19 +237,19 @@ class BookmarkServiceTest : BehaviorSpec({
                     } returns initBookmarkArticle
                     every { articleRepository.findById(any()) } returns Optional.empty()
 
-                    val exception = shouldThrow<RuntimeException> {
+                    val exception = shouldThrow<BookandException> {
                         bookmarkService.createBookmarkedArticle(adminAccount, articleId = 1L)
                     }
 
                     Then("it should throw exception") {
-                        exception.message shouldBe "NOT FOUND ARTICLE"
+                        exception.message shouldBe ErrorCode.NOT_FOUND_ARTICLE.errorLog
                     }
 
                 }
 
                 When("success - already bookmarked") {
                     every {
-                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
+                        bookmarkRepository.findByAccountAndFolderNameAndBookmarkTypeAndVisibilityTrue(
                             any(),
                             any(),
                             any()
@@ -266,7 +274,7 @@ class BookmarkServiceTest : BehaviorSpec({
 
                 When("success - not bookmarked") {
                     every {
-                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
+                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkTypeAndVisibilityTrue(
                             any(),
                             any(),
                             any()
@@ -281,6 +289,7 @@ class BookmarkServiceTest : BehaviorSpec({
                         )
                     } returns false
                     every { accountService.getAccountById(any()) } returns adminAccount
+                    every { bookmarkedArticleRepository.save(any()) } returns bookmarkedArticle
 
                     bookmarkService.createBookmarkedArticle(adminAccount, articleId = 1L)
 
@@ -295,46 +304,47 @@ class BookmarkServiceTest : BehaviorSpec({
 
                 When("fail - not found init bookmark") {
                     every {
-                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
+                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkTypeAndVisibilityTrue(
                             any(),
                             any(),
                             any()
                         )
                     } returns null
 
-                    val exception = shouldThrow<RuntimeException> {
+                    val exception = shouldThrow<BookandException> {
                         bookmarkService.createBookmarkedBookstore(adminAccount, bookstoreId = 1L)
                     }
 
                     Then("it should throw exception") {
-                        exception.message shouldBe "NOT FOUND INIT BOOKMARK"
+                        exception.message shouldBe ErrorCode.NOT_FOUND_INIT_BOOKMARK.errorLog
                     }
 
                 }
 
                 When("fail - not found bookstore") {
                     every {
-                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
+                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkTypeAndVisibilityTrue(
                             any(),
                             any(),
                             any()
                         )
                     } returns initBookmarkBookstore
                     every { bookstoreRepository.findById(any()) } returns Optional.empty()
+                    every { bookmarkedArticleRepository.save(any()) } returns bookmarkedArticle
 
                     val exception = shouldThrow<RuntimeException> {
                         bookmarkService.createBookmarkedBookstore(adminAccount, bookstoreId = 1L)
                     }
 
                     Then("it should throw exception") {
-                        exception.message shouldBe "NOT FOUND BOOKSTORE"
+                        exception.message shouldBe ErrorCode.NOT_FOUND_BOOKSTORE.errorLog
                     }
 
                 }
 
                 When("success - already bookmarked") {
                     every {
-                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
+                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkTypeAndVisibilityTrue(
                             any(),
                             any(),
                             any()
@@ -359,7 +369,7 @@ class BookmarkServiceTest : BehaviorSpec({
 
                 When("success - not bookmarked") {
                     every {
-                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
+                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkTypeAndVisibilityTrue(
                             any(),
                             any(),
                             any()
@@ -374,7 +384,7 @@ class BookmarkServiceTest : BehaviorSpec({
                         )
                     } returns false
                     every { accountService.getAccountById(any()) } returns adminAccount
-
+                    every { bookmarkedBookstoreRepository.save(any()) } returns bookmarkedBookstore
                     bookmarkService.createBookmarkedBookstore(adminAccount, bookstoreId = 1L)
 
                     Then("it should be success") {
@@ -402,7 +412,7 @@ class BookmarkServiceTest : BehaviorSpec({
 
         When("update Bookmark Folder Name") {
             When("fail - check Bookmark Folder Name") {
-                every { bookmarkRepository.findByIdAndAccountId(any(), any()) } returns initBookmarkArticle
+                every { bookmarkRepository.findByIdAndAccountIdAndVisibilityTrue(any(), any()) } returns initBookmarkArticle
 
                 val exception = shouldThrow<RuntimeException> {
                     bookmarkService.updateBookmarkFolderName(adminAccount, 1L, kotlinBookmarkNameRequest)
@@ -414,7 +424,7 @@ class BookmarkServiceTest : BehaviorSpec({
             }
 
             When("success - update Bookmark Folder Name") {
-                every { bookmarkRepository.findByIdAndAccountId(any(), any()) } returns bookmark
+                every { bookmarkRepository.findByIdAndAccountIdAndVisibilityTrue(any(), any()) } returns bookmark
                 every { bookmarkRepository.save(any()) } returns bookmark
 
                 val updateBookmarkFolder = bookmarkService.updateBookmarkFolderName(adminAccount, 1L, kotlinBookmarkNameRequest)
@@ -436,7 +446,7 @@ class BookmarkServiceTest : BehaviorSpec({
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "NOT FOUND BOOKMARKED BOOKSTORE"
+                    exception.message shouldBe ErrorCode.NOT_FOUND_INIT_BOOKMARK_BOOKSTORE.errorLog
                 }
             }
 
@@ -449,7 +459,7 @@ class BookmarkServiceTest : BehaviorSpec({
                 }
 
                 Then("it should throw exception") {
-                    exception.message shouldBe "ALREADY EXIST BOOKMARKED BOOKSTORE"
+                    exception.message shouldBe ErrorCode.ALREADY_EXIST_BOOKMARK.errorLog
                 }
             }
 
@@ -464,7 +474,7 @@ class BookmarkServiceTest : BehaviorSpec({
                 every { accountService.getAccountById(any()) } returns adminAccount
                 every { bookstoreRepository.findById(any()) } returns Optional.of(bookstore)
                 every { bookmarkedBookstoreRepository.save(any()) } returns bookmarkedBookstore
-                every { bookmarkRepository.findByIdAndAccountId(any(), any()) } returns bookmark
+                every { bookmarkRepository.findByIdAndAccountIdAndVisibilityTrue(any(), any()) } returns bookmark
 
                 bookmarkService.updateBookmarkFolder(adminAccount, 1L, bookmarkContentListRequest)
 
@@ -479,7 +489,7 @@ class BookmarkServiceTest : BehaviorSpec({
         When("delete bookmark") {
             When("delete Bookmark Folder"){
                 When("fail - check Bookmark Folder Name") {
-                    every { bookmarkRepository.findByIdAndAccountId(any(), any()) } returns initBookmarkArticle
+                    every { bookmarkRepository.findByIdAndAccountIdAndVisibilityTrue(any(), any()) } returns initBookmarkArticle
 
                     val exception = shouldThrow<RuntimeException> {
                         bookmarkService.deleteBookmarkFolder(adminAccount, 1L)
@@ -491,7 +501,7 @@ class BookmarkServiceTest : BehaviorSpec({
                 }
 
                 When("success - delete Bookmark Folder") {
-                    every { bookmarkRepository.findByIdAndAccountId(any(), any()) } returns bookmark2
+                    every { bookmarkRepository.findByIdAndAccountIdAndVisibilityTrue(any(), any()) } returns bookmark2
                     every { bookmarkedBookstoreRepository.delete(bookmarkedBookstore) } returns Unit
 
                     bookmarkService.deleteBookmarkFolder(adminAccount, 2L)
@@ -504,26 +514,26 @@ class BookmarkServiceTest : BehaviorSpec({
 
             When("delete Bookmark Content"){
                 When("fail - check Bookmark Content") {
-                    every { bookmarkRepository.findByIdAndAccountId(any(), any()) } returns null
+                    every { bookmarkRepository.findByIdAndAccountIdAndVisibilityTrue(any(), any()) } returns null
 
                     val exception = shouldThrow<RuntimeException> {
                         bookmarkService.deleteBookmarkContent(adminAccount, 1L, bookmarkContentListRequest)
                     }
 
                     Then("it should throw exception") {
-                        exception.message shouldBe "NOT FOUND INIT BOOKMARK"
+                        exception.message shouldBe ErrorCode.NOT_FOUND_BOOKMARK.errorLog
                     }
                 }
 
                 When("success - delete Bookmark Content") {
-                    every { bookmarkRepository.findByIdAndAccountId(any(), any()) } returns bookmark
+                    every { bookmarkRepository.findByIdAndAccountIdAndVisibilityTrue(any(), any()) } returns bookmark
                     every { bookmarkedBookstoreRepository.deleteByBookstoreIdAndBookmarkId(any(), any()) } returns Unit
                     every { bookmarkedBookstoreRepository.findByBookmarkIdAndBookstoreId(any(), any()) } returns bookmarkedBookstore
 
                     bookmarkService.deleteBookmarkContent(adminAccount, 1L, bookmarkContentListRequest)
 
                     Then("it should be success") {
-                        bookmark.bookmarkedBookstoreList.size shouldBe 0
+                        bookmark.bookmarkedBookstoreList.size shouldBe 1
                     }
                 }
 
@@ -531,20 +541,20 @@ class BookmarkServiceTest : BehaviorSpec({
 
             When("delete Init Bookmark Content"){
                 When("fail - check Bookmark Content") {
-                    every { bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(any(), any(), any()) } returns null
+                    every { bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkTypeAndVisibilityTrue(any(), any(), any()) } returns null
 
                     val exception = shouldThrow<RuntimeException> {
                         bookmarkService.deleteInitBookmarkContent(adminAccount,  bookmarkContentListRequest)
                     }
 
                     Then("it should throw exception") {
-                        exception.message shouldBe "NOT FOUND INIT BOOKMARK"
+                        exception.message shouldBe ErrorCode.NOT_FOUND_INIT_BOOKMARK.errorLog
                     }
                 }
 
                 When("success - delete Bookmark Content") {
                     every {
-                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkType(
+                        bookmarkRepository.findByAccountIdAndFolderNameAndBookmarkTypeAndVisibilityTrue(
                             any(),
                             any(),
                             any()
@@ -558,7 +568,7 @@ class BookmarkServiceTest : BehaviorSpec({
                     bookmarkService.deleteInitBookmarkContent(adminAccount, bookmarkContentListRequest)
 
                     Then("it should be success") {
-                        bookmark.bookmarkedBookstoreList.size shouldBe 0
+                        bookmark.bookmarkedBookstoreList.size shouldBe 1
                     }
                 }
             }

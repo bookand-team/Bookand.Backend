@@ -1,5 +1,8 @@
 package kr.co.bookand.backend.account.domain
 
+import kr.co.bookand.backend.common.ErrorCode
+import kr.co.bookand.backend.common.exception.BookandException
+
 enum class RevokeType(
     var reason: String
 ) {
@@ -15,7 +18,7 @@ enum class RevokeType(
                 "UNCOMFORTABLE" -> UNCOMFORTABLE
                 "PRIVACY" -> PRIVACY
                 "ETC" -> ETC
-                else -> throw IllegalArgumentException("해당하는 타입이 없습니다.")
+                else -> throw BookandException(ErrorCode.INPUT_VALID_ERROR)
             }
         }
     }

@@ -8,6 +8,7 @@ import io.mockk.mockk
 import kr.co.bookand.backend.account.domain.*
 import kr.co.bookand.backend.account.service.AccountService
 import kr.co.bookand.backend.common.DeviceOSFilter
+import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.MemberIdFilter
 import kr.co.bookand.backend.common.Status
 import kr.co.bookand.backend.notice.domain.Notice
@@ -94,7 +95,7 @@ class NoticeServiceTest : BehaviorSpec({
                 }
 
                 Then("throw exception") {
-                    exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
+                    exception.message shouldBe ErrorCode.ROLE_ACCESS_ERROR.errorLog
                 }
             }
 
@@ -118,7 +119,7 @@ class NoticeServiceTest : BehaviorSpec({
                     }
 
                     Then("throw exception") {
-                        exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
+                        exception.message shouldBe ErrorCode.ROLE_ACCESS_ERROR.errorLog
                     }
                 }
 
@@ -142,7 +143,7 @@ class NoticeServiceTest : BehaviorSpec({
                     }
 
                     Then("throw exception") {
-                        exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
+                        exception.message shouldBe ErrorCode.ROLE_ACCESS_ERROR.errorLog
                     }
                 }
 
@@ -166,7 +167,7 @@ class NoticeServiceTest : BehaviorSpec({
                 }
 
                 Then("throw exception") {
-                    exception.message shouldBe "ErrorCode.ROLE_ACCESS_ERROR"
+                    exception.message shouldBe ErrorCode.ROLE_ACCESS_ERROR.errorLog
                 }
             }
 

@@ -8,6 +8,7 @@ import kr.co.bookand.backend.account.repository.SuspendedAccountRepository
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.PageResponse
 import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.exception.BookandException
 import kr.co.bookand.backend.config.jwt.RefreshTokenRepository
 import kr.co.bookand.backend.config.security.SecurityUtils.getCurrentAccountEmail
 import org.springframework.data.domain.Pageable
@@ -29,7 +30,7 @@ class AccountService(
 
     fun getCurrentAccount(): Account {
         return accountRepository.findByEmail(getCurrentAccountEmail())
-            ?: throw IllegalArgumentException("존재하지 않는 계정입니다.")
+            ?: throw BookandException(ErrorCode.NOT_FOUND_MEMBER)
     }
 
     fun getMyAccountInfo(): AccountInfoResponse {
@@ -38,18 +39,18 @@ class AccountService(
 
     fun getAccountByEmail(email: String): Account {
         return accountRepository.findByEmail(email)
-            ?: throw IllegalArgumentException("존재하지 않는 계정입니다.")
+            ?: throw BookandException(ErrorCode.NOT_FOUND_MEMBER)
     }
 
     fun getAccountByNickname(nickname: String): AccountInfoResponse {
         val account = accountRepository.findByNickname(nickname)
-            ?: throw IllegalArgumentException("존재하지 않는 계정입니다.")
+            ?: throw BookandException(ErrorCode.NOT_FOUND_MEMBER)
         return AccountInfoResponse(account)
     }
 
     fun getAccountById(id: Long): Account {
         return accountRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 계정입니다.") }
+            .orElseThrow { BookandException(ErrorCode.NOT_FOUND_MEMBER) }
     }
 
     fun getAccountInfoById(id: Long): AccountInfoResponse {
@@ -74,7 +75,7 @@ class AccountService(
     fun updateAccount(currentAccount: Account, request: AccountRequest): AccountInfoResponse {
         val checkNicknameBoolean = checkNicknameBoolean(request.nickname, currentAccount.nickname)
         if (checkNicknameBoolean) {
-            throw RuntimeException(ErrorCode.NICKNAME_DUPLICATION.errorMessage)
+            throw BookandException(ErrorCode.NICKNAME_DUPLICATION)
         }
         currentAccount.updateProfile(request.profileImage, request.nickname)
         return AccountInfoResponse(currentAccount)
@@ -154,17 +155,17 @@ class AccountService(
 
     fun checkAccountAdmin(id: Long) {
         val account = accountRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 계정입니다.") }
+            .orElseThrow { BookandException(ErrorCode.NOT_FOUND_MEMBER)}
         if (account.role.name != "ADMIN") {
-            throw IllegalArgumentException("관리자 계정이 아닙니다.")
+            throw BookandException(ErrorCode.ROLE_ACCESS_ERROR)
         }
     }
 
     fun checkAccountUser(id: Long) {
         val account = accountRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 계정입니다.") }
+            .orElseThrow { BookandException(ErrorCode.NOT_FOUND_MEMBER) }
         if (account.role.name != "USER") {
-            throw IllegalArgumentException("일반 계정이 아닙니다.")
+            throw BookandException(ErrorCode.ROLE_ACCESS_ERROR)
         }
     }
 
@@ -178,7 +179,7 @@ class AccountService(
         val socialEmail =
             socialIdWithAccessToken.userId + "@" + account.provider.lowercase(Locale.getDefault()) + ".com"
         if (account.email != socialEmail) {
-            throw RuntimeException(ErrorCode.NOT_MATCH_MEMBER.errorMessage)
+            throw BookandException(ErrorCode.NOT_MATCH_MEMBER)
         }
     }
 

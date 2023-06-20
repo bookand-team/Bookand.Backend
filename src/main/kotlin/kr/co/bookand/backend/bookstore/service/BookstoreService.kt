@@ -13,6 +13,7 @@ import kr.co.bookand.backend.bookstore.repository.ReportBookstoreRepository
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.Status
 import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.exception.BookandException
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -94,7 +95,7 @@ class BookstoreService(
     fun deleteBookstore(bookstoreId: Long): MessageResponse {
         val bookstore = getBookstore(bookstoreId)
         if (!bookstore.visibility) {
-            throw RuntimeException("Bookstore already deleted")
+            throw BookandException(ErrorCode.ALREADY_DELETE_BOOKSTORE)
         }
         bookstore.softDelete()
         return MessageResponse(message = "서점 삭제", statusCode = 200)
@@ -141,12 +142,12 @@ class BookstoreService(
 
     fun duplicateBookstoreName(name: String) {
         if (bookstoreRepository.existsByName(name))
-            throw RuntimeException(ErrorCode.DUPLICATE_BOOKSTORE_NAME.errorMessage)
+            throw BookandException(ErrorCode.DUPLICATE_BOOKSTORE_NAME)
     }
 
     fun checkCountBookstoreTheme(theme: List<String>) {
         if (theme.size > 4) {
-            throw RuntimeException(ErrorCode.TOO_MANY_BOOKSTORE_THEME.errorMessage)
+            throw BookandException(ErrorCode.TOO_MANY_BOOKSTORE_THEME)
         }
     }
 
@@ -157,12 +158,12 @@ class BookstoreService(
 
     fun getBookstore(id: Long): Bookstore {
         return bookstoreRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 서점입니다.") }
+            .orElseThrow { BookandException(ErrorCode.NOT_FOUND_BOOKSTORE) }
     }
 
     fun getReportBookstore(id: Long): ReportBookstore {
         return reportBookstoreRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 신고입니다.") }
+            .orElseThrow { BookandException(ErrorCode.NOT_FOUND_REPORT_BOOKSTORE) }
     }
 
     fun getBookstoreSimpleList(currentAccount: Account, pageable: Pageable): BookstorePageResponse {

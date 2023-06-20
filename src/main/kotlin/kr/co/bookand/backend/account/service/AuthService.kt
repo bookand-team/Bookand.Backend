@@ -14,6 +14,7 @@ import kr.co.bookand.backend.bookmark.repository.BookmarkRepository
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.RestTemplateService
 import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.exception.BookandException
 import kr.co.bookand.backend.config.jwt.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
@@ -130,18 +131,18 @@ class AuthService(
                 if (isAccountExpired) {
                     account.updateAccountStatus(AccountStatus.NORMAL)
                 } else {
-                    throw RuntimeException(ErrorCode.SUSPENDED_ACCOUNT.errorMessage)
+                    throw BookandException(ErrorCode.SUSPENDED_ACCOUNT)
                 }
             }
 
-            AccountStatus.DELETED -> throw RuntimeException(ErrorCode.DELETED_ACCOUNT.errorMessage)
+            AccountStatus.DELETED -> throw BookandException(ErrorCode.DELETED_ACCOUNT)
             else -> return
         }
     }
 
     private fun checkRole(roleManager: String, authority: String) {
         if (roleManager != authority) {
-            throw RuntimeException(ErrorCode.ROLE_ACCESS_ERROR.errorMessage)
+            throw BookandException(ErrorCode.ROLE_ACCESS_ERROR)
         }
     }
 
@@ -190,10 +191,10 @@ class AuthService(
         val loginAccount = authentication.name
         if (accountRepository.existsByEmail(loginAccount) || refreshTokenRepository.existsByKey(authentication.name)) {
             val refreshToken = refreshTokenRepository.findByKey(authentication.name)
-                ?: throw RuntimeException(ErrorCode.NOT_FOUND_REFRESH_TOKEN.errorMessage)
+                ?: throw BookandException(ErrorCode.NOT_FOUND_REFRESH_TOKEN)
             refreshTokenRepository.delete(refreshToken)
         } else {
-            throw RuntimeException(ErrorCode.NOT_FOUND_MEMBER.errorMessage)
+            throw BookandException(ErrorCode.NOT_FOUND_MEMBER)
         }
         return MessageResponse(message = "로그아웃 성공", 200)
     }
@@ -227,31 +228,31 @@ class AuthService(
 
     private fun duplicateEmailAndNickName(email: String, nickname: String) {
         if (accountRepository.existsByEmail(email)) {
-            throw RuntimeException(ErrorCode.EMAIL_DUPLICATION.errorMessage)
+            throw BookandException(ErrorCode.EMAIL_DUPLICATION)
         }
         if (accountRepository.existsByNickname(nickname)) {
-            throw RuntimeException(ErrorCode.NICKNAME_DUPLICATION.errorMessage)
+            throw BookandException(ErrorCode.NICKNAME_DUPLICATION)
         }
     }
 
 
     fun checkSignUp(signKey: SigningAccount) {
         if (signKey.email == null || signKey.socialType == null || signKey.providerEmail == null) {
-            throw RuntimeException(ErrorCode.INVALID_SIGN_TOKEN.errorMessage)
+            throw BookandException(ErrorCode.INVALID_SIGN_TOKEN)
         }
     }
 
     @Transactional
     fun reissue(tokenRequestDto: TokenRequest): TokenResponse {
         if (!jwtProvider.validateToken(tokenRequestDto.refreshToken)) {
-            throw JwtException(ErrorCode.JWT_ERROR.errorMessage)
+            throw BookandException(ErrorCode.JWT_ERROR)
         }
         val authentication = jwtProvider.getAuthentication(tokenRequestDto.refreshToken)
         if (authentication != null) {
             println("authentication.name = ${authentication.name}")
         }
         val refreshToken = authentication?.let { refreshTokenRepository.findByKey(it.name) }
-            ?: throw RuntimeException(ErrorCode.NOT_FOUND_REFRESH_TOKEN.errorMessage)
+            ?: throw BookandException(ErrorCode.NOT_FOUND_REFRESH_TOKEN)
 
         checkSuspended(refreshToken.account)
 
@@ -272,10 +273,10 @@ class AuthService(
 
     private fun reissueRefreshExceptionCheck(refreshToken: String?, tokenRequestDto: TokenRequest) {
         if (refreshToken == null) {
-            throw RuntimeException(ErrorCode.NOT_FOUND_REFRESH_TOKEN.errorMessage)
+            throw BookandException(ErrorCode.NOT_FOUND_REFRESH_TOKEN)
         }
         if (refreshToken != tokenRequestDto.refreshToken) {
-            throw RuntimeException(ErrorCode.NOT_MATCH_REFRESH_TOKEN.errorMessage)
+            throw BookandException(ErrorCode.NOT_MATCH_REFRESH_TOKEN)
         }
     }
 
@@ -310,7 +311,7 @@ class AuthService(
         return when (data.socialType) {
             SocialType.GOOGLE.name -> getGoogleIdAndEmail(data)
             SocialType.APPLE.name -> getAppleId(data.accessToken)
-            else -> throw RuntimeException()
+            else -> throw BookandException(ErrorCode.NOT_FOUND_SOCIAL_TYPE)
         }
     }
 
@@ -363,7 +364,7 @@ class AuthService(
             val email = claims["email"] as String?
             return ProviderIdAndEmail(subject, email)
         } catch (e: Exception) {
-            throw RuntimeException(ErrorCode.APPLE_LOGIN_ERROR.errorMessage)
+            throw BookandException(ErrorCode.APPLE_LOGIN_ERROR)
         }
     }
 
@@ -377,7 +378,7 @@ class AuthService(
 
     fun getAccountByEmail(email: String): Account {
         return accountRepository.findByEmail(email)
-            ?: throw RuntimeException(ErrorCode.NOT_FOUND_MEMBER.errorMessage)
+            ?: throw BookandException(ErrorCode.NOT_FOUND_MEMBER)
     }
 
     fun getSuspendedAccount(account: Account): SuspendedAccount? {

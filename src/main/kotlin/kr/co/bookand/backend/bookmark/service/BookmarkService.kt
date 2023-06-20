@@ -14,6 +14,7 @@ import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.PageResponse
 import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.exception.BookandException
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -126,7 +127,7 @@ class BookmarkService(
             currentAccount,
             INIT_BOOKMARK_FOLDER_NAME,
             bookmarkType
-        ) ?: throw RuntimeException(ErrorCode.NOT_FOUND_BOOKMARK.errorMessage)
+        ) ?: throw BookandException(ErrorCode.NOT_FOUND_BOOKMARK, )
         return getBookmarkResponse(bookmark, pageable, cursorId)
     }
 
@@ -286,22 +287,22 @@ class BookmarkService(
             accountId,
             INIT_BOOKMARK_FOLDER_NAME,
             bookmarkType
-        ) ?: throw RuntimeException("NOT FOUND INIT BOOKMARK")
+        ) ?: throw BookandException(ErrorCode.NOT_FOUND_INIT_BOOKMARK)
     }
 
     fun getMyBookmark(accountId: Long, bookmarkId: Long): Bookmark {
         return bookmarkRepository.findByIdAndAccountIdAndVisibilityTrue(bookmarkId, accountId)
-            ?: throw RuntimeException("NOT FOUND BOOKMARK")
+            ?: throw BookandException(ErrorCode.NOT_FOUND_BOOKMARK)
     }
 
     fun getArticle(articleId: Long): Article {
         return articleRepository.findById(articleId)
-            .orElseThrow { throw RuntimeException("NOT FOUND ARTICLE") }
+            .orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_ARTICLE) }
     }
 
     fun getBookstore(bookstoreId: Long): Bookstore {
         return bookstoreRepository.findById(bookstoreId)
-            .orElseThrow { throw RuntimeException("NOT FOUND BOOKSTORE") }
+            .orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_BOOKSTORE) }
     }
 
     fun checkBookmarkedArticle(
@@ -339,44 +340,44 @@ class BookmarkService(
     }
 
     fun checkUpdateBookmarkRequest(bookmark: Bookmark, request: BookmarkContentListRequest) {
-        if (bookmark.bookmarkType.toString() != request.bookmarkType) throw RuntimeException("NOT MATCH BOOKMARK TYPE")
+        if (bookmark.bookmarkType.toString() != request.bookmarkType) throw BookandException(ErrorCode.NOT_MATCH_BOOKMARK_TYPE)
     }
 
     fun checkBookmarkedBookstoreInInitBookmark(myInitBookmarkId: Long, contentId: Long) {
         bookmarkedBookstoreRepository.findByBookmarkIdAndBookstoreId(myInitBookmarkId, contentId)
-            ?: throw RuntimeException("NOT FOUND BOOKMARKED BOOKSTORE")
+            ?: throw BookandException(ErrorCode.NOT_FOUND_INIT_BOOKMARK_BOOKSTORE)
     }
 
     fun checkBookmarkedArticleInInitBookmark(myInitBookmarkId: Long, contentId: Long) {
         bookmarkedArticleRepository.findByBookmarkIdAndArticleId(myInitBookmarkId, contentId)
-            ?: throw RuntimeException("NOT FOUND BOOKMARKED ARTICLE")
+            ?: throw BookandException(ErrorCode.NOT_FOUND_INIT_BOOKMARK_ARTICLE)
     }
 
     fun existBookmarkedBookstore(bookmarkId: Long, contentId: Long) {
         val checkExist =
             bookmarkedBookstoreRepository.existsByBookmarkIdAndBookstoreId(bookmarkId, contentId)
-        if (checkExist) throw RuntimeException("ALREADY EXIST BOOKMARKED BOOKSTORE")
+        if (checkExist) throw BookandException(ErrorCode.ALREADY_EXIST_BOOKMARK)
     }
 
     fun checkBookmarkedBookstore(bookmarkId: Long, contentId: Long) {
         bookmarkedBookstoreRepository.findByBookmarkIdAndBookstoreId(bookmarkId, contentId)
-            ?: throw RuntimeException("NOT FOUND BOOKMARKED BOOKSTORE")
+            ?: throw BookandException(ErrorCode.ALREADY_EXIST_BOOKMARK)
     }
 
     fun existBookmarkedArticle(bookmarkId: Long, contentId: Long) {
         val checkExist =
             bookmarkedArticleRepository.existsByBookmarkIdAndArticleId(bookmarkId, contentId)
-        if (checkExist) throw RuntimeException("ALREADY EXIST BOOKMARKED ARTICLE")
+        if (checkExist) throw BookandException(ErrorCode.ALREADY_EXIST_BOOKMARK)
     }
 
     fun checkBookmarkedArticle(bookmarkId: Long, contentId: Long) {
         bookmarkedArticleRepository.findByBookmarkIdAndArticleId(bookmarkId, contentId)
-            ?: throw RuntimeException("NOT FOUND BOOKMARKED ARTICLE")
+            ?: throw BookandException(ErrorCode.NOT_FOUND_BOOKMARK_ARTICLE)
     }
 
     fun checkBookmarkFolderName(bookmark: Bookmark) {
         if (bookmark.folderName == INIT_BOOKMARK_FOLDER_NAME) {
-            throw RuntimeException("NOT CHANGE INIT BOOKMARK")
+            throw BookandException(ErrorCode.NOT_CHANGE_INIT_BOOKMARK)
         }
     }
 

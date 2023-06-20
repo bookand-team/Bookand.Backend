@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.amazonaws.services.s3.model.DeleteObjectRequest
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
+import kr.co.bookand.backend.common.ErrorCode
+import kr.co.bookand.backend.common.exception.BookandException
 import kr.co.bookand.backend.util.s3.S3SaveDir
 import kr.co.bookand.backend.util.s3.dto.FileDto
 import kr.co.bookand.backend.util.s3.dto.FileListDto
@@ -39,7 +41,7 @@ class AwsS3Service(
         val currentAccountEmail = "SecurityUtil.getCurrentAccountEmail()"
         val files = uploadFileRequest.files
         if (CollectionUtils.isEmpty(files)) {
-            throw RuntimeException("ErrorCode.INPUT_VALID_ERROR")
+            throw BookandException(ErrorCode.INPUT_VALID_ERROR)
         }
         val result = uploadFileRequest.files
             .map { file: MultipartFile -> uploadV2(file, uploadFileRequest.type, currentAccountEmail) }
@@ -63,9 +65,9 @@ class AwsS3Service(
                 )
             }
         } catch (e: RuntimeException) {
-            throw RuntimeException("ErrorCode.AWS_S3_UPLOAD_FAIL")
+            throw BookandException(ErrorCode.AWS_S3_UPLOAD_FAIL)
         } catch (e: IOException) {
-            throw RuntimeException("ErrorCode.AWS_S3_UPLOAD_FAIL")
+            throw BookandException(ErrorCode.AWS_S3_UPLOAD_FAIL)
         }
 
         val fileUrl = amazonS3Client.getUrl(bucketPath, fileName).toString()
@@ -74,7 +76,7 @@ class AwsS3Service(
 
     private fun validateFileExists(multipartFile: MultipartFile) {
         if (multipartFile.isEmpty) {
-            throw RuntimeException("ErrorCode.AWS_S3_UPLOAD_FAIL")
+            throw BookandException(ErrorCode.AWS_S3_UPLOAD_FAIL)
         }
     }
 
@@ -98,7 +100,7 @@ class AwsS3Service(
         val loginUser = "todo"
         val urls = updateFileRequest.toDeleteUrls
         if (CollectionUtils.isEmpty(urls)) {
-            throw RuntimeException("ErrorCode.AWS_S3_UPLOAD_FAIL")
+            throw BookandException(ErrorCode.AWS_S3_UPLOAD_FAIL)
         }
         updateFileRequest.toDeleteUrls
             .forEach { file-> delete(type=type, url=file) }
@@ -119,7 +121,7 @@ class AwsS3Service(
         try {
             amazonS3Client.deleteObject(DeleteObjectRequest(bucketPath, filename))
         } catch (e: Exception) {
-            throw RuntimeException("AWS S3 delete fail.")
+            throw BookandException(ErrorCode.AWS_S3_DELETE_FAIL)
         }
     }
 

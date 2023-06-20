@@ -16,6 +16,7 @@ import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.Status
 import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.exception.BookandException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -78,7 +79,7 @@ class ArticleService(
 
         if (cursorId != null && cursorId == 0L) {
             val firstArticle = articleRepository.findFirstByStatusOrderByCreatedAtDesc(Status.VISIBLE)
-                ?: throw RuntimeException(ErrorCode.NOT_FOUND_ARTICLE.errorMessage)
+                ?: throw BookandException(ErrorCode.NOT_FOUND_ARTICLE)
             nextCursorId = firstArticle.id
         }
         val date: String? = if (cursorId == null) null else getArticle(nextCursorId).createdAt.toString()
@@ -230,18 +231,18 @@ class ArticleService(
 
     fun duplicateArticle(title: String) {
         if (isDuplicateArticle(title)) {
-            throw RuntimeException("DUPLICATE ARTICLE")
+            throw BookandException(ErrorCode.DUPLICATE_ARTICLE)
         }
     }
 
     fun getBookstore(bookstoreId: Long): Bookstore {
         return bookstoreRepository.findById(bookstoreId)
-            .orElseThrow { RuntimeException("NOT FOUND BOOKSTORE") }
+            .orElseThrow { BookandException(ErrorCode.NOT_FOUND_BOOKSTORE) }
     }
 
     fun getArticle(articleId: Long): Article {
         return articleRepository.findById(articleId)
-            .orElseThrow { RuntimeException("NOT FOUND ARTICLE") }
+            .orElseThrow { BookandException(ErrorCode.NOT_FOUND_ARTICLE) }
     }
 
     private fun removeIntroducedBookstores(article: Article) {

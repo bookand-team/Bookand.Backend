@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.config.security
 
-import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.model.Account
 import kr.co.bookand.backend.account.repository.AccountRepository
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.exception.BookandException

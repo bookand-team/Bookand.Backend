@@ -3,11 +3,11 @@ package kr.co.bookand.backend.issue.controller
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import kr.co.bookand.backend.account.service.AccountService
-import kr.co.bookand.backend.common.domain.MessageResponse
-import kr.co.bookand.backend.issue.domain.dto.CreateIssueRequest
-import kr.co.bookand.backend.issue.domain.dto.IssueIdResponse
-import kr.co.bookand.backend.issue.domain.dto.IssueResponse
-import kr.co.bookand.backend.issue.domain.dto.IssueSimpleListResponse
+import kr.co.bookand.backend.common.model.MessageResponse
+import kr.co.bookand.backend.issue.dto.CreateIssueRequest
+import kr.co.bookand.backend.issue.dto.IssueIdResponse
+import kr.co.bookand.backend.issue.dto.IssueResponse
+import kr.co.bookand.backend.issue.dto.IssueSimpleListResponse
 import kr.co.bookand.backend.issue.service.IssueService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault

@@ -4,9 +4,9 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import kr.co.bookand.backend.account.domain.*
-import kr.co.bookand.backend.feedback.domain.*
-import kr.co.bookand.backend.feedback.domain.dto.CreateFeedbackRequest
+import kr.co.bookand.backend.account.model.*
+import kr.co.bookand.backend.feedback.model.*
+import kr.co.bookand.backend.feedback.dto.CreateFeedbackRequest
 import kr.co.bookand.backend.feedback.repository.FeedbackRepository
 import kr.co.bookand.backend.feedback.service.FeedbackService
 import java.time.LocalDateTime

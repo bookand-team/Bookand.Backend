@@ -6,9 +6,9 @@ import io.swagger.annotations.ApiImplicitParams
 import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import kr.co.bookand.backend.account.service.AccountService
-import kr.co.bookand.backend.article.domain.dto.*
+import kr.co.bookand.backend.article.dto.*
 import kr.co.bookand.backend.article.service.ArticleService
-import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.model.MessageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault

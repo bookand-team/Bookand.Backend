@@ -5,8 +5,8 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import kr.co.bookand.backend.account.domain.*
-import kr.co.bookand.backend.account.domain.dto.AccountRequest
+import kr.co.bookand.backend.account.model.*
+import kr.co.bookand.backend.account.dto.AccountRequest
 import kr.co.bookand.backend.account.repository.AccountRepository
 import kr.co.bookand.backend.account.repository.RevokeAccountRepository
 import kr.co.bookand.backend.account.repository.SuspendedAccountRepository

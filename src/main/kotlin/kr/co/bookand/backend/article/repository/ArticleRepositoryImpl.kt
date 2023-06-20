@@ -2,9 +2,9 @@ package kr.co.bookand.backend.article.repository
 
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
-import kr.co.bookand.backend.article.domain.Article
-import kr.co.bookand.backend.article.domain.ArticleCategory
-import kr.co.bookand.backend.article.domain.QArticle.*
+import kr.co.bookand.backend.article.model.Article
+import kr.co.bookand.backend.article.model.ArticleCategory
+import kr.co.bookand.backend.article.model.QArticle.*
 import kr.co.bookand.backend.common.Status
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

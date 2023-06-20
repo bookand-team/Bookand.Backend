@@ -3,10 +3,9 @@ package kr.co.bookand.backend.bookstore.controller
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import kr.co.bookand.backend.account.service.AccountService
-import kr.co.bookand.backend.bookstore.domain.Bookstore
-import kr.co.bookand.backend.bookstore.domain.dto.*
+import kr.co.bookand.backend.bookstore.dto.*
 import kr.co.bookand.backend.bookstore.service.BookstoreService
-import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.model.MessageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
@@ -112,7 +111,7 @@ class BookstoreController(
     @PutMapping("/report/{reportId}/answer")
     fun answerReportBookstore(
         @PathVariable reportId: Long,
-        @RequestBody answerReportRequest:AnswerReportRequest
+        @RequestBody answerReportRequest: AnswerReportRequest
     ): ResponseEntity<MessageResponse> {
         return ResponseEntity.ok(bookstoreService.answerReportBookstore(reportId, answerReportRequest))
     }

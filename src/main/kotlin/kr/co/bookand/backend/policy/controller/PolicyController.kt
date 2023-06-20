@@ -4,10 +4,10 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import kr.co.bookand.backend.account.service.AccountService
-import kr.co.bookand.backend.common.domain.MessageResponse
-import kr.co.bookand.backend.policy.domain.dto.PolicyIdResponse
-import kr.co.bookand.backend.policy.domain.dto.CreatePolicyRequest
-import kr.co.bookand.backend.policy.domain.dto.PolicyResponse
+import kr.co.bookand.backend.common.model.MessageResponse
+import kr.co.bookand.backend.policy.dto.PolicyIdResponse
+import kr.co.bookand.backend.policy.dto.CreatePolicyRequest
+import kr.co.bookand.backend.policy.dto.PolicyResponse
 import kr.co.bookand.backend.policy.service.PolicyService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

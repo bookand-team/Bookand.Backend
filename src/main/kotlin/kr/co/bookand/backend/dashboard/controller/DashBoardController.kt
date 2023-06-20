@@ -2,7 +2,7 @@ package kr.co.bookand.backend.dashboard.controller
 
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
-import kr.co.bookand.backend.dashboard.domain.dto.StatusBoardResponse
+import kr.co.bookand.backend.dashboard.dto.StatusBoardResponse
 import kr.co.bookand.backend.dashboard.service.DashBoardService
 import lombok.RequiredArgsConstructor
 import org.springframework.http.ResponseEntity

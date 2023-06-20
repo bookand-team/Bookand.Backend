@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.account.repository
 
-import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.model.Account
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface AccountRepository : JpaRepository<Account, Long> {

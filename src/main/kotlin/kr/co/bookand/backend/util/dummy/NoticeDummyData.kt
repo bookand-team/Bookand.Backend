@@ -3,8 +3,8 @@ package kr.co.bookand.backend.util.dummy
 import kr.co.bookand.backend.common.DeviceOSFilter
 import kr.co.bookand.backend.common.MemberIdFilter
 import kr.co.bookand.backend.common.Status
-import kr.co.bookand.backend.notice.domain.Notice
-import kr.co.bookand.backend.notice.domain.NoticeType
+import kr.co.bookand.backend.notice.model.Notice
+import kr.co.bookand.backend.notice.model.NoticeType
 import kr.co.bookand.backend.notice.repository.NoticeRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

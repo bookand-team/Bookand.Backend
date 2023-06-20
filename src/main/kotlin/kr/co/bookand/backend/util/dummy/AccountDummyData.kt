@@ -1,11 +1,11 @@
 package kr.co.bookand.backend.util.dummy
 
-import kr.co.bookand.backend.account.domain.Account
-import kr.co.bookand.backend.account.domain.SocialType
-import kr.co.bookand.backend.account.domain.dto.MiddleAccount
+import kr.co.bookand.backend.account.model.Account
+import kr.co.bookand.backend.account.model.SocialType
+import kr.co.bookand.backend.account.dto.MiddleAccount
 import kr.co.bookand.backend.account.repository.AccountRepository
 import kr.co.bookand.backend.account.service.AuthService
-import kr.co.bookand.backend.bookmark.domain.Bookmark
+import kr.co.bookand.backend.bookmark.model.Bookmark
 import kr.co.bookand.backend.bookmark.repository.BookmarkRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

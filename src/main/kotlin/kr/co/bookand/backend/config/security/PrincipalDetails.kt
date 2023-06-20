@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.config.security
 
-import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.model.Account
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 

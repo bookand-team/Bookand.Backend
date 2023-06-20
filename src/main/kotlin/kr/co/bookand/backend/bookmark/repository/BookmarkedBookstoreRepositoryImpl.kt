@@ -2,9 +2,9 @@ package kr.co.bookand.backend.bookmark.repository
 
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
-import kr.co.bookand.backend.bookmark.domain.Bookmark
-import kr.co.bookand.backend.bookmark.domain.BookmarkedBookstore
-import kr.co.bookand.backend.bookmark.domain.QBookmarkedBookstore.*
+import kr.co.bookand.backend.bookmark.model.Bookmark
+import kr.co.bookand.backend.bookmark.model.BookmarkedBookstore
+import kr.co.bookand.backend.bookmark.model.QBookmarkedBookstore.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils

@@ -1,14 +1,14 @@
 package kr.co.bookand.backend.feedback.service
 
-import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.model.Account
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.PageResponse
 import kr.co.bookand.backend.common.exception.BookandException
-import kr.co.bookand.backend.feedback.domain.Feedback
-import kr.co.bookand.backend.feedback.domain.dto.CreateFeedbackRequest
-import kr.co.bookand.backend.feedback.domain.dto.FeedbackIdResponse
-import kr.co.bookand.backend.feedback.domain.dto.FeedbackListResponse
-import kr.co.bookand.backend.feedback.domain.dto.FeedbackResponse
+import kr.co.bookand.backend.feedback.model.Feedback
+import kr.co.bookand.backend.feedback.dto.CreateFeedbackRequest
+import kr.co.bookand.backend.feedback.dto.FeedbackIdResponse
+import kr.co.bookand.backend.feedback.dto.FeedbackListResponse
+import kr.co.bookand.backend.feedback.dto.FeedbackResponse
 import kr.co.bookand.backend.feedback.repository.FeedbackRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Pageable

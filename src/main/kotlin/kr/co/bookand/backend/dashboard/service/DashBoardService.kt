@@ -2,15 +2,15 @@ package kr.co.bookand.backend.dashboard.service
 
 import kr.co.bookand.backend.account.repository.AccountRepository
 import kr.co.bookand.backend.account.service.AccountService
-import kr.co.bookand.backend.article.domain.ArticleCategory
+import kr.co.bookand.backend.article.model.ArticleCategory
 import kr.co.bookand.backend.article.repository.ArticleRepository
-import kr.co.bookand.backend.bookmark.domain.BookmarkType
+import kr.co.bookand.backend.bookmark.model.BookmarkType
 import kr.co.bookand.backend.bookmark.repository.BookmarkRepository
 import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
 import kr.co.bookand.backend.bookstore.repository.ReportBookstoreRepository
 import kr.co.bookand.backend.common.Status
-import kr.co.bookand.backend.dashboard.domain.DashBoard
-import kr.co.bookand.backend.dashboard.domain.dto.StatusBoardResponse
+import kr.co.bookand.backend.dashboard.model.DashBoard
+import kr.co.bookand.backend.dashboard.dto.StatusBoardResponse
 import kr.co.bookand.backend.dashboard.repository.DashBoardRepository
 import kr.co.bookand.backend.feedback.repository.FeedbackRepository
 import lombok.RequiredArgsConstructor
@@ -31,7 +31,7 @@ class DashBoardService(
     private val reportBookstoreRepository: ReportBookstoreRepository,
     private val feedbackRepository: FeedbackRepository
 ) {
-    fun getStatusBoard() : StatusBoardResponse{
+    fun getStatusBoard() : StatusBoardResponse {
         val account = accountService.getAccountById(1L)
         account.role.checkAdminAndManager()
         val dashBoard = dashBoardRepository.findById(dashBoardRepository.count()).get()

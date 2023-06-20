@@ -3,8 +3,8 @@ package kr.co.bookand.backend.notice.repository
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import kr.co.bookand.backend.common.Status
-import kr.co.bookand.backend.notice.domain.Notice
-import kr.co.bookand.backend.notice.domain.QNotice.*
+import kr.co.bookand.backend.notice.model.Notice
+import kr.co.bookand.backend.notice.model.QNotice.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils

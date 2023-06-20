@@ -2,10 +2,10 @@ package kr.co.bookand.backend.bookstore.repository
 
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
-import kr.co.bookand.backend.account.domain.Account
-import kr.co.bookand.backend.bookstore.domain.Bookstore
-import kr.co.bookand.backend.bookstore.domain.BookstoreType
-import kr.co.bookand.backend.bookstore.domain.QBookstore.*
+import kr.co.bookand.backend.account.model.Account
+import kr.co.bookand.backend.bookstore.model.Bookstore
+import kr.co.bookand.backend.bookstore.model.BookstoreType
+import kr.co.bookand.backend.bookstore.model.QBookstore.*
 import kr.co.bookand.backend.common.Status
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

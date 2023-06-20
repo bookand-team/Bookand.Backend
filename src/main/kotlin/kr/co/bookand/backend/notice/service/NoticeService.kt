@@ -1,11 +1,11 @@
 package kr.co.bookand.backend.notice.service
 
-import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.model.Account
 import kr.co.bookand.backend.common.PageResponse
 import kr.co.bookand.backend.common.Status
-import kr.co.bookand.backend.common.domain.MessageResponse
-import kr.co.bookand.backend.notice.domain.Notice
-import kr.co.bookand.backend.notice.domain.dto.*
+import kr.co.bookand.backend.common.model.MessageResponse
+import kr.co.bookand.backend.notice.dto.*
+import kr.co.bookand.backend.notice.model.Notice
 import kr.co.bookand.backend.notice.repository.NoticeRepository
 import lombok.RequiredArgsConstructor
 import lombok.extern.slf4j.Slf4j

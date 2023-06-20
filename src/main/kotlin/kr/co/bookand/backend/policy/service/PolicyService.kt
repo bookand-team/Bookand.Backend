@@ -1,13 +1,13 @@
 package kr.co.bookand.backend.policy.service
 
 
-import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.model.Account
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.exception.BookandException
-import kr.co.bookand.backend.policy.domain.Policy
-import kr.co.bookand.backend.policy.domain.dto.PolicyIdResponse
-import kr.co.bookand.backend.policy.domain.dto.CreatePolicyRequest
-import kr.co.bookand.backend.policy.domain.dto.PolicyResponse
+import kr.co.bookand.backend.policy.model.Policy
+import kr.co.bookand.backend.policy.dto.PolicyIdResponse
+import kr.co.bookand.backend.policy.dto.CreatePolicyRequest
+import kr.co.bookand.backend.policy.dto.PolicyResponse
 import kr.co.bookand.backend.policy.repository.PolicyRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service

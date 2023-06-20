@@ -1,13 +1,13 @@
 package kr.co.bookand.backend.account.service
 
-import kr.co.bookand.backend.account.domain.*
-import kr.co.bookand.backend.account.domain.dto.*
+import kr.co.bookand.backend.account.dto.*
+import kr.co.bookand.backend.account.model.*
 import kr.co.bookand.backend.account.repository.AccountRepository
 import kr.co.bookand.backend.account.repository.RevokeAccountRepository
 import kr.co.bookand.backend.account.repository.SuspendedAccountRepository
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.PageResponse
-import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.model.MessageResponse
 import kr.co.bookand.backend.common.exception.BookandException
 import kr.co.bookand.backend.config.jwt.RefreshTokenRepository
 import kr.co.bookand.backend.config.security.SecurityUtils.getCurrentAccountEmail

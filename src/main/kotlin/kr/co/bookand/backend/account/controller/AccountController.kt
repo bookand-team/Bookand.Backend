@@ -3,9 +3,9 @@ package kr.co.bookand.backend.account.controller
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
-import kr.co.bookand.backend.account.domain.dto.*
+import kr.co.bookand.backend.account.dto.*
 import kr.co.bookand.backend.account.service.AccountService
-import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.model.MessageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
@@ -73,7 +73,7 @@ class AccountController(
     )
     @DeleteMapping("/revoke")
     fun revokeReason(
-        @RequestBody @Valid revokeReasonRequest :RevokeReasonRequest
+        @RequestBody @Valid revokeReasonRequest : RevokeReasonRequest
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         val revokeAccount: Boolean = accountService.revokeAccount(account, revokeReasonRequest)

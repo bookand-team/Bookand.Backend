@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.feedback.repository
 
-import kr.co.bookand.backend.feedback.domain.Feedback
+import kr.co.bookand.backend.feedback.model.Feedback
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface FeedbackRepository : JpaRepository<Feedback, Long> {

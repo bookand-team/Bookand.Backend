@@ -1,7 +1,7 @@
 package kr.co.bookand.backend.bookmark.repository
 
-import kr.co.bookand.backend.bookmark.domain.Bookmark
-import kr.co.bookand.backend.bookmark.domain.BookmarkedBookstore
+import kr.co.bookand.backend.bookmark.model.Bookmark
+import kr.co.bookand.backend.bookmark.model.BookmarkedBookstore
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface BookmarkedBookstoreRepository : JpaRepository<BookmarkedBookstore, Long>, BookmarkedBookstoreRepositoryCustom {

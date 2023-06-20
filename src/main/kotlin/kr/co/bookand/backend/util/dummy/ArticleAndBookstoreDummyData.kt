@@ -1,14 +1,14 @@
 package kr.co.bookand.backend.util.dummy
 
 
-import kr.co.bookand.backend.article.domain.Article
-import kr.co.bookand.backend.article.domain.ArticleCategory
-import kr.co.bookand.backend.article.domain.ArticleTag
-import kr.co.bookand.backend.article.domain.IntroducedBookstore
+import kr.co.bookand.backend.article.model.Article
+import kr.co.bookand.backend.article.model.ArticleCategory
+import kr.co.bookand.backend.article.model.ArticleTag
+import kr.co.bookand.backend.article.model.IntroducedBookstore
 import kr.co.bookand.backend.article.repository.ArticleRepository
 import kr.co.bookand.backend.article.repository.ArticleTagRepository
 import kr.co.bookand.backend.article.repository.IntroducedBookstoreRepository
-import kr.co.bookand.backend.bookstore.domain.*
+import kr.co.bookand.backend.bookstore.model.*
 import kr.co.bookand.backend.bookstore.repository.BookstoreImageRepository
 import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
 import kr.co.bookand.backend.bookstore.repository.BookstoreThemeRepository

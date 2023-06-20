@@ -3,10 +3,10 @@ package kr.co.bookand.backend.feedback.controller
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import kr.co.bookand.backend.account.service.AccountService
-import kr.co.bookand.backend.feedback.domain.dto.CreateFeedbackRequest
-import kr.co.bookand.backend.feedback.domain.dto.FeedbackIdResponse
-import kr.co.bookand.backend.feedback.domain.dto.FeedbackListResponse
-import kr.co.bookand.backend.feedback.domain.dto.FeedbackResponse
+import kr.co.bookand.backend.feedback.dto.CreateFeedbackRequest
+import kr.co.bookand.backend.feedback.dto.FeedbackIdResponse
+import kr.co.bookand.backend.feedback.dto.FeedbackListResponse
+import kr.co.bookand.backend.feedback.dto.FeedbackResponse
 import kr.co.bookand.backend.feedback.service.FeedbackService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault

@@ -3,11 +3,11 @@ package kr.co.bookand.backend.config.jwt
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
-import kr.co.bookand.backend.account.domain.Role
-import kr.co.bookand.backend.account.domain.dto.MiddleAccount
-import kr.co.bookand.backend.account.domain.dto.SignTokenRequest
-import kr.co.bookand.backend.account.domain.dto.SigningAccount
-import kr.co.bookand.backend.account.domain.dto.TokenResponse
+import kr.co.bookand.backend.account.model.Role
+import kr.co.bookand.backend.account.dto.MiddleAccount
+import kr.co.bookand.backend.account.dto.SignTokenRequest
+import kr.co.bookand.backend.account.dto.SigningAccount
+import kr.co.bookand.backend.account.dto.TokenResponse
 import kr.co.bookand.backend.config.security.PrincipalDetailService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken

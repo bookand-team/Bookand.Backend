@@ -1,13 +1,13 @@
 package kr.co.bookand.backend.issue.service
 
-import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.model.Account
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.PageResponse
-import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.model.MessageResponse
 import kr.co.bookand.backend.common.exception.BookandException
-import kr.co.bookand.backend.issue.domain.Issue
-import kr.co.bookand.backend.issue.domain.IssueImage
-import kr.co.bookand.backend.issue.domain.dto.*
+import kr.co.bookand.backend.issue.dto.*
+import kr.co.bookand.backend.issue.model.Issue
+import kr.co.bookand.backend.issue.model.IssueImage
 import kr.co.bookand.backend.issue.repository.IssueImageRepository
 import kr.co.bookand.backend.issue.repository.IssueRepository
 import kr.co.bookand.backend.util.s3.dto.FileDto

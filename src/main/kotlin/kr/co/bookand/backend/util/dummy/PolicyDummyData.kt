@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.util.dummy
 
-import kr.co.bookand.backend.policy.domain.Policy
+import kr.co.bookand.backend.policy.model.Policy
 import kr.co.bookand.backend.policy.repository.PolicyRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

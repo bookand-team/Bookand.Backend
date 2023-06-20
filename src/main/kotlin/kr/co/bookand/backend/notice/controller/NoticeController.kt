@@ -4,8 +4,8 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import kr.co.bookand.backend.account.service.AccountService
-import kr.co.bookand.backend.common.domain.MessageResponse
-import kr.co.bookand.backend.notice.domain.dto.*
+import kr.co.bookand.backend.common.model.MessageResponse
+import kr.co.bookand.backend.notice.dto.*
 import kr.co.bookand.backend.notice.service.NoticeService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault

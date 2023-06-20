@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.bookstore.repository
 
-import kr.co.bookand.backend.bookstore.domain.Bookstore
+import kr.co.bookand.backend.bookstore.model.Bookstore
 import kr.co.bookand.backend.common.Status
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

@@ -1,18 +1,18 @@
 package kr.co.bookand.backend.bookstore.service
 
-import kr.co.bookand.backend.account.domain.Account
+import kr.co.bookand.backend.account.model.Account
 import kr.co.bookand.backend.account.service.AccountService
-import kr.co.bookand.backend.bookmark.domain.BookmarkType
+import kr.co.bookand.backend.bookmark.model.BookmarkType
 import kr.co.bookand.backend.bookmark.service.BookmarkService
-import kr.co.bookand.backend.bookstore.domain.*
-import kr.co.bookand.backend.bookstore.domain.dto.*
+import kr.co.bookand.backend.bookstore.dto.*
+import kr.co.bookand.backend.bookstore.model.*
 import kr.co.bookand.backend.bookstore.repository.BookstoreImageRepository
 import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
 import kr.co.bookand.backend.bookstore.repository.BookstoreThemeRepository
 import kr.co.bookand.backend.bookstore.repository.ReportBookstoreRepository
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.Status
-import kr.co.bookand.backend.common.domain.MessageResponse
+import kr.co.bookand.backend.common.model.MessageResponse
 import kr.co.bookand.backend.common.exception.BookandException
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Pageable

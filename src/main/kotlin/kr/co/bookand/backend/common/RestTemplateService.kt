@@ -1,6 +1,6 @@
 package kr.co.bookand.backend.common
 
-import kr.co.bookand.backend.account.domain.dto.AppleDto
+import kr.co.bookand.backend.account.dto.AppleDto
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod

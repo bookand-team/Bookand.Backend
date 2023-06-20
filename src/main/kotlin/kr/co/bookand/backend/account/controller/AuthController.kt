@@ -2,14 +2,14 @@ package kr.co.bookand.backend.account.controller
 
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
-import kr.co.bookand.backend.account.domain.dto.AuthRequest
-import kr.co.bookand.backend.account.domain.dto.LoginRequest
-import kr.co.bookand.backend.account.domain.dto.ManagerInfoRequest
+import kr.co.bookand.backend.account.dto.AuthRequest
+import kr.co.bookand.backend.account.dto.LoginRequest
+import kr.co.bookand.backend.account.dto.ManagerInfoRequest
 import kr.co.bookand.backend.account.service.AuthService
-import kr.co.bookand.backend.common.domain.MessageResponse
-import kr.co.bookand.backend.account.domain.dto.SignTokenRequest
-import kr.co.bookand.backend.account.domain.dto.TokenRequest
-import kr.co.bookand.backend.account.domain.dto.TokenResponse
+import kr.co.bookand.backend.common.model.MessageResponse
+import kr.co.bookand.backend.account.dto.SignTokenRequest
+import kr.co.bookand.backend.account.dto.TokenRequest
+import kr.co.bookand.backend.account.dto.TokenResponse
 import kr.co.bookand.backend.config.security.SecurityUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

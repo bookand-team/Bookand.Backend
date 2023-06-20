@@ -4,11 +4,11 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import kr.co.bookand.backend.account.domain.Account
-import kr.co.bookand.backend.account.domain.AccountStatus
-import kr.co.bookand.backend.account.domain.Role
-import kr.co.bookand.backend.policy.domain.Policy
-import kr.co.bookand.backend.policy.domain.dto.CreatePolicyRequest
+import kr.co.bookand.backend.account.model.Account
+import kr.co.bookand.backend.account.model.AccountStatus
+import kr.co.bookand.backend.account.model.Role
+import kr.co.bookand.backend.policy.model.Policy
+import kr.co.bookand.backend.policy.dto.CreatePolicyRequest
 import kr.co.bookand.backend.policy.repository.PolicyRepository
 import kr.co.bookand.backend.policy.service.PolicyService
 import java.time.LocalDateTime

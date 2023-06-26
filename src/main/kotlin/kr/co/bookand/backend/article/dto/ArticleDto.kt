@@ -20,6 +20,7 @@ data class ArticleRequest(
     val writer: String,
     val articleTagList: List<String>,
     val bookstoreList: List<Long>,
+    val articleFilter: ArticleFilter
 )
 
 data class IntroducedBookstoreRequest(
@@ -47,9 +48,9 @@ data class ArticleDetailResponse(
     val bookStoreList: List<BookstoreSimpleResponse>,
     val filter: ArticleFilter,
     val createdDate: String,
-    val modifiedDate: String,
-    val displayDate: LocalDateTime?
+    val modifiedDate: String
 )
+
 data class ArticleWebResponse(
     val id: Long,
     val title: String,
@@ -63,8 +64,7 @@ data class ArticleWebResponse(
     val articleTagList: List<String>,
     val visibility: Boolean,
     val createdDate: String,
-    val modifiedDate: String,
-    val displayDate: LocalDateTime?
+    val modifiedDate: String
 ) {
     constructor(article: Article) : this(
         id = article.id,
@@ -79,8 +79,7 @@ data class ArticleWebResponse(
         articleTagList = article.articleTagList.map { it.tag },
         visibility = article.visibility,
         createdDate = article.createdAt.toString(),
-        modifiedDate = article.modifiedAt.toString(),
-        displayDate = article.displayedAt
+        modifiedDate = article.modifiedAt.toString()
     )
 
 }

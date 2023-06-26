@@ -24,7 +24,6 @@ class Article(
     var category: ArticleCategory,
 
     var viewCount: Int,
-    var displayedAt: LocalDateTime? = null,
 
     @Enumerated(EnumType.STRING)
     var status: Status,
@@ -48,11 +47,10 @@ class Article(
         mainImage = articleRequest.mainImage,
         writer = articleRequest.writer,
         viewCount = 0,
-        displayedAt = null,
         category = ArticleCategory.valueOf(articleRequest.category),
         status = Status.VISIBLE,
-        deviceOSFilter = DeviceOSFilter.ALL,
-        memberIdFilter = MemberIdFilter.ALL,
+        deviceOSFilter = articleRequest.articleFilter.deviceOS,
+        memberIdFilter = articleRequest.articleFilter.memberId,
         articleTagList = mutableListOf(),
         introducedBookstoreList = mutableListOf()
     )

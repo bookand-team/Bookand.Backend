@@ -65,7 +65,6 @@ class PolicyServiceTest : BehaviorSpec({
         every { policyRepository.findById(1) } returns Optional.of(policy)
         When("policy 업데이트") {
             val request = CreatePolicyRequest(
-                1L,
                 "Privacy Policy",
                 "This is privacy policy",
                 "This is new privacy policy content"
@@ -96,7 +95,6 @@ class PolicyServiceTest : BehaviorSpec({
         }
         When("policy 생성") {
             val request = CreatePolicyRequest(
-                2L,
                 "This is privacy policy2",
                 "Privacy Policy2",
                 "This is privacy policy content2"

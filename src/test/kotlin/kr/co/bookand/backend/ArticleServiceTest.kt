@@ -8,6 +8,7 @@ import io.mockk.mockk
 import kr.co.bookand.backend.account.model.Account
 import kr.co.bookand.backend.account.model.AccountStatus
 import kr.co.bookand.backend.account.model.Role
+import kr.co.bookand.backend.article.dto.ArticleFilter
 import kr.co.bookand.backend.article.model.*
 import kr.co.bookand.backend.article.dto.ArticleListRequest
 import kr.co.bookand.backend.article.dto.ArticleRequest
@@ -82,7 +83,6 @@ class ArticleServiceTest : BehaviorSpec({
             category = ArticleCategory.BOOKSTORE_REVIEW,
             writer = "writer",
             viewCount = 0,
-            displayedAt = LocalDateTime.now(),
             status = Status.VISIBLE,
             deviceOSFilter = DeviceOSFilter.ALL,
             memberIdFilter = MemberIdFilter.ALL,
@@ -150,7 +150,11 @@ class ArticleServiceTest : BehaviorSpec({
             category = ArticleCategory.BOOKSTORE_REVIEW.toString(),
             writer = "writer",
             bookstoreList = listOf(1L, 2L),
-            articleTagList = listOf("tag1", "tag2")
+            articleTagList = listOf("tag1", "tag2"),
+            articleFilter = ArticleFilter(
+                deviceOS = DeviceOSFilter.ALL,
+                memberId = MemberIdFilter.ALL
+            )
         )
 
         val updateArticleRequest = ArticleRequest(
@@ -161,7 +165,11 @@ class ArticleServiceTest : BehaviorSpec({
             category = ArticleCategory.BOOKSTORE_REVIEW.toString(),
             writer = "writer",
             bookstoreList = listOf(1L, 2L),
-            articleTagList = listOf("tag1", "tag2")
+            articleTagList = listOf("tag1", "tag2"),
+            articleFilter = ArticleFilter(
+                deviceOS = DeviceOSFilter.ALL,
+                memberId = MemberIdFilter.ALL
+            )
         )
 
         val introducedBookstore = IntroducedBookstore(

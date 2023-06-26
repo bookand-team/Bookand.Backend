@@ -44,8 +44,8 @@ class Notice(
         image = createNoticeRequest.image,
         status = Status.INVISIBLE,
         noticeType = NoticeType.valueOf(createNoticeRequest.noticeType),
-        deviceOSFilter = DeviceOSFilter.ALL,
-        memberIdFilter = MemberIdFilter.ALL
+        deviceOSFilter = createNoticeRequest.noticeFilter.deviceOS,
+        memberIdFilter = createNoticeRequest.noticeFilter.memberId
     )
 
     fun updateNoticeData(updateNoticeRequest: UpdateNoticeRequest) {
@@ -53,11 +53,12 @@ class Notice(
         this.content = updateNoticeRequest.content
         this.image = updateNoticeRequest.image
         this.noticeType = NoticeType.valueOf(updateNoticeRequest.noticeType)
-        this.deviceOSFilter = DeviceOSFilter.valueOf(updateNoticeRequest.targetType)
-        this.memberIdFilter = MemberIdFilter.valueOf(updateNoticeRequest.targetNum)
+        this.deviceOSFilter = updateNoticeRequest.noticeFilter.deviceOS
+        this.memberIdFilter = updateNoticeRequest.noticeFilter.memberId
     }
 
     fun updateNoticeStatus(status: Status) {
         this.status = status
+        this.displayAt = LocalDateTime.now()
     }
 }

@@ -34,7 +34,10 @@ class IssueService(
             .orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_ISSUE) }
     }
 
-    fun getIssueList(currentAccount: Account, pageable: Pageable): IssueSimpleListResponse {
+    fun getIssueList(
+        currentAccount: Account,
+        pageable: Pageable
+    ): IssueSimpleListResponse {
         currentAccount.role.checkAdminAndManager()
         val map = issueRepository.findAll(pageable)
             .map { IssueSimpleResponse(it) }
@@ -73,7 +76,12 @@ class IssueService(
     }
 
     @Transactional
-    fun checkConfirmed(issueId: Long, checkConfirmed: Boolean): IssueIdResponse {
+    fun checkConfirmed(
+        currentAccount: Account,
+        issueId: Long,
+        checkConfirmed: Boolean
+    ): IssueIdResponse {
+        currentAccount.role.checkAdminAndManager()
         val issue: Issue = issueRepository.findById(issueId)
             .orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_ISSUE) }
         issue.checkConfirmed(checkConfirmed)

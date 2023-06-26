@@ -53,6 +53,7 @@ class IssueController(
         @PathVariable issueId: Long,
         @RequestParam checkConfirmed: Boolean
     ): ResponseEntity<IssueIdResponse> {
-        return ResponseEntity.ok(issueService.checkConfirmed(issueId, checkConfirmed))
+        val account = accountService.getCurrentAccount()
+        return ResponseEntity.ok(issueService.checkConfirmed(account, issueId, checkConfirmed))
     }
 }

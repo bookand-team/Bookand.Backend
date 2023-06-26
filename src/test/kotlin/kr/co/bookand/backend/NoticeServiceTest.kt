@@ -13,6 +13,7 @@ import kr.co.bookand.backend.common.MemberIdFilter
 import kr.co.bookand.backend.common.Status
 import kr.co.bookand.backend.notice.model.Notice
 import kr.co.bookand.backend.notice.dto.CreateNoticeRequest
+import kr.co.bookand.backend.notice.dto.NoticeFilter
 import kr.co.bookand.backend.notice.model.NoticeType
 import kr.co.bookand.backend.notice.dto.UpdateNoticeRequest
 import kr.co.bookand.backend.notice.repository.NoticeRepository
@@ -63,8 +64,10 @@ class NoticeServiceTest : BehaviorSpec({
             content = "content",
             image = "image",
             noticeType = "SERVICE",
-            targetType = "ALL",
-            targetNum = "ALL"
+            noticeFilter = NoticeFilter(
+                deviceOS = DeviceOSFilter.ALL,
+                memberId = MemberIdFilter.ALL
+            )
         )
 
         val notice = Notice(
@@ -83,8 +86,10 @@ class NoticeServiceTest : BehaviorSpec({
             content = "content",
             image = "image",
             noticeType = "SERVICE",
-            targetType = "ALL",
-            targetNum = "ALL"
+            noticeFilter = NoticeFilter(
+                deviceOS = DeviceOSFilter.ALL,
+                memberId = MemberIdFilter.ALL
+            )
         )
 
 
@@ -153,7 +158,7 @@ class NoticeServiceTest : BehaviorSpec({
                     val noticeMessageResponse = noticeService.updateNoticeStatus(adminAccount, 1L)
 
                     Then("return notice id") {
-                        noticeMessageResponse.result shouldBe "Update Status to Visible."
+                        noticeMessageResponse.id shouldBe 1L
                     }
                 }
             }

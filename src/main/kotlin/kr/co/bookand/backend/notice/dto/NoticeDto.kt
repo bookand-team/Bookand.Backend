@@ -1,5 +1,7 @@
 package kr.co.bookand.backend.notice.dto
 
+import kr.co.bookand.backend.common.DeviceOSFilter
+import kr.co.bookand.backend.common.MemberIdFilter
 import kr.co.bookand.backend.common.PageResponse
 import kr.co.bookand.backend.notice.model.Notice
 
@@ -9,8 +11,7 @@ data class CreateNoticeRequest(
     val content: String,
     val image: String,
     val noticeType: String,
-    val targetType: String,
-    val targetNum: String
+    val noticeFilter: NoticeFilter
 )
 
 data class NoticeIdResponse(
@@ -22,8 +23,12 @@ data class UpdateNoticeRequest(
     val content: String,
     val image: String,
     val noticeType: String,
-    val targetType: String,
-    val targetNum: String
+    val noticeFilter: NoticeFilter
+)
+
+data class NoticeFilter(
+    val deviceOS: DeviceOSFilter,
+    val memberId: MemberIdFilter
 )
 
 data class NoticePageResponse(
@@ -37,8 +42,7 @@ data class NoticeResponse(
     val image: String,
     val status: String,
     val noticeType: String,
-    val targetType: String,
-    val targetNum: String,
+    val noticeFilter: NoticeFilter,
     val displayAt: String?
 ) {
     constructor(notice: Notice) : this(
@@ -48,8 +52,10 @@ data class NoticeResponse(
         image = notice.image,
         status = notice.status.name,
         noticeType = notice.noticeType.name,
-        targetType = notice.deviceOSFilter.name,
-        targetNum = notice.memberIdFilter.name,
+        noticeFilter = NoticeFilter(
+            deviceOS = notice.deviceOSFilter,
+            memberId = notice.memberIdFilter
+        ),
         displayAt = notice.displayAt?.toString()
     )
 }

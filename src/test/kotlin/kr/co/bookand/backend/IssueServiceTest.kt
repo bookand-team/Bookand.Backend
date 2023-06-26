@@ -96,10 +96,10 @@ class IssueServiceTest : BehaviorSpec({
         When("checkConfirmed") {
             every { issueRepository.findById(any()) } returns Optional.of(issue)
 
-            val result = issueService.checkConfirmed(1L, true)
+            val result = issueService.checkConfirmed(account, 1L, true)
 
             Then("result") {
-                result.statusCode shouldBe 200
+                result.id shouldBe 1L
             }
         }
     }

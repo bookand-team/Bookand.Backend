@@ -120,7 +120,6 @@ class BookmarkServiceTest : BehaviorSpec({
             category = ArticleCategory.BOOKSTORE_REVIEW,
             writer = "writer",
             viewCount = 0,
-            displayedAt = LocalDateTime.now(),
             status = Status.VISIBLE,
             deviceOSFilter = DeviceOSFilter.ALL,
             memberIdFilter = MemberIdFilter.ALL,

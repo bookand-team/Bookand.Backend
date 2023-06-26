@@ -86,7 +86,6 @@ class ArticleAndBookstoreDummyData(
                 mainImage = "https://picsum.photos/700/700",
                 writer = "writer $i",
                 viewCount = 0,
-                displayedAt = null,
                 category = ArticleCategory.BOOKSTORE_REVIEW,
                 status = Status.VISIBLE,
                 deviceOSFilter = DeviceOSFilter.ALL,

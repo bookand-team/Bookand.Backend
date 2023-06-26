@@ -177,8 +177,7 @@ class ArticleService(
             bookStoreList = bookStoreList,
             filter = filter,
             createdDate = article.createdAt.toString(),
-            modifiedDate = article.modifiedAt.toString(),
-            displayDate = article.displayedAt
+            modifiedDate = article.modifiedAt.toString()
         )
     }
 

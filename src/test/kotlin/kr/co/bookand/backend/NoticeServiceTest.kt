@@ -153,7 +153,7 @@ class NoticeServiceTest : BehaviorSpec({
                     val noticeMessageResponse = noticeService.updateNoticeStatus(adminAccount, 1L)
 
                     Then("return notice id") {
-                        noticeMessageResponse.message shouldBe "Update Status to Visible."
+                        noticeMessageResponse.result shouldBe "Update Status to Visible."
                     }
                 }
             }

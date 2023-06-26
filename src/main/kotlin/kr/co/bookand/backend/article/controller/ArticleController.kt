@@ -119,7 +119,7 @@ class ArticleController(
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         articleService.removeArticle(account, id)
-        return ResponseEntity.ok(MessageResponse(message = "아티클 삭제 완료.", statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(result = "아티클 삭제 완료.", statusCode = 200))
     }
 
     @ApiOperation(value = "선택된 아티클 삭제")
@@ -129,14 +129,14 @@ class ArticleController(
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         articleService.removeArticleList(account, list)
-        return ResponseEntity.ok(MessageResponse(message = "선택된 서점 삭제 완료.", statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(result = "선택된 서점 삭제 완료.", statusCode = 200))
     }
 
     @ApiOperation(value = "아티클 상태 변경")
     @PutMapping("/{id}/status")
     fun updateArticleStatus(
         @PathVariable id: Long,
-    ): ResponseEntity<MessageResponse> {
+    ): ResponseEntity<ArticleIdResponse> {
         return ResponseEntity.ok(articleService.updateArticleStatus(id))
     }
 }

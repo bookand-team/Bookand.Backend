@@ -77,7 +77,7 @@ class AccountController(
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         val revokeAccount: Boolean = accountService.revokeAccount(account, revokeReasonRequest)
-        return ResponseEntity.ok(MessageResponse(message = revokeAccount.toString(), statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(result = revokeAccount.toString(), statusCode = 200))
     }
 
     @ApiOperation(value = "닉네임 랜덤 생성")
@@ -107,7 +107,7 @@ class AccountController(
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         val suspendedAccount = accountService.suspendedAccount(account, id)
-        return ResponseEntity.ok(MessageResponse(message = suspendedAccount.name, statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(result = suspendedAccount.name, statusCode = 200))
     }
 
 }

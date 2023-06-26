@@ -179,7 +179,7 @@ class AuthService(
         )
         val saveAccount = accountRepository.save(account)
         saveAccount.updateBookmarks(createInitBookmark(account))
-        return MessageResponse(message = "생성 완료", 200)
+        return MessageResponse(result = "생성 완료", 200)
     }
 
 
@@ -194,7 +194,7 @@ class AuthService(
         } else {
             throw BookandException(ErrorCode.NOT_FOUND_MEMBER)
         }
-        return MessageResponse(message = "로그아웃 성공", 200)
+        return MessageResponse(result = "로그아웃 성공", 200)
     }
 
     private fun createInitBookmark(saveAccount: Account): MutableList<Bookmark> {

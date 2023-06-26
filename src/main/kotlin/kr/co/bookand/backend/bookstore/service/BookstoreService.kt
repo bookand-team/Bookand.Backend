@@ -98,7 +98,7 @@ class BookstoreService(
             throw BookandException(ErrorCode.ALREADY_DELETE_BOOKSTORE)
         }
         bookstore.softDelete()
-        return MessageResponse(message = "서점 삭제", statusCode = 200)
+        return MessageResponse(result = "서점 삭제", statusCode = 200)
     }
 
     @Transactional
@@ -106,16 +106,16 @@ class BookstoreService(
         for (bookstoreId in request.bookstoreList) {
             deleteBookstore(bookstoreId)
         }
-        return MessageResponse(message = "서점 삭제", statusCode = 200)
+        return MessageResponse(result = "서점 삭제", statusCode = 200)
     }
 
     @Transactional
-    fun updateBookstoreStatus(bookstoreId: Long): MessageResponse {
+    fun updateBookstoreStatus(bookstoreId: Long): BookstoreIdResponse {
         val bookstore = getBookstore(bookstoreId)
         val status = bookstore.status
         if (status == Status.VISIBLE) bookstore.updateBookstoreStatus(Status.INVISIBLE)
         else bookstore.updateBookstoreStatus(Status.VISIBLE)
-        return MessageResponse(message = "SUCCESS", statusCode = 200)
+        return BookstoreIdResponse(bookstore.id)
     }
 
     @Transactional
@@ -137,7 +137,7 @@ class BookstoreService(
     fun answerReportBookstore(reportId: Long, request: AnswerReportRequest): MessageResponse {
         val reportBookstore = getReportBookstore(reportId)
         reportBookstore.updateAnswer(request)
-        return MessageResponse(message = "SUCCESS", statusCode = 200)
+        return MessageResponse(result = "제보 응답 완료", statusCode = 200)
     }
 
     fun duplicateBookstoreName(name: String) {

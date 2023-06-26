@@ -3,7 +3,7 @@ package kr.co.bookand.backend.common.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 
 data class MessageResponse(
-    val message: String,
+    val result: String,
     @JsonIgnore
-    val statusCode : Int
+    val statusCode: Int
 )

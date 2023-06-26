@@ -78,7 +78,7 @@ class NoticeController(
     @ApiOperation(value = "공지사항 상태 변경")
     @PutMapping("/{notificationId}/status")
     fun updateNoticeStatus(@PathVariable notificationId: Long
-    ): ResponseEntity<MessageResponse> {
+    ): ResponseEntity<NoticeIdResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(noticeService.updateNoticeStatus(account, notificationId))
     }

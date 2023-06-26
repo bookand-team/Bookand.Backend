@@ -315,10 +315,10 @@ class BookmarkService(
 
         return if (isBookmarkedArticle) {
             deleteBookmarkArticle(myBookmark.id, article.id)
-            MessageResponse(message = "북마크 삭제", statusCode = 200)
+            MessageResponse(result = "북마크 삭제", statusCode = 200)
         } else {
             createBookmarkArticle(myBookmark, article, accountId)
-            MessageResponse(message = "북마크 추가", statusCode = 200)
+            MessageResponse(result = "북마크 추가", statusCode = 200)
         }
     }
 
@@ -332,10 +332,10 @@ class BookmarkService(
 
         return if (isBookmarkedBookstore) {
             deleteBookmarkBookstore(myBookmark.id, bookstore.id)
-            MessageResponse(message = "북마크 삭제", statusCode = 200)
+            MessageResponse(result = "북마크 삭제", statusCode = 200)
         } else {
             createBookmarkBookstore(myBookmark, bookstore, accountId)
-            MessageResponse(message = "북마크 추가", statusCode = 200)
+            MessageResponse(result = "북마크 추가", statusCode = 200)
         }
     }
 

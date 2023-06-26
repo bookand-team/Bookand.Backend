@@ -52,7 +52,7 @@ class IssueController(
     fun checkIssue(
         @PathVariable issueId: Long,
         @RequestParam checkConfirmed: Boolean
-    ): ResponseEntity<MessageResponse> {
+    ): ResponseEntity<IssueIdResponse> {
         return ResponseEntity.ok(issueService.checkConfirmed(issueId, checkConfirmed))
     }
 }

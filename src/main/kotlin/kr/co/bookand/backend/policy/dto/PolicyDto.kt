@@ -3,7 +3,6 @@ package kr.co.bookand.backend.policy.dto
 import kr.co.bookand.backend.policy.model.Policy
 
 data class CreatePolicyRequest(
-    val policyId: Long,
     val title: String,
     val name: String,
     val content: String

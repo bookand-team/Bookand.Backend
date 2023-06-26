@@ -120,7 +120,7 @@ class BookmarkController(
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         bookmarkService.deleteInitBookmarkContent(account, bookmarkRequest)
-        return ResponseEntity.ok(MessageResponse(message = "북마크 삭제 완료", statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(result = "북마크 삭제 완료", statusCode = 200))
     }
 
     @ApiOperation(value = "북마크 폴더 내용 삭제")
@@ -134,7 +134,7 @@ class BookmarkController(
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         bookmarkService.deleteBookmarkContent(account, bookmarkFolderId, bookmarkRequest)
-        return ResponseEntity.ok(MessageResponse(message = "북마크 내용 삭제 완료", statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(result = "북마크 내용 삭제 완료", statusCode = 200))
     }
 
     @ApiOperation(value = "북마크 폴더 삭제")
@@ -148,7 +148,7 @@ class BookmarkController(
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         bookmarkService.deleteBookmarkFolder(account, bookmarkFolderId)
-        return ResponseEntity.ok(MessageResponse(message = "북마크 폴더 삭제 완료", statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(result = "북마크 폴더 삭제 완료", statusCode = 200))
     }
 
 

@@ -95,7 +95,7 @@ class BookstoreController(
     @PutMapping("/{id}/status")
     fun updateBookstoreStatus(
         @PathVariable id: Long
-    ): ResponseEntity<MessageResponse> {
+    ): ResponseEntity<BookstoreIdResponse> {
         return ResponseEntity.ok(bookstoreService.updateBookstoreStatus(id))
     }
 

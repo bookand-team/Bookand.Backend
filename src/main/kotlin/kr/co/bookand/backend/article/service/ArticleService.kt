@@ -40,8 +40,8 @@ class ArticleService(
         currentAccount.role.checkAdminAndManager()
         duplicateArticle(articleRequest.title)
 
-        val bookStoreList = articleRequest.bookStoreList
-        val articleTags = articleRequest.tagList
+        val bookStoreList = articleRequest.bookstoreList
+        val articleTags = articleRequest.articleTagList
         val article = Article(articleRequest)
         val saveArticle = articleRepository.save(article)
 
@@ -63,9 +63,9 @@ class ArticleService(
         article.updateArticleData(articleRequest)
 
         removeIntroducedBookstores(article)
-        addBookstoresToArticle(article, articleRequest.bookStoreList)
+        addBookstoresToArticle(article, articleRequest.bookstoreList)
         removeArticleTags(article)
-        addArticleTags(article, articleRequest.tagList)
+        addArticleTags(article, articleRequest.articleTagList)
 
         return ArticleIdResponse(article.id)
     }
@@ -203,12 +203,12 @@ class ArticleService(
 
 
     @Transactional
-    fun updateArticleStatus(articleId: Long): MessageResponse {
+    fun updateArticleStatus(articleId: Long): ArticleIdResponse {
         val article = getArticle(articleId)
         val status = article.status
         if (status == Status.VISIBLE) article.updateArticleStatus(Status.INVISIBLE)
         else article.updateArticleStatus(Status.VISIBLE)
-        return MessageResponse(message = "SUCCESS", statusCode = 200)
+        return ArticleIdResponse(article.id)
     }
 
     fun removeArticle(currentAccount: Account, articleId: Long) {

@@ -73,10 +73,10 @@ class IssueService(
     }
 
     @Transactional
-    fun checkConfirmed(issueId: Long, checkConfirmed: Boolean): MessageResponse {
+    fun checkConfirmed(issueId: Long, checkConfirmed: Boolean): IssueIdResponse {
         val issue: Issue = issueRepository.findById(issueId)
             .orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_ISSUE) }
         issue.checkConfirmed(checkConfirmed)
-        return MessageResponse(message = "성공적으로 처리되었습니다.", statusCode = 200)
+        return IssueIdResponse(issue.id)
     }
 }

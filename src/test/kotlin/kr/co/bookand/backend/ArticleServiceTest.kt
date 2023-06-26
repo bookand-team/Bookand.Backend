@@ -149,8 +149,8 @@ class ArticleServiceTest : BehaviorSpec({
             mainImage = "mainImage",
             category = ArticleCategory.BOOKSTORE_REVIEW.toString(),
             writer = "writer",
-            bookStoreList = listOf(1L, 2L),
-            tagList = listOf("tag1", "tag2")
+            bookstoreList = listOf(1L, 2L),
+            articleTagList = listOf("tag1", "tag2")
         )
 
         val updateArticleRequest = ArticleRequest(
@@ -160,8 +160,8 @@ class ArticleServiceTest : BehaviorSpec({
             mainImage = "mainImage2",
             category = ArticleCategory.BOOKSTORE_REVIEW.toString(),
             writer = "writer",
-            bookStoreList = listOf(1L, 2L),
-            tagList = listOf("tag1", "tag2")
+            bookstoreList = listOf(1L, 2L),
+            articleTagList = listOf("tag1", "tag2")
         )
 
         val introducedBookstore = IntroducedBookstore(

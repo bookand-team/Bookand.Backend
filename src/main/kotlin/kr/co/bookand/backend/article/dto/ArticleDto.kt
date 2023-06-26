@@ -18,8 +18,8 @@ data class ArticleRequest(
     val content: String,
     val category: String,
     val writer: String,
-    val tagList: List<String>,
-    val bookStoreList: List<Long>,
+    val articleTagList: List<String>,
+    val bookstoreList: List<Long>,
 )
 
 data class IntroducedBookstoreRequest(

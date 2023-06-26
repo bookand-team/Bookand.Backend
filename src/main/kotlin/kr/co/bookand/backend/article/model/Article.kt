@@ -52,7 +52,9 @@ class Article(
         category = ArticleCategory.valueOf(articleRequest.category),
         status = Status.VISIBLE,
         deviceOSFilter = DeviceOSFilter.ALL,
-        memberIdFilter = MemberIdFilter.ALL
+        memberIdFilter = MemberIdFilter.ALL,
+        articleTagList = mutableListOf(),
+        introducedBookstoreList = mutableListOf()
     )
     fun updateIntroducedBookstore(introducedBookstore: IntroducedBookstore) {
         introducedBookstoreList.add(introducedBookstore)

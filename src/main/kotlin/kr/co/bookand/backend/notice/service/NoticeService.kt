@@ -60,23 +60,20 @@ class NoticeService(
     fun deleteNotice(currentAccount: Account, noticeId: Long): MessageResponse {
         currentAccount.role.checkAdminAndManager()
         noticeRepository.deleteById(noticeId)
-        return MessageResponse(message = "Success", statusCode = 200)
+        return MessageResponse(result = "공지 삭제 완료", statusCode = 200)
     }
 
     @Transactional
     fun updateNoticeStatus(
         currentAccount: Account,
         noticeId: Long
-    ): MessageResponse {
+    ): NoticeIdResponse {
         currentAccount.role.checkAdminAndManager()
         val notice = getNotice(noticeId)
-        return if (notice.status == Status.INVISIBLE) {
-            notice.status = Status.VISIBLE
-            MessageResponse(message = "Update Status to Visible.", statusCode = 200)
-        } else {
-            notice.status = Status.INVISIBLE
-            MessageResponse(message = "Update Status to Invisible.", statusCode = 200)
-        }
+        val status = notice.status
+        if (status == Status.VISIBLE) notice.updateNoticeStatus(Status.INVISIBLE)
+        else notice.updateNoticeStatus(Status.VISIBLE)
+        return NoticeIdResponse(notice.id)
     }
 
     fun getNoticeDetail(noticeId: Long): NoticeResponse {

@@ -62,7 +62,7 @@ class PolicyController(
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         policyService.removePolicy(account, id)
-        return ResponseEntity.ok(MessageResponse(message = "정책이 삭제되었습니다.", statusCode = 200))
+        return ResponseEntity.ok(MessageResponse(result = "정책이 삭제되었습니다.", statusCode = 200))
     }
 
 }

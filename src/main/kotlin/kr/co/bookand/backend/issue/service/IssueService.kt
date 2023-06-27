@@ -3,7 +3,6 @@ package kr.co.bookand.backend.issue.service
 import kr.co.bookand.backend.account.model.Account
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.PageResponse
-import kr.co.bookand.backend.common.model.MessageResponse
 import kr.co.bookand.backend.common.exception.BookandException
 import kr.co.bookand.backend.issue.dto.*
 import kr.co.bookand.backend.issue.model.Issue
@@ -76,15 +75,15 @@ class IssueService(
     }
 
     @Transactional
-    fun checkConfirmed(
+    fun updateConfirmed(
         currentAccount: Account,
         issueId: Long,
-        checkConfirmed: Boolean
+        updateConfirmed: Boolean
     ): IssueIdResponse {
         currentAccount.role.checkAdminAndManager()
         val issue: Issue = issueRepository.findById(issueId)
             .orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_ISSUE) }
-        issue.checkConfirmed(checkConfirmed)
+        issue.updateConfirmed(updateConfirmed)
         return IssueIdResponse(issue.id)
     }
 }

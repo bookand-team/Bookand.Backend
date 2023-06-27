@@ -4,6 +4,8 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import kr.co.bookand.backend.account.dto.*
+import kr.co.bookand.backend.account.model.AccountStatus
+import kr.co.bookand.backend.account.model.Role
 import kr.co.bookand.backend.account.service.AccountService
 import kr.co.bookand.backend.common.model.MessageResponse
 import org.springframework.data.domain.Pageable
@@ -116,4 +118,26 @@ class AccountController(
         return ResponseEntity.ok(changeAccount)
     }
 
+    @ApiOperation(value = "회원 탈퇴 (관리자)")
+    @Operation(summary = "회원 탈퇴 (관리자)", description = "회원을 탈퇴 시킵니다.")
+    @DeleteMapping("/{id}")
+    fun deleteAccount(
+        @PathVariable id: Long
+    ): ResponseEntity<MessageResponse> {
+        val account = accountService.getCurrentAccount()
+        val deleteAccount = accountService.deleteAccount(account, id)
+        return ResponseEntity.ok(MessageResponse(result = deleteAccount.toString(), statusCode = 200))
+    }
+
+    @ApiOperation(value = "회원 필터 조회 (관리자)")
+    @Operation(summary = "회원 필터 조회 (관리자)", description = "회원 필터 조회 (관리자)")
+    @GetMapping("/filter")
+    fun getAccountFilterList(
+        @PageableDefault pageable: Pageable,
+        @RequestParam("account-status") accountStatus: AccountStatus?,
+        @RequestParam("role") role: Role?,
+    ): ResponseEntity<AccountListResponse> {
+        val account = accountService.getCurrentAccount()
+        return ResponseEntity.ok(accountService.getAccountFilterList(account, pageable, accountStatus, role))
+    }
 }

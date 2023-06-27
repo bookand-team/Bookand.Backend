@@ -88,11 +88,6 @@ data class AccountIdResponse(
     val id: Long
 )
 
-data class AccountFilterRequest(
-    val accountStatus: AccountStatus,
-    val role: Role
-)
-
 data class AccountSearchRequest(
     val searchType: String,
     val searchKeyword: String

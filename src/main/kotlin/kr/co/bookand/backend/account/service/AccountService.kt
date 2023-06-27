@@ -199,5 +199,26 @@ class AccountService(
         }
     }
 
+    fun deleteAccount(currentAccount: Account, accountId: Long): Boolean {
+        currentAccount.role.checkAdminAndManager()
+        val account = getAccountById(accountId)
+        refreshTokenRepository.deleteByAccountId(accountId)
+        accountRepository.delete(account)
+        return true
+    }
+
+    fun getAccountFilterList(
+        currentAccount: Account,
+        pageable: Pageable,
+        accountStatus: AccountStatus?,
+        role: Role?
+    ): AccountListResponse {
+        val accountList = accountRepository.findAllByFilter(
+            pageable = pageable,
+            role = role,
+            accountStatus = accountStatus
+        ).map { AccountDetailInfoResponse(it) }
+        return AccountListResponse(PageResponse.of(accountList))
+    }
 
 }

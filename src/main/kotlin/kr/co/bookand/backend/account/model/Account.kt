@@ -22,6 +22,7 @@ class Account(
     var profileImage: String? = null,
     var lastLoginDate: LocalDateTime? = null,
     var signUpDate: LocalDateTime? = null,
+    var suspendReason : String? = null,
 
     @Enumerated(EnumType.STRING)
     var role: Role,
@@ -45,6 +46,10 @@ class Account(
 
     fun updateLastLoginDate() {
         this.lastLoginDate = LocalDateTime.now()
+    }
+
+    fun updateSuspendReason(suspendReason : String) {
+        this.suspendReason = suspendReason
     }
 
     fun updateAccountStatus(accountStatus: AccountStatus) {

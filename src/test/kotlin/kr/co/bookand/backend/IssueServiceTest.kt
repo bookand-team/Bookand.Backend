@@ -41,6 +41,7 @@ class IssueServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.ADMIN,
             AccountStatus.NORMAL
         )

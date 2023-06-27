@@ -56,6 +56,7 @@ class ArticleServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.USER,
             AccountStatus.NORMAL
         )
@@ -70,6 +71,7 @@ class ArticleServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.ADMIN,
             AccountStatus.NORMAL
         )

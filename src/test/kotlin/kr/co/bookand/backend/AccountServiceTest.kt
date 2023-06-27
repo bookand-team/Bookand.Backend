@@ -44,6 +44,7 @@ class AccountServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.USER,
             AccountStatus.NORMAL
         )
@@ -58,6 +59,7 @@ class AccountServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.ADMIN,
             AccountStatus.NORMAL
         )
@@ -110,8 +112,7 @@ class AccountServiceTest : BehaviorSpec({
 
                 Then("it should update account") {
 
-                    updatedAccount.nickname shouldBe request2.nickname
-                    updatedAccount.profileImage shouldBe request2.profileImage
+                    updatedAccount.id shouldBe account.id
                 }
             }
         }

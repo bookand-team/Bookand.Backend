@@ -61,6 +61,7 @@ class BookmarkServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.USER,
             AccountStatus.NORMAL
         )
@@ -75,6 +76,7 @@ class BookmarkServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.ADMIN,
             AccountStatus.NORMAL
         )

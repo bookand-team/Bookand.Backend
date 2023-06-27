@@ -54,6 +54,7 @@ class BookstoreServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.USER,
             AccountStatus.NORMAL
         )
@@ -68,6 +69,7 @@ class BookstoreServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.ADMIN,
             AccountStatus.NORMAL
         )
@@ -279,7 +281,7 @@ class BookstoreServiceTest : BehaviorSpec({
             every { bookstoreRepository.existsByName("Book Store") } returns false
 
             // When
-            val response = bookstoreService.updateBookstore(bookstoreId, bookstoreRequest)
+            val response = bookstoreService.updateBookstore(account, bookstoreId, bookstoreRequest)
 
             Then("it should return updated book store") {
                 response shouldBe BookstoreWebResponse(

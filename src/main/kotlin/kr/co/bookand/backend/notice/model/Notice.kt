@@ -61,4 +61,8 @@ class Notice(
         this.status = status
         this.displayAt = LocalDateTime.now()
     }
+
+    fun updateDisplayAt() {
+        this.displayAt = LocalDateTime.now()
+    }
 }

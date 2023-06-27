@@ -74,7 +74,10 @@ class NoticeService(
         val notice = getNotice(noticeId)
         val status = notice.status
         if (status == Status.VISIBLE) notice.updateNoticeStatus(Status.INVISIBLE)
-        else notice.updateNoticeStatus(Status.VISIBLE)
+        else {
+            notice.updateNoticeStatus(Status.VISIBLE)
+            notice.updateDisplayAt()
+        }
         return NoticeIdResponse(notice.id)
     }
 
@@ -92,7 +95,8 @@ class NoticeService(
     }
 
     fun getNotice(noticeId: Long): Notice {
-        return noticeRepository.findById(noticeId).orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_NOTIFICATION) }
+        return noticeRepository.findById(noticeId)
+            .orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_NOTIFICATION) }
     }
 
 

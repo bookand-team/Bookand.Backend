@@ -7,9 +7,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface NoticeRepository : JpaRepository<Notice, Long>, NoticeRepositoryCustom {
-    fun findAllByStatusAndVisibility(
+    fun findAllByVisibility(
         pageable: Pageable,
-        status: Status,
         visibility: Boolean
     ): Page<Notice>
 }

@@ -22,7 +22,7 @@ class ArticleController(
     private val articleService: ArticleService,
     private val accountService: AccountService
 ) {
-    @ApiOperation(value = "아티클 생성")
+    @ApiOperation(value = "아티클 생성 (WEB)")
     @PostMapping("")
     fun createArticle(
         @RequestBody articleRequest: ArticleRequest
@@ -67,7 +67,7 @@ class ArticleController(
         return ResponseEntity.ok(articleList)
     }
 
-    @ApiOperation(value = "조건에 맞는 아티클 조회")
+    @ApiOperation(value = "조건에 맞는 아티클 조회 (WEB)")
     @GetMapping("/search")
     @ApiImplicitParams(
         ApiImplicitParam(
@@ -101,7 +101,7 @@ class ArticleController(
         return ResponseEntity.ok(articleService.searchArticleList(search, category, status, pageable))
     }
 
-    @ApiOperation(value = "아티클 수정")
+    @ApiOperation(value = "아티클 수정 (WEB)")
     @PutMapping("/{id}")
     fun updateArticle(
         @PathVariable id: Long,
@@ -112,7 +112,7 @@ class ArticleController(
         return ResponseEntity.ok(article)
     }
 
-    @ApiOperation(value = "아티클 삭제")
+    @ApiOperation(value = "아티클 삭제 (WEB)")
     @DeleteMapping("/{id}")
     fun removeArticle(
         @PathVariable id: Long
@@ -122,7 +122,7 @@ class ArticleController(
         return ResponseEntity.ok(MessageResponse(result = "아티클 삭제 완료.", statusCode = 200))
     }
 
-    @ApiOperation(value = "선택된 아티클 삭제")
+    @ApiOperation(value = "선택된 아티클 삭제 (WEB)")
     @DeleteMapping("/list")
     fun deleteArticleList(
         @RequestBody list: ArticleListRequest
@@ -132,7 +132,7 @@ class ArticleController(
         return ResponseEntity.ok(MessageResponse(result = "선택된 서점 삭제 완료.", statusCode = 200))
     }
 
-    @ApiOperation(value = "아티클 상태 변경")
+    @ApiOperation(value = "아티클 상태 변경 (WEB)")
     @PutMapping("/{id}/status")
     fun updateArticleStatus(
         @PathVariable id: Long,

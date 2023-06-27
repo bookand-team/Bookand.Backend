@@ -271,7 +271,6 @@ class BookstoreServiceTest : BehaviorSpec({
         }
 
         When("bookstore 업데이트") {
-            every { accountService.checkAccountAdmin(accountId) } returns Unit
             every { bookstoreRepository.findById(bookstoreId) } returns Optional.of(bookstore)
             every { bookstoreImageRepository.deleteAll(bookstore.imageList) } returns Unit
             every { bookstoreThemeRepository.deleteAll(bookstore.themeList) } returns Unit
@@ -281,7 +280,7 @@ class BookstoreServiceTest : BehaviorSpec({
             every { bookstoreRepository.existsByName("Book Store") } returns false
 
             // When
-            val response = bookstoreService.updateBookstore(account, bookstoreId, bookstoreRequest)
+            val response = bookstoreService.updateBookstore(adminAccount, bookstoreId, bookstoreRequest)
 
             Then("it should return updated book store") {
                 response shouldBe BookstoreWebResponse(

@@ -85,6 +85,7 @@ class ArticleServiceTest : BehaviorSpec({
             category = ArticleCategory.BOOKSTORE_REVIEW,
             writer = "writer",
             viewCount = 0,
+            bookmarkCount = 0,
             status = Status.VISIBLE,
             deviceOSFilter = DeviceOSFilter.ALL,
             memberIdFilter = MemberIdFilter.ALL,

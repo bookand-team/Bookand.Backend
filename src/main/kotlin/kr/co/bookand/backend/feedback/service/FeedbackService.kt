@@ -23,9 +23,10 @@ class FeedbackService(
 ) {
 
     @Transactional
-    fun createFeedback(currentAccount : Account, createFeedbackRequest: CreateFeedbackRequest) : FeedbackIdResponse {
+    fun createFeedback(currentAccount: Account, createFeedbackRequest: CreateFeedbackRequest): FeedbackIdResponse {
         val feedback = Feedback(createFeedbackRequest)
         val saveFeedback = feedbackRepository.save(feedback)
+        saveFeedback.updateFeedbackAccount(currentAccount)
         return FeedbackIdResponse(saveFeedback.id)
     }
 
@@ -39,6 +40,19 @@ class FeedbackService(
         val feedbackList = feedbackRepository.findAll(pageable)
             .map { FeedbackResponse(it) }
         return FeedbackListResponse(PageResponse.of(feedbackList))
+    }
+
+    @Transactional
+    fun updateConfirmed(
+        currentAccount: Account,
+        feedbackId: Long,
+        updateConfirmed: Boolean
+    ): FeedbackIdResponse {
+        currentAccount.role.checkAdminAndManager()
+        val feedback = feedbackRepository.findById(feedbackId)
+            .orElseThrow { BookandException(ErrorCode.NOT_FOUND_FEEDBACK) }
+        feedback.updateConfirmed(updateConfirmed)
+        return FeedbackIdResponse(feedback.id)
     }
 
 }

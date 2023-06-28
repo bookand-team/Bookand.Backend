@@ -42,10 +42,10 @@ class AccountService(
             ?: throw BookandException(ErrorCode.NOT_FOUND_MEMBER)
     }
 
-    fun getAccountByNickname(nickname: String): AccountInfoResponse {
+    fun getAccountByNickname(nickname: String): AccountDetailInfoResponse {
         val account = accountRepository.findByNickname(nickname)
             ?: throw BookandException(ErrorCode.NOT_FOUND_MEMBER)
-        return AccountInfoResponse(account)
+        return AccountDetailInfoResponse(account)
     }
 
     fun getAccountById(id: Long): Account {
@@ -53,13 +53,13 @@ class AccountService(
             .orElseThrow { BookandException(ErrorCode.NOT_FOUND_MEMBER) }
     }
 
-    fun getAccountInfoById(id: Long): AccountInfoResponse {
-        return AccountInfoResponse(getAccountById(id))
+    fun getAccountDetailInfoById(id: Long): AccountDetailInfoResponse {
+        return AccountDetailInfoResponse(getAccountById(id))
     }
 
     fun getAccountList(pageable: Pageable): AccountListResponse {
         val accountList = accountRepository.findAll(pageable)
-            .map { AccountInfoResponse(it) }
+            .map { AccountDetailInfoResponse(it) }
         return AccountListResponse(PageResponse.of(accountList))
     }
 
@@ -70,15 +70,26 @@ class AccountService(
         }
         return NicknameResponse(nicknameRandom)
     }
+    @Transactional
+    fun changeAccountStatus(
+        currentAccount: Account,
+        accountId: Long,
+        request: AccountStatusRequest
+    ): AccountIdResponse {
+        val account = getAccountById(accountId)
+        if (request.accountStatus == AccountStatus.SUSPENDED) suspendedAccount(currentAccount, accountId, request.reason)
+        else account.updateAccountStatus(request.accountStatus)
+        return AccountIdResponse(account.id)
+    }
 
     @Transactional
-    fun updateAccount(currentAccount: Account, request: AccountRequest): AccountInfoResponse {
+    fun updateAccount(currentAccount: Account, request: AccountRequest): AccountIdResponse {
         val checkNicknameBoolean = checkNicknameBoolean(request.nickname, currentAccount.nickname)
         if (checkNicknameBoolean) {
             throw BookandException(ErrorCode.NICKNAME_DUPLICATION)
         }
         currentAccount.updateProfile(request.profileImage, request.nickname)
-        return AccountInfoResponse(currentAccount)
+        return AccountIdResponse(currentAccount.id)
     }
 
     fun existNickname(nickname: String): MessageResponse {
@@ -110,9 +121,14 @@ class AccountService(
     }
 
     @Transactional
-    fun suspendedAccount(currentAccount: Account, accountId: Long): AccountStatus {
-        checkAccountAdmin(currentAccount.id)
+    fun suspendedAccount(
+        currentAccount: Account,
+        accountId: Long,
+        reason: String
+    ): AccountStatus {
+        currentAccount.role.checkAdminAndManager()
         val account = getAccountById(accountId)
+        account.updateSuspendReason(reason)
         val suspendedAccount = getSuspendedAccount(account)
             ?: suspendedAccountRepository.save(SuspendedAccount(account = account))
         return setSuspendedAccount(account, suspendedAccount)
@@ -183,5 +199,26 @@ class AccountService(
         }
     }
 
+    fun deleteAccount(currentAccount: Account, accountId: Long): Boolean {
+        currentAccount.role.checkAdminAndManager()
+        val account = getAccountById(accountId)
+        refreshTokenRepository.deleteByAccountId(accountId)
+        accountRepository.delete(account)
+        return true
+    }
+
+    fun getAccountFilterList(
+        currentAccount: Account,
+        pageable: Pageable,
+        accountStatus: AccountStatus?,
+        role: Role?
+    ): AccountListResponse {
+        val accountList = accountRepository.findAllByFilter(
+            pageable = pageable,
+            role = role,
+            accountStatus = accountStatus
+        ).map { AccountDetailInfoResponse(it) }
+        return AccountListResponse(PageResponse.of(accountList))
+    }
 
 }

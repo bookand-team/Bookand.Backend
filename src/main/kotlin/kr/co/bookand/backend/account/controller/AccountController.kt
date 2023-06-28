@@ -4,6 +4,8 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import kr.co.bookand.backend.account.dto.*
+import kr.co.bookand.backend.account.model.AccountStatus
+import kr.co.bookand.backend.account.model.Role
 import kr.co.bookand.backend.account.service.AccountService
 import kr.co.bookand.backend.common.model.MessageResponse
 import org.springframework.data.domain.Pageable
@@ -26,21 +28,21 @@ class AccountController(
         return ResponseEntity.ok(accountService.getMyAccountInfo())
     }
 
-    @ApiOperation(value = "회원 조회 (id)")
+    @ApiOperation(value = "회원 조회 (id) (관리자)")
     @Operation(summary = "회원 조회", description = "회원의 정보를 조회합니다.")
     @GetMapping("/{id}")
     fun getAccountInfo(
         @PathVariable id: Long
-    ): ResponseEntity<AccountInfoResponse> {
-        return ResponseEntity.ok(accountService.getAccountInfoById(id))
+    ): ResponseEntity<AccountDetailInfoResponse> {
+        return ResponseEntity.ok(accountService.getAccountDetailInfoById(id))
     }
 
-    @ApiOperation(value = "회원 조회 (닉네임)")
+    @ApiOperation(value = "회원 조회 (닉네임) (관리자)")
     @Operation(summary = "회원 조회", description = "회원의 정보를 조회합니다.")
     @GetMapping("/nickname/{nickname}")
     fun getAccountInfo(
         @PathVariable nickname: String
-    ): ResponseEntity<AccountInfoResponse> {
+    ): ResponseEntity<AccountDetailInfoResponse> {
         return ResponseEntity.ok(accountService.getAccountByNickname(nickname))
     }
 
@@ -49,7 +51,7 @@ class AccountController(
     @PutMapping("/profile")
     fun updateNickname(
         @Valid @RequestBody accountRequest: AccountRequest
-    ): ResponseEntity<AccountInfoResponse> {
+    ): ResponseEntity<AccountIdResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(accountService.updateAccount(account, accountRequest))
     }
@@ -66,14 +68,17 @@ class AccountController(
 
     @ApiOperation(value = "회원 탈퇴 사유 입력")
     @Operation(
-        summary = "회원 탈퇴 사유 입력", description = """회원 탈퇴 사유를 입력합니다.탈퇴 사유 종류는     NOT_ENOUGH_CONTENT("콘텐츠가 만족스럽지 않아요"),
-    UNCOMFORTABLE("이용 방법이 불편해요"),
-    PRIVACY("개인정보 보안이 걱정돼요"),
-    ETC("기타") 입니다.탈퇴 reasone 은 필수는 아니고socialAccessToken 에 accessToken 값을 입력해야 됩니다"""
+        summary = "회원 탈퇴 사유 입력",
+        description = """회원 탈퇴 사유를 입력합니다.탈퇴 사유 종류는     
+            NOT_ENOUGH_CONTENT("콘텐츠가 만족스럽지 않아요"),
+            UNCOMFORTABLE("이용 방법이 불편해요"),
+            PRIVACY("개인정보 보안이 걱정돼요"),
+            ETC("기타") 입니다.
+            탈퇴 reasone 은 필수는 아니고socialAccessToken 에 accessToken 값을 입력해야 됩니다"""
     )
     @DeleteMapping("/revoke")
     fun revokeReason(
-        @RequestBody @Valid revokeReasonRequest : RevokeReasonRequest
+        @RequestBody @Valid revokeReasonRequest: RevokeReasonRequest
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
         val revokeAccount: Boolean = accountService.revokeAccount(account, revokeReasonRequest)
@@ -96,18 +101,43 @@ class AccountController(
         return ResponseEntity.ok(accountService.getAccountList(pageable))
     }
 
-    @ApiOperation(value = "회원 정지 (관리자)")
+    @ApiOperation(value = "회원 상태 변경 (관리자)")
     @Operation(
-        summary = "회원 정지 (관리자)", description = "회원을 정지합니다." +
-                "1회 정지는 SUSPENDED 상태에 7일 정지, 2회 정지는 DELETED 상태에 6개월 정지"
+        summary = "회원 상태 변경 (관리자)",
+        description = "회원을 상태를 변경합니다." +
+                "맴버 타입은 USER, ADMIN 이 있습니다." +
+                "이용 상태는 NORMAL, DORMANCY ,SUSPENDED, DELETED 가 있습니다."
     )
-    @PutMapping("/suspend/{id}")
+    @PutMapping("/{id}/status")
     fun suspendAccount(
+        @PathVariable id: Long,
+        @RequestBody @Valid accountStatusRequest: AccountStatusRequest
+    ): ResponseEntity<AccountIdResponse> {
+        val account = accountService.getCurrentAccount()
+        val changeAccount = accountService.changeAccountStatus(account, id, accountStatusRequest)
+        return ResponseEntity.ok(changeAccount)
+    }
+
+    @ApiOperation(value = "회원 탈퇴 (관리자)")
+    @Operation(summary = "회원 탈퇴 (관리자)", description = "회원을 탈퇴 시킵니다.")
+    @DeleteMapping("/{id}")
+    fun deleteAccount(
         @PathVariable id: Long
     ): ResponseEntity<MessageResponse> {
         val account = accountService.getCurrentAccount()
-        val suspendedAccount = accountService.suspendedAccount(account, id)
-        return ResponseEntity.ok(MessageResponse(result = suspendedAccount.name, statusCode = 200))
+        val deleteAccount = accountService.deleteAccount(account, id)
+        return ResponseEntity.ok(MessageResponse(result = deleteAccount.toString(), statusCode = 200))
     }
 
+    @ApiOperation(value = "회원 필터 조회 (관리자)")
+    @Operation(summary = "회원 필터 조회 (관리자)", description = "회원 필터 조회 (관리자)")
+    @GetMapping("/filter")
+    fun getAccountFilterList(
+        @PageableDefault pageable: Pageable,
+        @RequestParam("account-status") accountStatus: AccountStatus?,
+        @RequestParam("role") role: Role?,
+    ): ResponseEntity<AccountListResponse> {
+        val account = accountService.getCurrentAccount()
+        return ResponseEntity.ok(accountService.getAccountFilterList(account, pageable, accountStatus, role))
+    }
 }

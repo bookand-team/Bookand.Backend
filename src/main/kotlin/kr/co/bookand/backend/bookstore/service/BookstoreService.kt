@@ -66,10 +66,11 @@ class BookstoreService(
 
     @Transactional
     fun updateBookstore(
+        currentAccount: Account,
         bookstoreId: Long,
         bookstoreRequest: BookstoreRequest
     ): BookstoreWebResponse {
-        accountService.checkAccountAdmin(bookstoreId)
+        currentAccount.role.checkAdminAndManager()
         val bookstore = getBookstore(bookstoreId)
         val imageList = bookstore.imageList
         bookstoreImageRepository.deleteAll(imageList)

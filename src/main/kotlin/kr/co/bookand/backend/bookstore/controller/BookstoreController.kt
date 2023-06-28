@@ -72,7 +72,8 @@ class BookstoreController(
         @PathVariable id: Long,
         @RequestBody bookStoreRequest: BookstoreRequest
     ): ResponseEntity<BookstoreWebResponse> {
-        return ResponseEntity.ok(bookstoreService.updateBookstore(id, bookStoreRequest))
+        val account = accountService.getCurrentAccount()
+        return ResponseEntity.ok(bookstoreService.updateBookstore(account, id, bookStoreRequest))
     }
 
     @ApiOperation(value = "서점 삭제")

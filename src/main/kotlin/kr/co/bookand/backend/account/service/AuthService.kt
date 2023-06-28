@@ -96,7 +96,8 @@ class AuthService(
             provider = signKey.socialType,
             providerEmail = signKey.providerEmail,
             role = Role.USER,
-            accountStatus = AccountStatus.NORMAL
+            accountStatus = AccountStatus.NORMAL,
+            signUpDate = LocalDateTime.now(),
         )
         val saveAccount = accountRepository.save(account)
         saveAccount.updateLastLoginDate()

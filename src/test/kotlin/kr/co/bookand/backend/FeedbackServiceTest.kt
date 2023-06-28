@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import kr.co.bookand.backend.account.model.*
+import kr.co.bookand.backend.common.DeviceOSFilter
 import kr.co.bookand.backend.feedback.model.*
 import kr.co.bookand.backend.feedback.dto.CreateFeedbackRequest
 import kr.co.bookand.backend.feedback.repository.FeedbackRepository
@@ -29,6 +30,7 @@ class FeedbackServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.ADMIN,
             AccountStatus.NORMAL
         )
@@ -38,13 +40,16 @@ class FeedbackServiceTest : BehaviorSpec({
             FeedbackType.PUSH,
             FeedbackTarget.HOME,
             "content",
-            adminAccount
+            adminAccount,
+            DeviceOSFilter.ANDROID,
+            false
         )
 
         val createFeedbackRequest = CreateFeedbackRequest(
             feedbackType = FeedbackType.PUSH.name,
             feedbackTarget = FeedbackTarget.HOME.name,
-            content = "content"
+            content = "content",
+            deviceOS = DeviceOSFilter.ANDROID
         )
 
         When("create feedback"){

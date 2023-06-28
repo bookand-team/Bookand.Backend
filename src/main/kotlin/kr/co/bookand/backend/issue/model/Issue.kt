@@ -21,7 +21,7 @@ class Issue(
     var logFilePath: String?,
     var logFileName: String?,
     var accountId: Long,
-    var checkConfirmed: Boolean,
+    var isConfirmed: Boolean,
     @Enumerated(EnumType.STRING)
     var deviceOS: DeviceOSFilter,
 
@@ -39,7 +39,7 @@ class Issue(
         logFilePath = null,
         logFileName = null,
         accountId = accountId,
-        checkConfirmed = false,
+        isConfirmed = false,
         deviceOS = createIssueRequest.deviceOS
     )
 
@@ -48,8 +48,8 @@ class Issue(
         this.logFileName = logFileName
     }
 
-    fun checkConfirmed(checkConfirmed: Boolean) {
-        this.checkConfirmed = checkConfirmed
+    fun updateConfirmed(updateConfirmed: Boolean) {
+        this.isConfirmed = updateConfirmed
     }
 
     fun setIssueImage(issueImage: List<IssueImage>) {

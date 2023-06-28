@@ -24,6 +24,7 @@ class Article(
     var category: ArticleCategory,
 
     var viewCount: Int,
+    var bookmarkCount: Int,
 
     @Enumerated(EnumType.STRING)
     var status: Status,
@@ -47,6 +48,7 @@ class Article(
         mainImage = articleRequest.mainImage,
         writer = articleRequest.writer,
         viewCount = 0,
+        bookmarkCount = 0,
         category = ArticleCategory.valueOf(articleRequest.category),
         status = Status.VISIBLE,
         deviceOSFilter = articleRequest.articleFilter.deviceOS,

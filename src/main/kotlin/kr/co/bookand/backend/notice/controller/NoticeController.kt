@@ -19,7 +19,7 @@ class NoticeController(
     private val noticeService: NoticeService,
     private val accountService: AccountService
 ) {
-    @ApiOperation(value = "공지사항 생성")
+    @ApiOperation(value = "공지사항 생성 (WEB)")
     @PostMapping
     fun createNotice(
         @RequestBody createNoticeRequest: CreateNoticeRequest
@@ -41,7 +41,7 @@ class NoticeController(
         return ResponseEntity.ok(noticeService.getNoticeSimpleList(pageable, cursorId))
     }
 
-    @ApiOperation(value = "공지사항 목록 조회")
+    @ApiOperation(value = "공지사항 목록 조회 (WEB)")
     @GetMapping("/web")
     fun getNoticeList(
         @PageableDefault pageable: Pageable
@@ -57,7 +57,7 @@ class NoticeController(
         return ResponseEntity.ok(noticeService.getNoticeDetail(notificationId))
     }
 
-    @ApiOperation(value = "공지사항 수정")
+    @ApiOperation(value = "공지사항 수정 (WEB)")
     @PutMapping("/{notificationId}")
     fun updateNotice(
         @PathVariable notificationId: Long,
@@ -67,7 +67,7 @@ class NoticeController(
         return ResponseEntity.ok(noticeService.updateNotice(account, notificationId, updateNoticeRequest))
     }
 
-    @ApiOperation(value = "공지사항 삭제")
+    @ApiOperation(value = "공지사항 삭제 (WEB)")
     @DeleteMapping("/{notificationId}")
     fun deleteNotice(@PathVariable notificationId: Long
     ): ResponseEntity<MessageResponse> {
@@ -75,7 +75,7 @@ class NoticeController(
         return ResponseEntity.ok(noticeService.deleteNotice(account, notificationId))
     }
 
-    @ApiOperation(value = "공지사항 상태 변경")
+    @ApiOperation(value = "공지사항 상태 변경 (WEB)")
     @PutMapping("/{notificationId}/status")
     fun updateNoticeStatus(@PathVariable notificationId: Long
     ): ResponseEntity<NoticeIdResponse> {

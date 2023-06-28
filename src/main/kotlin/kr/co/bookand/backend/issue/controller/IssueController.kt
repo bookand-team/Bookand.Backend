@@ -3,7 +3,6 @@ package kr.co.bookand.backend.issue.controller
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import kr.co.bookand.backend.account.service.AccountService
-import kr.co.bookand.backend.common.model.MessageResponse
 import kr.co.bookand.backend.issue.dto.CreateIssueRequest
 import kr.co.bookand.backend.issue.dto.IssueIdResponse
 import kr.co.bookand.backend.issue.dto.IssueResponse
@@ -48,12 +47,12 @@ class IssueController(
     }
 
     @ApiOperation(value = "오류 및 버그 신고 체크 하기")
-    @PutMapping("/{issueId}/check")
+    @PutMapping("/{issueId}")
     fun checkIssue(
         @PathVariable issueId: Long,
-        @RequestParam checkConfirmed: Boolean
+        @RequestParam confirmed: Boolean
     ): ResponseEntity<IssueIdResponse> {
         val account = accountService.getCurrentAccount()
-        return ResponseEntity.ok(issueService.checkConfirmed(account, issueId, checkConfirmed))
+        return ResponseEntity.ok(issueService.updateConfirmed(account, issueId, confirmed))
     }
 }

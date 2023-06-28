@@ -1,8 +1,10 @@
 package kr.co.bookand.backend.notice.service
 
 import kr.co.bookand.backend.account.model.Account
+import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.PageResponse
 import kr.co.bookand.backend.common.Status
+import kr.co.bookand.backend.common.exception.BookandException
 import kr.co.bookand.backend.common.model.MessageResponse
 import kr.co.bookand.backend.notice.dto.*
 import kr.co.bookand.backend.notice.model.Notice
@@ -72,7 +74,10 @@ class NoticeService(
         val notice = getNotice(noticeId)
         val status = notice.status
         if (status == Status.VISIBLE) notice.updateNoticeStatus(Status.INVISIBLE)
-        else notice.updateNoticeStatus(Status.VISIBLE)
+        else {
+            notice.updateNoticeStatus(Status.VISIBLE)
+            notice.updateDisplayAt()
+        }
         return NoticeIdResponse(notice.id)
     }
 
@@ -84,13 +89,14 @@ class NoticeService(
     fun getNoticeList(
         pageable: Pageable
     ): NoticePageResponse {
-        val list = noticeRepository.findAllByStatusAndVisibility(pageable, Status.VISIBLE, true)
+        val list = noticeRepository.findAllByVisibility(pageable, true)
             .map { NoticeResponse(it) }
         return NoticePageResponse(PageResponse.of(list))
     }
 
     fun getNotice(noticeId: Long): Notice {
-        return noticeRepository.findById(noticeId).orElseThrow { throw Exception("존재하지 않는 공지사항입니다.") }
+        return noticeRepository.findById(noticeId)
+            .orElseThrow { throw BookandException(ErrorCode.NOT_FOUND_NOTIFICATION) }
     }
 
 

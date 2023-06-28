@@ -54,32 +54,30 @@ data class ArticleDetailResponse(
 data class ArticleWebResponse(
     val id: Long,
     val title: String,
+    val category: ArticleCategory,
+    val view: Int,
+    val countBookmark: Int,
+    val writer: String,
+    val createdDate: String,
+    val modifiedDate: String,
     val subTitle: String,
     val mainImage: String,
     val content: String,
-    val category: ArticleCategory,
-    val writer: String,
-    val status: Status,
-    val view: Int,
-    val articleTagList: List<String>,
-    val visibility: Boolean,
-    val createdDate: String,
-    val modifiedDate: String
+    val status: Boolean
 ) {
     constructor(article: Article) : this(
         id = article.id,
         title = article.title,
+        category = article.category,
+        view = article.viewCount,
+        countBookmark = article.bookmarkCount,
+        writer = article.writer,
+        createdDate = article.createdAt.toString(),
+        modifiedDate = article.modifiedAt.toString(),
         subTitle = article.subTitle,
         mainImage = article.mainImage,
         content = article.content,
-        category = article.category,
-        writer = article.writer,
-        status = article.status,
-        view = article.viewCount,
-        articleTagList = article.articleTagList.map { it.tag },
-        visibility = article.visibility,
-        createdDate = article.createdAt.toString(),
-        modifiedDate = article.modifiedAt.toString()
+        status = article.status == Status.VISIBLE
     )
 
 }
@@ -114,8 +112,9 @@ data class ArticleWebPageResponse(
 }
 
 data class ArticleListRequest(
-    val articleIdList : List<Long>
+    val articleIdList: List<Long>
 )
+
 data class ArticleResponse(
     val id: Long,
     val title: String,
@@ -130,8 +129,8 @@ data class ArticleResponse(
     val visibility: Boolean,
     val createdDate: String,
     val modifiedDate: String
-){
-    constructor(article : Article): this(
+) {
+    constructor(article: Article) : this(
         id = article.id,
         title = article.title,
         subTitle = article.subTitle,

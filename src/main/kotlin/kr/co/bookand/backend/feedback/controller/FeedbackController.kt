@@ -8,6 +8,7 @@ import kr.co.bookand.backend.feedback.dto.FeedbackIdResponse
 import kr.co.bookand.backend.feedback.dto.FeedbackListResponse
 import kr.co.bookand.backend.feedback.dto.FeedbackResponse
 import kr.co.bookand.backend.feedback.service.FeedbackService
+import kr.co.bookand.backend.issue.dto.IssueIdResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
@@ -44,6 +45,16 @@ class FeedbackController(
         @PathVariable feedbackId: Long
     ): ResponseEntity<FeedbackResponse> {
         return ResponseEntity.ok(feedbackService.getFeedback(feedbackId))
+    }
+
+    @ApiOperation(value = "피드백 확인 여부 체크 하기")
+    @PutMapping("/{feedbackId}")
+    fun checkFeedback(
+        @PathVariable feedbackId: Long,
+        @RequestParam checkConfirmed: Boolean
+    ): ResponseEntity<FeedbackIdResponse> {
+        val account = accountService.getCurrentAccount()
+        return ResponseEntity.ok(feedbackService.updateConfirmed(account, feedbackId, checkConfirmed))
     }
 
 }

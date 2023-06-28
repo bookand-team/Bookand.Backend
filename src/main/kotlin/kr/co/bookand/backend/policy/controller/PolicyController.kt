@@ -20,7 +20,7 @@ class PolicyController(
     private val accountService: AccountService
 ) {
 
-    @ApiOperation(value = "정책 생성")
+    @ApiOperation(value = "정책 생성 (WEB)")
     @PostMapping
     fun createPolicy(
         @RequestBody policyRequest: CreatePolicyRequest
@@ -45,7 +45,7 @@ class PolicyController(
         return ResponseEntity.ok(policyService.getTitlePolicy(policyName))
     }
 
-    @ApiOperation(value = "정책 수정")
+    @ApiOperation(value = "정책 수정 (WEB)")
     @PutMapping("/{id}")
     fun updatePolicy(
         @RequestBody policyRequest: CreatePolicyRequest,
@@ -55,7 +55,7 @@ class PolicyController(
         return ResponseEntity.ok(policyService.updatePolicy(account, id, policyRequest))
     }
 
-    @ApiOperation(value = "정책 삭제")
+    @ApiOperation(value = "정책 삭제 (WEB)")
     @DeleteMapping("/{id}")
     fun deletePolicy(
         @PathVariable id: Long

@@ -61,6 +61,7 @@ class BookmarkServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.USER,
             AccountStatus.NORMAL
         )
@@ -75,6 +76,7 @@ class BookmarkServiceTest : BehaviorSpec({
             "profileImage",
             LocalDateTime.now(),
             LocalDateTime.now(),
+            null,
             Role.ADMIN,
             AccountStatus.NORMAL
         )
@@ -120,6 +122,7 @@ class BookmarkServiceTest : BehaviorSpec({
             category = ArticleCategory.BOOKSTORE_REVIEW,
             writer = "writer",
             viewCount = 0,
+            bookmarkCount = 0,
             status = Status.VISIBLE,
             deviceOSFilter = DeviceOSFilter.ALL,
             memberIdFilter = MemberIdFilter.ALL,

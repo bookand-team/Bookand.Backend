@@ -27,7 +27,7 @@ data class IssueSimpleResponse(
     val issueContent: String,
     val issuedAt: LocalDateTime,
     val createdAt: String,
-    val checkConfirmed: Boolean
+    val isConfirmed: Boolean
 ){
     constructor(issue: Issue): this(
         id = issue.id,
@@ -36,7 +36,7 @@ data class IssueSimpleResponse(
         issueContent = issue.issueContent,
         issuedAt = issue.issuedAt,
         createdAt = issue.createdAt.toString(),
-        checkConfirmed = issue.checkConfirmed
+        isConfirmed = issue.isConfirmed
     )
 }
 data class IssueSimpleListResponse(
@@ -52,6 +52,7 @@ data class IssueResponse(
     val issuedAt: LocalDateTime,
     val issueContent: String,
     val issueImages: List<String>,
+    val isConfirmed: Boolean
 ){
     constructor(issue: Issue): this(
         id = issue.id,
@@ -61,6 +62,7 @@ data class IssueResponse(
         logFilePath = issue.logFilePath,
         issuedAt = issue.issuedAt,
         issueContent = issue.issueContent,
-        issueImages = issue.issueImageList.map { it.imageUrl }
+        issueImages = issue.issueImageList.map { it.imageUrl },
+        isConfirmed = issue.isConfirmed
     )
 }

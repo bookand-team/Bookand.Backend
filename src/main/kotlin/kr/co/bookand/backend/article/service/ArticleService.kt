@@ -92,6 +92,7 @@ class ArticleService(
                     subTitle = article.subTitle,
                     mainImage = article.mainImage,
                     category = article.category,
+                    content = article.content,
                     writer = article.writer,
                     status = article.status,
                     view = article.viewCount,

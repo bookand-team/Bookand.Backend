@@ -78,7 +78,7 @@ class AuthService(
             val signTokenResponse = jwtProvider.createSignTokenDto(middleAccount)
             return LoginResponse(
                 tokenResponse = signTokenResponse,
-                httpStatus = HttpStatus.CREATED
+                httpStatus = HttpStatus.NOT_FOUND
             )
         }
     }

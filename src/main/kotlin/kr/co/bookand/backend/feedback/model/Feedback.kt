@@ -19,7 +19,7 @@ class Feedback(
 
     @Enumerated(EnumType.STRING)
     @Nullable
-    var feedbackTarget: FeedbackTarget,
+    var feedbackTarget: FeedbackTarget? = null,
 
     @Column(length = 1000)
     var content: String,
@@ -36,11 +36,14 @@ class Feedback(
 
     constructor(createFeedbackRequest: CreateFeedbackRequest) : this(
         feedbackType = FeedbackType.valueOf(createFeedbackRequest.feedbackType),
-        feedbackTarget = FeedbackTarget.valueOf(createFeedbackRequest.feedbackTarget),
         content = createFeedbackRequest.content,
         deviceOS = createFeedbackRequest.deviceOS,
         isConfirmed = false
     )
+
+    fun updateFeedbackTarget(feedbackTarget: FeedbackTarget) {
+        this.feedbackTarget = feedbackTarget
+    }
 
     fun updateFeedbackAccount(account: Account) {
         this.account = account

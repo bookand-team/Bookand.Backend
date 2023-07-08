@@ -9,6 +9,7 @@ import kr.co.bookand.backend.feedback.dto.CreateFeedbackRequest
 import kr.co.bookand.backend.feedback.dto.FeedbackIdResponse
 import kr.co.bookand.backend.feedback.dto.FeedbackListResponse
 import kr.co.bookand.backend.feedback.dto.FeedbackResponse
+import kr.co.bookand.backend.feedback.model.FeedbackTarget
 import kr.co.bookand.backend.feedback.repository.FeedbackRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Pageable
@@ -25,6 +26,9 @@ class FeedbackService(
     @Transactional
     fun createFeedback(currentAccount: Account, createFeedbackRequest: CreateFeedbackRequest): FeedbackIdResponse {
         val feedback = Feedback(createFeedbackRequest)
+        if (createFeedbackRequest.feedbackTarget != null) {
+            feedback.updateFeedbackTarget(FeedbackTarget.valueOf(createFeedbackRequest.feedbackTarget))
+        }
         val saveFeedback = feedbackRepository.save(feedback)
         saveFeedback.updateFeedbackAccount(currentAccount)
         return FeedbackIdResponse(saveFeedback.id)

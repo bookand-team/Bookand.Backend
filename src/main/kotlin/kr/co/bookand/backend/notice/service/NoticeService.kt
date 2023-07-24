@@ -37,13 +37,11 @@ class NoticeService(
     fun getNoticeSimpleList(
         pageable: Pageable,
         cursorId: Long?
-    ): NoticePageResponse {
+    ): PageResponse<NoticeResponse> {
         val nextCursorId = cursorId ?: 0L
         val page = noticeRepository.findAllByVisibilityAndStatus(pageable, true, Status.VISIBLE, nextCursorId)
             .map { NoticeResponse(it) }
-        val totalElements = noticeRepository.count()
-        val ofCursor = PageResponse.ofCursor(page, totalElements)
-        return NoticePageResponse(ofCursor)
+        return PageResponse.of(page)
     }
 
     @Transactional

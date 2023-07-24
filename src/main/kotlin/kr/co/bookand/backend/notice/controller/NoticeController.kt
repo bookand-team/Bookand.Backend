@@ -4,6 +4,7 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.v3.oas.annotations.Operation
 import kr.co.bookand.backend.account.service.AccountService
+import kr.co.bookand.backend.common.PageResponse
 import kr.co.bookand.backend.common.model.MessageResponse
 import kr.co.bookand.backend.notice.dto.*
 import kr.co.bookand.backend.notice.service.NoticeService
@@ -37,7 +38,7 @@ class NoticeController(
     fun getNoticeSimpleList(
         @PageableDefault pageable: Pageable,
         @RequestParam(required = false) cursorId: Long?
-    ): ResponseEntity<NoticePageResponse> {
+    ): ResponseEntity<PageResponse<NoticeResponse>> {
         return ResponseEntity.ok(noticeService.getNoticeSimpleList(pageable, cursorId))
     }
 

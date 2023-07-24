@@ -66,6 +66,7 @@ class BookmarkService(
         val bookmarkType = BookmarkType.valueOf(bookmarkType)
         val bookmarkFolderResponseList =
             bookmarkRepository.findAllByAccountAndBookmarkTypeAndVisibilityTrue(currentAccount, bookmarkType)
+                .filter { it.folderName != "모아보기" }
                 .map { BookmarkFolderResponse(it) }
         return BookmarkFolderListResponse(bookmarkFolderResponseList)
     }

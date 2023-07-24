@@ -22,8 +22,8 @@ class GlobalExceptionHandler {
     @ExceptionHandler(BookandException::class)
     fun handleBookandException(ex: BookandException): ResponseEntity<ApiErrorResponse> {
         log.error("GlobalExceptionHandler BookandException {}", ex.message)
-        val response = ApiErrorResponse(ErrorCode.INTER_SERVER_ERROR, ex.message ?: "")
-        return ResponseEntity.status(ErrorCode.INTER_SERVER_ERROR.httpStatus).body(response)
+        val response = ApiErrorResponse(ex.errorCode, ex.message ?: "")
+        return ResponseEntity.status(ex.errorCode.httpStatus).body(response)
     }
 
     @ExceptionHandler(IllegalArgumentException::class)

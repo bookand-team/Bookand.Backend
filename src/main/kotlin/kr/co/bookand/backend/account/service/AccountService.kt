@@ -186,7 +186,7 @@ class AccountService(
     }
 
     fun checkNicknameBoolean(nickname: String, currentNickname: String): Boolean {
-        return if (currentNickname == nickname) true
+        return if (currentNickname == nickname) false
         else accountRepository.existsByNickname(nickname)
     }
 

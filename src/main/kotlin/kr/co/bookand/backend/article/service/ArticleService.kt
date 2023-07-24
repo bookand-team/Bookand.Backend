@@ -15,7 +15,6 @@ import kr.co.bookand.backend.bookstore.dto.BookstoreSimpleResponse
 import kr.co.bookand.backend.bookstore.repository.BookstoreRepository
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.Status
-import kr.co.bookand.backend.common.model.MessageResponse
 import kr.co.bookand.backend.common.exception.BookandException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

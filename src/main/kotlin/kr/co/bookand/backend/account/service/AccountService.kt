@@ -83,13 +83,13 @@ class AccountService(
     }
 
     @Transactional
-    fun updateAccount(currentAccount: Account, request: AccountRequest): AccountIdResponse {
+    fun updateAccount(currentAccount: Account, request: AccountRequest): AccountDetailInfoResponse {
         val checkNicknameBoolean = checkNicknameBoolean(request.nickname, currentAccount.nickname)
         if (checkNicknameBoolean) {
             throw BookandException(ErrorCode.NICKNAME_DUPLICATION)
         }
         currentAccount.updateProfile(request.profileImage, request.nickname)
-        return AccountIdResponse(currentAccount.id)
+        return AccountDetailInfoResponse(currentAccount)
     }
 
     fun existNickname(nickname: String): MessageResponse {

@@ -82,12 +82,12 @@ class AccountServiceTest : BehaviorSpec({
 
         When("account 프로필 업데이트") {
             val request = AccountRequest(
-                "nickname",
+                "nickname2",
                 "profileImage"
             )
 
             val request2 = AccountRequest(
-                "nickname22",
+                "nickname23",
                 "profileImage"
             )
             every { accountRepository.findById(any()) } returns Optional.of(account)

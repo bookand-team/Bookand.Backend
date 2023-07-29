@@ -9,13 +9,13 @@ data class UploadFileRequest(
 
 data class UpdateFileRequest(
     val type: String,
-    val newFiles: List<MultipartFile>,
-    val toDeleteUrls: List<String>
+    val toDeleteUrls: List<String>,
+    val newFiles: List<MultipartFile>
 )
 
 data class FileDto(
-    val url: String,
-    val fileName: String
+    val fileName: String,
+    val fileUrl: String
 )
 
 data class FileListDto(

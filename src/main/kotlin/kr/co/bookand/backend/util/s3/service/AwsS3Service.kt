@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
 import kr.co.bookand.backend.common.ErrorCode
 import kr.co.bookand.backend.common.exception.BookandException
+import kr.co.bookand.backend.config.security.SecurityUtils.getCurrentAccountEmail
 import kr.co.bookand.backend.util.s3.S3SaveDir
 import kr.co.bookand.backend.util.s3.dto.FileDto
 import kr.co.bookand.backend.util.s3.dto.FileListDto
@@ -97,7 +98,7 @@ class AwsS3Service(
 
     fun updateFiles(updateFileRequest: UpdateFileRequest): FileListDto {
         val type = updateFileRequest.type
-        val loginUser = "todo"
+        val loginUser = getCurrentAccountEmail()
         val urls = updateFileRequest.toDeleteUrls
         if (CollectionUtils.isEmpty(urls)) {
             throw BookandException(ErrorCode.AWS_S3_UPLOAD_FAIL)

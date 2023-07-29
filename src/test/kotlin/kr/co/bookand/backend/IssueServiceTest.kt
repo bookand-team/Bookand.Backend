@@ -77,8 +77,8 @@ class IssueServiceTest : BehaviorSpec({
         )
 
         val fileDto = FileDto(
-            url = "url",
-            fileName = "fileName"
+            fileName = "fileName",
+            fileUrl = "url"
         )
 
 

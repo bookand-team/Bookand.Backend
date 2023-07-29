@@ -39,7 +39,7 @@ class AwsS3Service(
 
 
     fun uploadFiles(uploadFileRequest: UploadFileRequest): FileListDto {
-        val currentAccountEmail = "SecurityUtil.getCurrentAccountEmail()"
+        val currentAccountEmail = getCurrentAccountEmail()
         val files = uploadFileRequest.files
         if (CollectionUtils.isEmpty(files)) {
             throw BookandException(ErrorCode.INPUT_VALID_ERROR)

@@ -53,12 +53,12 @@ class IssueService(
         var fileDto = FileDto("", "")
         if (createIssueRequest.logFile != null) {
             val multipartFile = createIssueRequest.logFile
-            fileDto = awsS3Service.uploadV2(multipartFile, "reportLog", "loginAccount")
+            fileDto = awsS3Service.uploadV2(multipartFile, "reportLog", owner = currentAccount.email)
         }
         val issue = Issue(createIssueRequest, 1L)
 
         if (createIssueRequest.sendLogs) {
-            issue.setLogFile(fileDto.url, fileDto.fileName)
+            issue.setLogFile(fileDto.fileUrl, fileDto.fileName)
         }
 
         val saveIssue: Issue = issueRepository.save(issue)

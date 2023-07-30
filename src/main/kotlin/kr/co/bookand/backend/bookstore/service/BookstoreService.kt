@@ -120,7 +120,7 @@ class BookstoreService(
     }
 
     @Transactional
-    fun createReportBookstore(request: ReportBookstoreRequest): ReportBookstoreIdResponse {
+    fun createReportBookstore(request: ReportBookstoreRequest): MessageResponse {
         val reportBookstore = ReportBookstore(
             name = request.name,
             address = request.address,
@@ -130,7 +130,7 @@ class BookstoreService(
             answeredAt = "2023-01-01 00:00:00"
         )
         val saveReportBookstore = reportBookstoreRepository.save(reportBookstore)
-        return ReportBookstoreIdResponse(saveReportBookstore.id)
+        return MessageResponse(result = "서점 제보 완료", statusCode = 200)
 
     }
 

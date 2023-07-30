@@ -58,7 +58,7 @@ class IssueService(
         val issue = Issue(createIssueRequest, 1L)
 
         if (createIssueRequest.sendLogs) {
-            issue.setLogFile(fileDto.fileUrl, fileDto.fileName)
+            issue.setLogFile(fileDto.fileUrl, fileDto.filename)
         }
 
         val saveIssue: Issue = issueRepository.save(issue)

@@ -46,6 +46,7 @@ data class BookstoreResponse(
     val id: Long,
     val name: String,
     val info: BookstoreInfo,
+    val introduction: String,
     val mainImage: String,
     val themeList: MutableList<BookstoreType>,
     val subImage: List<BookstoreImageResponse>,
@@ -70,6 +71,7 @@ data class BookstoreResponse(
             longitude = bookstore.longitude,
             sns = bookstore.sns
         ),
+        introduction = bookstore.introduction,
         mainImage = bookstore.mainImage,
         themeList = bookstore.themeList.map { it.theme }.toMutableList(),
         subImage = bookstore.imageList.map {

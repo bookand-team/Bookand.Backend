@@ -104,7 +104,7 @@ class BookstoreController(
     @PostMapping("/report")
     fun reportBookstore(
         @RequestBody reportBookstoreRequest: ReportBookstoreRequest
-    ): ResponseEntity<ReportBookstoreIdResponse> {
+    ): ResponseEntity<MessageResponse> {
         return ResponseEntity.ok(bookstoreService.createReportBookstore(reportBookstoreRequest))
     }
 

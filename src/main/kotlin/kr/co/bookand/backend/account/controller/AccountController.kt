@@ -51,7 +51,7 @@ class AccountController(
     @PutMapping("/profile")
     fun updateNickname(
         @Valid @RequestBody accountRequest: AccountRequest
-    ): ResponseEntity<AccountDetailInfoResponse> {
+    ): ResponseEntity<AccountInfoResponse> {
         val account = accountService.getCurrentAccount()
         return ResponseEntity.ok(accountService.updateAccount(account, accountRequest))
     }

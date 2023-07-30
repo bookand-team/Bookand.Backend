@@ -14,7 +14,7 @@ data class UpdateFileRequest(
 )
 
 data class FileDto(
-    val fileName: String,
+    val filename: String,
     val fileUrl: String
 )
 

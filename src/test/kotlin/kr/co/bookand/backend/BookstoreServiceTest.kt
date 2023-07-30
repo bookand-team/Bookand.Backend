@@ -371,7 +371,7 @@ class BookstoreServiceTest : BehaviorSpec({
             val saveReportBookstore = bookstoreService.createReportBookstore(reportBookstoreRequest)
 
             Then("it should report bookstore") {
-                saveReportBookstore.id shouldBe 1L
+                saveReportBookstore.result shouldBe "서점 제보 완료"
             }
         }
 

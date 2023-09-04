@@ -12,7 +12,6 @@ import kr.co.bookand.backend.issue.repository.IssueRepository
 import kr.co.bookand.backend.util.s3.dto.FileDto
 import kr.co.bookand.backend.util.s3.service.AwsS3Service
 import lombok.RequiredArgsConstructor
-import lombok.extern.slf4j.Slf4j
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
 class IssueService(
     private val issueRepository: IssueRepository,
     private val issueImageRepository: IssueImageRepository,

@@ -65,6 +65,11 @@ dependencies {
 
 	// mockk
 	testImplementation("io.mockk:mockk:1.12.0")
+
+	// slack
+	implementation("net.gpedro.integrations.slack:slack-webhook:1.4.0")
+	implementation("com.github.maricn:logback-slack-appender:1.6.1")
+
 }
 
 tasks.withType<KotlinCompile> {

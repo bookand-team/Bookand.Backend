@@ -14,7 +14,6 @@ import kr.co.bookand.backend.util.s3.dto.FileListDto
 import kr.co.bookand.backend.util.s3.dto.UpdateFileRequest
 import kr.co.bookand.backend.util.s3.dto.UploadFileRequest
 import lombok.RequiredArgsConstructor
-import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.util.CollectionUtils
@@ -25,7 +24,6 @@ import java.nio.charset.StandardCharsets
 import java.text.MessageFormat
 import java.util.*
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 class AwsS3Service(

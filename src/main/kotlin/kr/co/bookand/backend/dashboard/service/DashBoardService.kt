@@ -1,5 +1,6 @@
 package kr.co.bookand.backend.dashboard.service
 
+import kr.co.bookand.backend.account.model.Account
 import kr.co.bookand.backend.account.repository.AccountRepository
 import kr.co.bookand.backend.account.service.AccountService
 import kr.co.bookand.backend.article.model.ArticleCategory
@@ -23,7 +24,6 @@ import java.time.LocalTime
 @RequiredArgsConstructor
 class DashBoardService(
     private val dashBoardRepository: DashBoardRepository,
-    private val accountService: AccountService,
     private val accountRepository: AccountRepository,
     private val articleRepository: ArticleRepository,
     private val bookstoreRepository: BookstoreRepository,
@@ -31,8 +31,7 @@ class DashBoardService(
     private val reportBookstoreRepository: ReportBookstoreRepository,
     private val feedbackRepository: FeedbackRepository
 ) {
-    fun getStatusBoard() : StatusBoardResponse {
-        val account = accountService.getAccountById(1L)
+    fun getStatusBoard(account: Account) : StatusBoardResponse {
         account.role.checkAdminAndManager()
         val dashBoard = dashBoardRepository.findById(dashBoardRepository.count()).get()
         return StatusBoardResponse(

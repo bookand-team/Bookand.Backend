@@ -124,7 +124,7 @@ class BookstoreService(
         val reportBookstore = ReportBookstore(
             name = request.name,
             address = request.address,
-            isAnswered = false,
+            checkAnswered = false,
             answerTitle = "",
             answerContent = "",
             answeredAt = "2023-01-01 00:00:00"

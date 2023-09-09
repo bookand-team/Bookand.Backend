@@ -2,6 +2,7 @@ package kr.co.bookand.backend.feedback.repository
 
 import kr.co.bookand.backend.feedback.model.Feedback
 import org.springframework.data.jpa.repository.JpaRepository
+import java.time.LocalDateTime
 
 interface FeedbackRepository : JpaRepository<Feedback, Long> {
 
@@ -9,7 +10,7 @@ interface FeedbackRepository : JpaRepository<Feedback, Long> {
 
     fun countAllByVisibilityAndCreatedAtBetween(
         visibility: Boolean,
-        startDatetime: String,
-        endDatetime: String
+        startDatetime: LocalDateTime,
+        endDatetime: LocalDateTime
     ): Long
 }

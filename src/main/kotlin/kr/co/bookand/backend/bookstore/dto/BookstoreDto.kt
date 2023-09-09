@@ -213,7 +213,7 @@ data class ReportBookstoreResponse(
         providerEmail = reportBookstore.account?.providerEmail,
         bookstoreName = reportBookstore.name,
         reportCount = 1,
-        isAnswered = reportBookstore.isAnswered,
+        isAnswered = reportBookstore.checkAnswered,
         createdAt = reportBookstore.createdAt.toString(),
         answeredAt = reportBookstore.answeredAt
     )

@@ -382,7 +382,7 @@ class BookstoreServiceTest : BehaviorSpec({
             bookstoreService.answerReportBookstore(1L, answerReportRequest)
 
             Then("it should answer bookstore report") {
-                reportBookstore.isAnswered shouldBe true
+                reportBookstore.checkAnswered shouldBe true
                 reportBookstore.answerTitle shouldBe answerReportRequest.answerTitle
                 reportBookstore.answerContent shouldBe answerReportRequest.answerContent
             }

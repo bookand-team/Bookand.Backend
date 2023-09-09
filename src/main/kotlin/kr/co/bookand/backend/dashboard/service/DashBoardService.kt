@@ -15,6 +15,7 @@ import kr.co.bookand.backend.dashboard.dto.StatusBoardResponse
 import kr.co.bookand.backend.dashboard.repository.DashBoardRepository
 import kr.co.bookand.backend.feedback.repository.FeedbackRepository
 import lombok.RequiredArgsConstructor
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -31,6 +32,7 @@ class DashBoardService(
     private val reportBookstoreRepository: ReportBookstoreRepository,
     private val feedbackRepository: FeedbackRepository
 ) {
+    private val log = LoggerFactory.getLogger(javaClass)
     fun getStatusBoard(account: Account) : StatusBoardResponse {
         account.role.checkAdminAndManager()
         val dashBoard = dashBoardRepository.findById(dashBoardRepository.count()).get()
@@ -59,11 +61,17 @@ class DashBoardService(
     fun updateStatusBoard() : Boolean{
         val totalAccountNum: Long = accountRepository.countAllByVisibility(true)
         val totalRevokeAccountNum: Long = accountRepository.countAllByVisibility(false)
-        val startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0)).toString()
-        val endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59)).toString()
-        val lastMonthStartDatetime = LocalDateTime.of(LocalDate.now().minusMonths(1).withDayOfMonth(1), LocalTime.of(0, 0, 0)).toString()
-        val lastMonthEndDatetime = LocalDateTime.of(LocalDate.now().minusMonths(1).withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth()), LocalTime.of(23, 59, 59)).toString()
+        val startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0))
+        val endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59))
+        val lastMonthStartDatetime = LocalDateTime.of(LocalDate.now().minusMonths(1).withDayOfMonth(1), LocalTime.of(0, 0, 0))
+        val lastMonthEndDatetime = LocalDateTime.of(LocalDate.now().minusMonths(1).withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth()), LocalTime.of(23, 59, 59))
 
+        log.info("totalAccountNum: $totalAccountNum")
+        log.info("totalRevokeAccountNum: $totalRevokeAccountNum")
+        log.info("startDatetime: $startDatetime")
+        log.info("endDatetime: $endDatetime")
+        log.info("lastMonthStartDatetime: $lastMonthStartDatetime")
+        log.info("lastMonthEndDatetime: $lastMonthEndDatetime")
 
         val dashBoard = DashBoard(
             articleRepository.countAllByVisibility(true),
@@ -84,7 +92,7 @@ class DashBoardService(
             totalRevokeAccountNum,
 
             reportBookstoreRepository.countAllByVisibilityAndCreatedAtBetween(true, startDatetime, endDatetime),
-            reportBookstoreRepository.countAllByVisibilityAndIsAnswered(true, false),
+            reportBookstoreRepository.countAllByVisibilityAndCheckAnswered(true, false),
             feedbackRepository.countAllByVisibility(true),
             feedbackRepository.countAllByVisibilityAndCreatedAtBetween(true, startDatetime, endDatetime),
             feedbackRepository.countAllByVisibilityAndCreatedAtBetween(true, lastMonthStartDatetime, lastMonthEndDatetime)

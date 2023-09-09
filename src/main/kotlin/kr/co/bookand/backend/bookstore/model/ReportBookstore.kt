@@ -15,7 +15,7 @@ class ReportBookstore(
     var id: Long = 0,
     var name: String,
     val address: String,
-    var isAnswered: Boolean,
+    var checkAnswered: Boolean,
     var answerTitle: String,
     var answerContent: String,
     var answeredAt: String,
@@ -26,7 +26,7 @@ class ReportBookstore(
 
 ) : BaseEntity() {
     fun updateAnswer(answerReportRequest: AnswerReportRequest) {
-        isAnswered = true
+        checkAnswered = true
         answerTitle = answerReportRequest.answerTitle
         answerContent = answerReportRequest.answerContent
         answeredAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor
 import org.springframework.http.ResponseEntity
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -26,6 +27,11 @@ class DashBoardController(
     }
 
     @Scheduled(cron = "0 0 0 * * *")
+    fun updateStatusBoardScheduled() {
+        dashBoardService.updateStatusBoard()
+    }
+
+    @PostMapping("/update")
     fun updateStatusBoard() {
         dashBoardService.updateStatusBoard()
     }

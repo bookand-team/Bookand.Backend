@@ -200,7 +200,7 @@ class AccountService(
     }
 
     fun deleteAccount(currentAccount: Account, accountId: Long): Boolean {
-        currentAccount.role.checkAdminAndManager()
+        currentAccount.role.checkAdmin()
         val account = getAccountById(accountId)
         refreshTokenRepository.deleteByAccountId(accountId)
         accountRepository.delete(account)
